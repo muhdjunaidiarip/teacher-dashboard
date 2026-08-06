@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teacher App Command Center</title>
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-dark: #0b0f19;
+      --surface: #1e293b;
+      --surface-card: #151d2a;
+      --surface-hover: #334155;
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --accent: #a855f7;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: rgba(255, 255, 255, 0.08);
+      --header-height: 58px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      overflow: hidden;
+    }
+
+    /* Top Navigation Bar */
+    header {
+      height: var(--header-height);
+      background-color: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.25rem;
+      gap: 1.5rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      z-index: 10;
+    }
+
+    /* Brand Logo (Clickable Home) */
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--text-main);
+      white-space: nowrap;
+      cursor: pointer;
+      user-select: none;
+      padding: 0.3rem 0.6rem;
+      border-radius: 8px;
+      transition: background 0.2s ease;
+    }
+
+    .brand:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .brand-icon {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      box-shadow: 0 2px 8px rgba(99, 102, 241, 0.4);
+    }
+
+    /* Scrollable Navigation Bar */
+    .nav-tabs-wrapper {
+      display: flex;
+      align-items: center;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      flex: 1;
+    }
+
+    .nav-tabs-wrapper::-webkit-scrollbar {
+      display: none;
+    }
+
+    .nav-tabs {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      list-style: none;
+    }
+
+    /* Navigation Pills */
+    .tab-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.45rem 0.85rem;
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn:hover {
+      background-color: var(--surface-hover);
+      color: var(--text-main);
+    }
+
+    .tab-btn.active {
+      background-color: rgba(99, 102, 241, 0.15);
+      color: #818cf8;
+      border-color: rgba(99, 102, 241, 0.4);
+      font-weight: 600;
+    }
+
+    /* Action Buttons */
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-action {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.45rem 0.85rem;
+      background-color: var(--primary);
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.825rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.1s ease;
+    }
+
+    .btn-action:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .btn-action:active {
+      transform: scale(0.97);
+    }
+
+    /* Main Container */
+    main {
+      flex: 1;
+      width: 100%;
+      height: calc(100vh - var(--header-height));
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Views Toggling */
+    .view-content {
+      width: 100%;
+      height: 100%;
+      display: none;
+    }
+
+    .view-content.active {
+      display: block;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+      background-color: #000;
+    }
+
+    /* Stylish Home Dashboard View */
+    #home-view {
+      padding: 2.5rem 2rem;
+      overflow-y: auto;
+      background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.08), transparent 40%),
+                  radial-gradient(circle at bottom left, rgba(168, 85, 247, 0.05), transparent 40%);
+    }
+
+    .home-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    /* Welcome Hero Card */
+    .hero-card {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2.5rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .hero-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+    }
+
+    .hero-title {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(90deg, #ffffff, #cbd5e1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      max-width: 650px;
+      line-height: 1.6;
+    }
+
+    .time-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 1.25rem;
+      padding: 0.4rem 0.85rem;
+      background-color: rgba(99, 102, 241, 0.1);
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      border-radius: 20px;
+      font-size: 0.85rem;
+      color: #818cf8;
+      font-weight: 500;
+    }
+
+    /* Section Titles */
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .section-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    /* Apps Quick Launch Grid */
+    .app-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .app-card {
+      background-color: var(--surface-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .app-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(99, 102, 241, 0.4);
+      background-color: var(--surface);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .app-card-icon {
+      font-size: 1.8rem;
+      width: 46px;
+      height: 46px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .app-card-title {
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--text-main);
+    }
+
+    .app-card-desc {
+      font-size: 0.825rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Tips & Widgets Section */
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+
+    @media (max-width: 768px) {
+      .info-grid { grid-template-columns: 1fr; }
+    }
+
+    .info-box {
+      background-color: var(--surface-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+    }
+
+    .info-box h4 {
+      font-size: 0.95rem;
+      color: var(--text-main);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .info-box p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <header>
+    <!-- Brand Logo: Click to Go Home -->
+    <div class="brand" onclick="showHome()" title="Return to Dashboard Home">
+      <div class="brand-icon">🎓</div>
+      <span>EduHub</span>
+    </div>
+
+    <!-- App Tabs Navigation -->
+    <div class="nav-tabs-wrapper">
+      <ul class="nav-tabs">
+        <li>
+          <button class="tab-btn" onclick="switchApp('app-grading', 'apps/app1-teachercompanionapp/', this)">
+            ⚡Smart Grading System
+          </button>
+        </li>
+        <li>
+          <button class="tab-btn" onclick="switchApp('app-placevalue', 'apps/app2-interactiveplacevalues/', this)">
+            🚀 Interactive Place Values
+          </button>
+        </li>
+        <li>
+          <button class="tab-btn" onclick="switchApp('app-classroom', 'apps/app3-classroomhub/', this)">
+            🎴 Classroom Hub
+          </button>
+        </li>
+        <li>
+          <button class="tab-btn" onclick="switchApp('app-lesson', 'apps/app4-lessonplan/', this)">
+            💡 My Lesson Plan
+          </button>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="actions">
+      <button class="btn-action" onclick="toggleFullScreen()" title="Present App Full Screen">
+        <span>📺</span> Present App
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <!-- 1. Home Dashboard View -->
+    <div id="home-view" class="view-content active">
+      <div class="home-container">
+        
+        <!-- Hero Section -->
+        <div class="hero-card">
+          <h1 class="hero-title">Welcome to EduHub – Where AI Empowers Educators</h1>
+          <p class="hero-subtitle">
+            Designed to support you in what really matters — creating engaging, inspiring, and meaningful experiences for your students.
+          </p>
+          <div class="time-badge">
+            📅 <span id="current-date">Loading date...</span>
+          </div>
+        </div>
+
+        <!-- App Launcher Section -->
+        <div class="section-header">
+          <h3 class="section-title">Classroom App Library</h3>
+        </div>
+
+        <div class="app-grid">
+          <div class="app-card" onclick="triggerAppTab(0)">
+            <div class="app-card-icon">⚡</div>
+            <div class="app-card-title">Smart Grading System</div>
+            <div class="app-card-desc">A Smart Grading System that will help you track students' progress timely and effectively.</div>
+          </div>
+
+          <div class="app-card" onclick="triggerAppTab(1)">
+            <div class="app-card-icon">🚀</div>
+            <div class="app-card-title">Interactive Place Values</div>
+            <div class="app-card-desc">A comprehensive interactive place values app which includes decimals and re-grouping capability.</div>
+          </div>
+
+          <div class="app-card" onclick="triggerAppTab(2)">
+            <div class="app-card-icon">🎴</div>
+            <div class="app-card-title">Classroom Hub</div>
+            <div class="app-card-desc">Your teacher companion page to keep your students entertained.</div>
+          </div>
+
+          <div class="app-card" onclick="triggerAppTab(3)">
+            <div class="app-card-icon">💡</div>
+            <div class="app-card-title">My Lesson Plan</div>
+            <div class="app-card-desc">Planning your lesson now is made easier with this Smart Lesson Plan app.</div>
+          </div>
+        </div>
+
+        <!-- Quick Classroom Utility Cards -->
+        <div class="info-grid">
+          <div class="info-box">
+            <h4>💡 Quick Pro-Tip</h4>
+            <p>Click <strong>Present App</strong> in the top-right corner whenever you want to project any tool full-screen onto your classroom smartboard.</p>
+          </div>
+          <div class="info-box">
+            <h4>⚡ Smooth Navigation</h4>
+            <p>Click on the <strong>EduHub</strong> icon at the top anytime to return to this home dashboard view.</p>
+          </div>
+        </div>
+
+        <!-- Footer Attribution -->
+        <p style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding-top: 1rem;">
+          An app by Junaidi
+        </p>
+
+      </div>
+    </div>
+
+    <!-- 2. Independent Persistent App Stages (iframes) -->
+    <iframe id="app-grading" class="view-content app-frame" title="Smart Grading System"></iframe>
+    <iframe id="app-placevalue" class="view-content app-frame" title="Interactive Place Values"></iframe>
+    <iframe id="app-classroom" class="view-content app-frame" title="Classroom Hub"></iframe>
+    <iframe id="app-lesson" class="view-content app-frame" title="My Lesson Plan"></iframe>
+  </main>
+
+  <script>
+    /**
+     * Show Home View and hide all app frames without destroying them
+     */
+    function showHome() {
+      // Hide all iframe views
+      document.querySelectorAll('.app-frame').forEach(frame => frame.classList.remove('active'));
+      
+      // Activate Home View
+      document.getElementById('home-view').classList.add('active');
+      
+      // Clear active styling on navigation tabs
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    }
+
+    /**
+     * Switch between persistent apps without reloading them
+     */
+    function switchApp(frameId, url, btnElement) {
+      // Hide home view
+      document.getElementById('home-view').classList.remove('active');
+
+      // Hide all app frames
+      document.querySelectorAll('.app-frame').forEach(frame => frame.classList.remove('active'));
+
+      const targetFrame = document.getElementById(frameId);
+      if (targetFrame) {
+        // Lazy-load the iframe URL on first click so all 4 don't load simultaneously
+        if (!targetFrame.getAttribute('src')) {
+          targetFrame.src = url;
+        }
+        
+        // Display the requested app frame
+        targetFrame.classList.add('active');
+      }
+
+      // Update active tab styling
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      if (btnElement) {
+        btnElement.classList.add('active');
+      }
+    }
+
+    /**
+     * Helper to open app from home cards
+     */
+    function triggerAppTab(index) {
+      const tabs = document.querySelectorAll('.tab-btn');
+      if (tabs[index]) {
+        tabs[index].click();
+      }
+    }
+
+    /**
+     * Toggle Full Screen view for active application
+     */
+    function toggleFullScreen() {
+      const docEl = document.documentElement;
+      if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+        if (docEl.requestFullscreen) {
+          docEl.requestFullscreen();
+        } else if (docEl.webkitRequestFullscreen) {
+          docEl.webkitRequestFullscreen();
+        }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        }
+      }
+    }
+
+    // Set today's date dynamically on home hero view
+    document.addEventListener('DOMContentLoaded', () => {
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      document.getElementById('current-date').textContent = new Date().toLocaleDateString(undefined, options);
+    });
+  </script>
+</body>
+</html>

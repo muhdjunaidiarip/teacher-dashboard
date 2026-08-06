@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Interactive Place Value Discs</title>
+    <style>
+        :root {
+            /* MOE Aligned Colors */
+            --hundred-thousands: #8B4513; /* Brown */
+            --ten-thousands: #8E44AD;     /* Purple */
+            --thousands: #27AE60;         /* Green */
+            --hundreds: #E84393;          /* Pink */
+            --tens: #E67E22;              /* Orange */
+            --ones: #2980B9;              /* Blue */
+            --tenths: #E67E22;            /* Orange */
+            --hundredths: #E84393;        /* Pink */
+            --thousandths: #27AE60;       /* Green */
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f0f4f8;
+            color: #334155;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            margin: 0 0 4px 0;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #1e293b;
+            letter-spacing: -0.5px;
+        }
+
+        p.subtitle {
+            margin-top: 0;
+            font-size: 0.95rem;
+            color: #64748b;
+            margin-bottom: 25px;
+            font-weight: 400;
+        }
+
+        .board-wrapper {
+            width: 100%;
+            max-width: 1250px;
+            background: #ffffff;
+            padding: 20px 25px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04), 0 4px 6px rgba(0, 0, 0, 0.02);
+            margin-bottom: 25px;
+            border-top: 5px solid transparent;
+            box-sizing: border-box;
+        }
+
+        .board-wrapper.board-a { border-top-color: #f59e0b; }
+        .board-wrapper.board-b { border-top-color: #10b981; }
+        .board-wrapper.board-c { border-top-color: #3b82f6; }
+
+        .board-header-block {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 12px;
+            margin-bottom: 15px;
+            gap: 20px;
+        }
+
+        .board-left-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex-grow: 1;
+            min-width: 0;
+        }
+
+        .board-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .expanded-display {
+            font-size: 0.9rem;
+            color: #64748b;
+            font-style: italic;
+            line-height: 1.4;
+            word-break: break-word;
+        }
+
+        .dashboard {
+            background: #f8fafc;
+            padding: 6px 20px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border: 1px solid #e2e8f0;
+            flex-shrink: 0;
+        }
+
+        .value-display {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #0f172a;
+            min-width: 120px;
+            text-align: center;
+        }
+
+        .chart-container {
+            display: grid;
+            grid-template-columns: repeat(9, minmax(90px, 1fr));
+            gap: 8px;
+            width: 100%;
+            overflow-x: auto;
+            padding-top: 6px;
+            padding-bottom: 6px;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-radius: 12px;
+            padding: 10px 5px;
+            min-height: 240px;
+            position: relative;
+            transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+            box-sizing: border-box;
+            z-index: 1;
+        }
+
+        /* Group Background Colors */
+        .column.whole-number-group {
+            background-color: #eaf0f6; /* Beautiful Blue Cream */
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+
+        .column.decimal-group {
+            background-color: #bae6fd; /* Clear Light Blue */
+        }
+
+        /* Black font colors for the decimal group text */
+        .column.decimal-group .column-header,
+        .column.decimal-group .column-value {
+            color: #000000;
+        }
+
+        /* Smooth Interactive Hover Styling */
+        .column.whole-number-group:hover {
+            background-color: #d9e4ee; /* Deepens blue-cream slightly */
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.01), 0 6px 16px rgba(0, 0, 0, 0.06);
+            transform: translateY(-4px);
+            z-index: 5;
+        }
+
+        .column.decimal-group:hover {
+            background-color: #7dd3fc; /* Deepens light blue smoothly */
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.01), 0 6px 16px rgba(0, 0, 0, 0.08);
+            transform: translateY(-4px);
+            z-index: 5;
+        }
+
+        .column-header {
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #475569;
+            margin-bottom: 2px;
+            text-align: center;
+            transition: opacity 0.3s ease;
+        }
+
+        .column-value {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-bottom: 10px;
+            font-weight: 600;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Hide headers when discs are present */
+        .column.has-discs .column-header,
+        .column.has-discs .column-value {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .disc-area {
+            display: flex;
+            flex-direction: column-reverse;
+            align-items: center;
+            gap: 4px;
+            width: 100%;
+            flex-grow: 1;
+            cursor: pointer;
+            padding-bottom: 5px;
+        }
+
+        .disc {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 0.6rem;
+            background-image: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(0,0,0,0.1) 100%);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.15), inset 0 2px 2px rgba(255,255,255,0.3);
+            border: 1px solid rgba(0,0,0,0.1);
+            transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            user-select: none;
+            animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .disc:hover {
+            transform: scale(1.1) translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.2), inset 0 2px 2px rgba(255,255,255,0.4);
+        }
+
+        .reset-btn {
+            border: none;
+            padding: 8px 16px;
+            background-color: #e2e8f0;
+            color: #334155;
+            font-weight: 700;
+            font-size: 0.8rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .reset-btn:hover { 
+            background-color: #cbd5e1; 
+            color: #0f172a;
+        }
+
+        .footer {
+            margin-top: 15px;
+            margin-bottom: 25px;
+            font-size: 0.65rem;
+            color: #94a3b8;
+            font-weight: 400;
+            opacity: 0.6;
+            user-select: none;
+        }
+
+        /* Color-coded Outlines & Disc Matching */
+        .col-hundred-thousands { border: 2px dashed var(--hundred-thousands); }
+        .col-hundred-thousands .disc { background-color: var(--hundred-thousands); }
+
+        .col-ten-thousands { border: 2px dashed var(--ten-thousands); }
+        .col-ten-thousands .disc { background-color: var(--ten-thousands); }
+
+        .col-thousands { border: 2px dashed var(--thousands); }
+        .col-thousands .disc { background-color: var(--thousands); }
+
+        .col-hundreds { border: 2px dashed var(--hundreds); }
+        .col-hundreds .disc { background-color: var(--hundreds); }
+
+        .col-tens { border: 2px dashed var(--tens); }
+        .col-tens .disc { background-color: var(--tens); }
+
+        .col-ones { border: 2px dashed var(--ones); }
+        .col-ones .disc { background-color: var(--ones); }
+
+        .col-tenths { border: 2px dashed var(--tenths); }
+        .col-tenths .disc { background-color: var(--tenths); }
+
+        .col-hundredths { border: 2px dashed var(--hundredths); }
+        .col-hundredths .disc { background-color: var(--hundredths); }
+
+        .col-thousandths { border: 2px dashed var(--thousandths); }
+        .col-thousandths .disc { background-color: var(--thousandths); }
+    </style>
+</head>
+<body>
+
+    <h1>Interactive Place Value Discs</h1>
+    <p class="subtitle">Click inside columns to drop a disc. 10 discs will automatically regroup.</p>
+
+    <div class="board-wrapper board-a" id="board-a">
+        <div class="board-header-block">
+            <div class="board-left-meta">
+                <div class="board-title">Board A</div>
+                <div class="expanded-display" id="expanded-value-a">0</div>
+            </div>
+            <div class="dashboard">
+                <div class="value-display" id="total-value-a">0</div>
+                <button class="reset-btn" onclick="resetBoard('a')">Clear</button>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <div class="column whole-number-group col-hundred-thousands" data-place="hundred-thousands" data-label="100000">
+                <div class="column-header">H Thousands</div>
+                <div class="column-value">100,000</div>
+                <div class="disc-area" onclick="addDisc('a', 'hundred-thousands')"></div>
+            </div>
+            <div class="column whole-number-group col-ten-thousands" data-place="ten-thousands" data-label="10000">
+                <div class="column-header">Ten Thousands</div>
+                <div class="column-value">10,000</div>
+                <div class="disc-area" onclick="addDisc('a', 'ten-thousands')"></div>
+            </div>
+            <div class="column whole-number-group col-thousands" data-place="thousands" data-label="1000">
+                <div class="column-header">Thousands</div>
+                <div class="column-value">1,000</div>
+                <div class="disc-area" onclick="addDisc('a', 'thousands')"></div>
+            </div>
+            <div class="column whole-number-group col-hundreds" data-place="hundreds" data-label="100">
+                <div class="column-header">Hundreds</div>
+                <div class="column-value">100</div>
+                <div class="disc-area" onclick="addDisc('a', 'hundreds')"></div>
+            </div>
+            <div class="column whole-number-group col-tens" data-place="tens" data-label="10">
+                <div class="column-header">Tens</div>
+                <div class="column-value">10</div>
+                <div class="disc-area" onclick="addDisc('a', 'tens')"></div>
+            </div>
+            <div class="column whole-number-group col-ones" data-place="ones" data-label="1">
+                <div class="column-header">Ones</div>
+                <div class="column-value">1</div>
+                <div class="disc-area" onclick="addDisc('a', 'ones')"></div>
+            </div>
+            <div class="column decimal-group col-tenths" data-place="tenths" data-label="0.1">
+                <div class="column-header">Tenths</div>
+                <div class="column-value">0.1</div>
+                <div class="disc-area" onclick="addDisc('a', 'tenths')"></div>
+            </div>
+            <div class="column decimal-group col-hundredths" data-place="hundredths" data-label="0.01">
+                <div class="column-header">Hundredths</div>
+                <div class="column-value">0.01</div>
+                <div class="disc-area" onclick="addDisc('a', 'hundredths')"></div>
+            </div>
+            <div class="column decimal-group col-thousandths" data-place="thousandths" data-label="0.001">
+                <div class="column-header">Thousandths</div>
+                <div class="column-value">0.001</div>
+                <div class="disc-area" onclick="addDisc('a', 'thousandths')"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="board-wrapper board-b" id="board-b">
+        <div class="board-header-block">
+            <div class="board-left-meta">
+                <div class="board-title">Board B</div>
+                <div class="expanded-display" id="expanded-value-b">0</div>
+            </div>
+            <div class="dashboard">
+                <div class="value-display" id="total-value-b">0</div>
+                <button class="reset-btn" onclick="resetBoard('b')">Clear</button>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <div class="column whole-number-group col-hundred-thousands" data-place="hundred-thousands" data-label="100000">
+                <div class="column-header">H Thousands</div>
+                <div class="column-value">100,000</div>
+                <div class="disc-area" onclick="addDisc('b', 'hundred-thousands')"></div>
+            </div>
+            <div class="column whole-number-group col-ten-thousands" data-place="ten-thousands" data-label="10000">
+                <div class="column-header">Ten Thousands</div>
+                <div class="column-value">10,000</div>
+                <div class="disc-area" onclick="addDisc('b', 'ten-thousands')"></div>
+            </div>
+            <div class="column whole-number-group col-thousands" data-place="thousands" data-label="1000">
+                <div class="column-header">Thousands</div>
+                <div class="column-value">1,000</div>
+                <div class="disc-area" onclick="addDisc('b', 'thousands')"></div>
+            </div>
+            <div class="column whole-number-group col-hundreds" data-place="hundreds" data-label="100">
+                <div class="column-header">Hundreds</div>
+                <div class="column-value">100</div>
+                <div class="disc-area" onclick="addDisc('b', 'hundreds')"></div>
+            </div>
+            <div class="column whole-number-group col-tens" data-place="tens" data-label="10">
+                <div class="column-header">Tens</div>
+                <div class="column-value">10</div>
+                <div class="disc-area" onclick="addDisc('b', 'tens')"></div>
+            </div>
+            <div class="column whole-number-group col-ones" data-place="ones" data-label="1">
+                <div class="column-header">Ones</div>
+                <div class="column-value">1</div>
+                <div class="disc-area" onclick="addDisc('b', 'ones')"></div>
+            </div>
+            <div class="column decimal-group col-tenths" data-place="tenths" data-label="0.1">
+                <div class="column-header">Tenths</div>
+                <div class="column-value">0.1</div>
+                <div class="disc-area" onclick="addDisc('b', 'tenths')"></div>
+            </div>
+            <div class="column decimal-group col-hundredths" data-place="hundredths" data-label="0.01">
+                <div class="column-header">Hundredths</div>
+                <div class="column-value">0.01</div>
+                <div class="disc-area" onclick="addDisc('b', 'hundredths')"></div>
+            </div>
+            <div class="column decimal-group col-thousandths" data-place="thousandths" data-label="0.001">
+                <div class="column-header">Thousandths</div>
+                <div class="column-value">0.001</div>
+                <div class="disc-area" onclick="addDisc('b', 'thousandths')"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="board-wrapper board-c" id="board-c">
+        <div class="board-header-block">
+            <div class="board-left-meta">
+                <div class="board-title">Board C</div>
+                <div class="expanded-display" id="expanded-value-c">0</div>
+            </div>
+            <div class="dashboard">
+                <div class="value-display" id="total-value-c">0</div>
+                <button class="reset-btn" onclick="resetBoard('c')">Clear</button>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <div class="column whole-number-group col-hundred-thousands" data-place="hundred-thousands" data-label="100000">
+                <div class="column-header">H Thousands</div>
+                <div class="column-value">100,000</div>
+                <div class="disc-area" onclick="addDisc('c', 'hundred-thousands')"></div>
+            </div>
+            <div class="column whole-number-group col-ten-thousands" data-place="ten-thousands" data-label="10000">
+                <div class="column-header">Ten Thousands</div>
+                <div class="column-value">10,000</div>
+                <div class="disc-area" onclick="addDisc('c', 'ten-thousands')"></div>
+            </div>
+            <div class="column whole-number-group col-thousands" data-place="thousands" data-label="1000">
+                <div class="column-header">Thousands</div>
+                <div class="column-value">1,000</div>
+                <div class="disc-area" onclick="addDisc('c', 'thousands')"></div>
+            </div>
+            <div class="column whole-number-group col-hundreds" data-place="hundreds" data-label="100">
+                <div class="column-header">Hundreds</div>
+                <div class="column-value">100</div>
+                <div class="disc-area" onclick="addDisc('c', 'hundreds')"></div>
+            </div>
+            <div class="column whole-number-group col-tens" data-place="tens" data-label="10">
+                <div class="column-header">Tens</div>
+                <div class="column-value">10</div>
+                <div class="disc-area" onclick="addDisc('c', 'tens')"></div>
+            </div>
+            <div class="column whole-number-group col-ones" data-place="ones" data-label="1">
+                <div class="column-header">Ones</div>
+                <div class="column-value">1</div>
+                <div class="disc-area" onclick="addDisc('c', 'ones')"></div>
+            </div>
+            <div class="column decimal-group col-tenths" data-place="tenths" data-label="0.1">
+                <div class="column-header">Tenths</div>
+                <div class="column-value">0.1</div>
+                <div class="disc-area" onclick="addDisc('c', 'tenths')"></div>
+            </div>
+            <div class="column decimal-group col-hundredths" data-place="hundredths" data-label="0.01">
+                <div class="column-header">Hundredths</div>
+                <div class="column-value">0.01</div>
+                <div class="disc-area" onclick="addDisc('c', 'hundredths')"></div>
+            </div>
+            <div class="column decimal-group col-thousandths" data-place="thousandths" data-label="0.001">
+                <div class="column-header">Thousandths</div>
+                <div class="column-value">0.001</div>
+                <div class="disc-area" onclick="addDisc('c', 'thousandths')"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">Created by Junaidi</div>
+
+    <script>
+        const state = {
+            a: { "hundred-thousands": 0, "ten-thousands": 0, thousands: 0, hundreds: 0, tens: 0, ones: 0, tenths: 0, hundredths: 0, thousandths: 0 },
+            b: { "hundred-thousands": 0, "ten-thousands": 0, thousands: 0, hundreds: 0, tens: 0, ones: 0, tenths: 0, hundredths: 0, thousandths: 0 },
+            c: { "hundred-thousands": 0, "ten-thousands": 0, thousands: 0, hundreds: 0, tens: 0, ones: 0, tenths: 0, hundredths: 0, thousandths: 0 }
+        };
+
+        // Hierarchy map to know where to move the disc during regrouping
+        const nextPlaceMap = {
+            "thousandths": "hundredths",
+            "hundredths": "tenths",
+            "tenths": "ones",
+            "ones": "tens",
+            "tens": "hundreds",
+            "hundreds": "thousands",
+            "thousands": "ten-thousands",
+            "ten-thousands": "hundred-thousands",
+            "hundred-thousands": null // Max column reached
+        };
+
+        function addDisc(boardId, place) {
+            // Prevent users from spam-clicking past 10 while the animation is waiting
+            if (state[boardId][place] >= 10) return;
+            
+            const boardEl = document.getElementById(`board-${boardId}`);
+            const column = boardEl.querySelector(`.col-${place}`);
+            const discArea = column.querySelector('.disc-area');
+            const label = column.dataset.label;
+
+            state[boardId][place]++;
+
+            const disc = document.createElement('div');
+            disc.className = 'disc';
+            disc.innerText = label;
+            
+            disc.onclick = function(e) {
+                e.stopPropagation();
+                disc.style.transform = 'scale(0)';
+                disc.style.opacity = '0';
+                setTimeout(() => {
+                    disc.remove();
+                    state[boardId][place]--;
+                    updateTotals(boardId);
+                }, 150);
+            };
+
+            discArea.appendChild(disc);
+            updateTotals(boardId);
+
+            // Regrouping Logic
+            if (state[boardId][place] === 10) {
+                const nextPlace = nextPlaceMap[place];
+                
+                if (nextPlace) {
+                    // Wait slightly so the user sees the 10th disc arrive before it vanishes
+                    setTimeout(() => {
+                        // Double check it's still 10 (in case the user manually deleted one during the timeout)
+                        if (state[boardId][place] === 10) {
+                            // Clear current column
+                            state[boardId][place] = 0;
+                            boardEl.querySelector(`.col-${place} .disc-area`).innerHTML = '';
+                            
+                            // Add 1 to the next column
+                            addDisc(boardId, nextPlace);
+                            
+                            // Update the UI
+                            updateTotals(boardId);
+                        }
+                    }, 400); // 400 millisecond delay
+                }
+            }
+        }
+
+        function updateTotals(boardId) {
+            const counts = state[boardId];
+            const boardEl = document.getElementById(`board-${boardId}`);
+
+            // Toggle visibility class based on whether the column has discs
+            for (let place in counts) {
+                const column = boardEl.querySelector(`.col-${place}`);
+                if (counts[place] > 0) {
+                    column.classList.add('has-discs');
+                } else {
+                    column.classList.remove('has-discs');
+                }
+            }
+
+            let total = 
+                (counts["hundred-thousands"] * 100000) +
+                (counts["ten-thousands"] * 10000) +
+                (counts.thousands * 1000) +
+                (counts.hundreds * 100) +
+                (counts.tens * 10) +
+                (counts.ones * 1) +
+                (counts.tenths * 0.1) +
+                (counts.hundredths * 0.01) +
+                (counts.thousandths * 0.001);
+
+            document.getElementById(`total-value-${boardId}`).innerText = Number(total.toFixed(3)).toLocaleString('en-US', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 3
+            });
+
+            let segments = [];
+            if (counts["hundred-thousands"] > 0) segments.push(`(${counts["hundred-thousands"]}×100k)`);
+            if (counts["ten-thousands"] > 0) segments.push(`(${counts["ten-thousands"]}×10k)`);
+            if (counts.thousands > 0) segments.push(`(${counts.thousands}×1k)`);
+            if (counts.hundreds > 0) segments.push(`(${counts.hundreds}×100)`);
+            if (counts.tens > 0) segments.push(`(${counts.tens}×10)`);
+            if (counts.ones > 0) segments.push(`(${counts.ones}×1)`);
+            if (counts.tenths > 0) segments.push(`(${counts.tenths}×0.1)`);
+            if (counts.hundredths > 0) segments.push(`(${counts.hundredths}×0.01)`);
+            if (counts.thousandths > 0) segments.push(`(${counts.thousandths}×0.001)`);
+
+            document.getElementById(`expanded-value-${boardId}`).innerText = segments.length > 0 ? segments.join(' + ') : '0';
+        }
+
+        function resetBoard(boardId) {
+            const counts = state[boardId];
+            for (let place in counts) {
+                counts[place] = 0;
+                const boardEl = document.getElementById(`board-${boardId}`);
+                boardEl.querySelector(`.col-${place} .disc-area`).innerHTML = '';
+            }
+            updateTotals(boardId);
+        }
+    </script>
+</body>
+</html>

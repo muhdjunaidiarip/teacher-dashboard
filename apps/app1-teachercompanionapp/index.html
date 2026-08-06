@@ -1,0 +1,2506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teacher Companion App</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #0f172a;
+      --primary: #2563eb;
+      --success: #16a34a;
+      --warning: #ca8a04;
+      --orange: #ea580c;
+      --concept: #dc2626;
+      --careless: #ea580c;
+      --incomplete: #9333ea;
+      --border: #cbd5e1;
+      --danger: #dc2626;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container { max-width: 1100px; margin: 0 auto; }
+    
+    /* Navigation Class Tabs */
+    .tab-bar {
+      display: flex;
+      gap: 6px;
+      margin-bottom: -1px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+
+    .tab-btn {
+      padding: 10px 18px;
+      background: #e2e8f0;
+      border: 1px solid var(--border);
+      border-bottom: none;
+      border-radius: 8px 8px 0 0;
+      font-weight: 600;
+      color: #64748b;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+      user-select: none;
+    }
+
+    .tab-btn.active {
+      background: var(--card);
+      color: var(--primary);
+      border-top: 3px solid var(--primary);
+    }
+
+    .tab-btn.add-tab {
+      background: #dbeafe;
+      color: var(--primary);
+      border-style: dashed;
+    }
+
+    /* Tab Edit Input Inline Styling */
+    .tab-rename-input {
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--primary);
+      padding: 2px 6px;
+      border: 1.5px solid var(--primary);
+      border-radius: 4px;
+      background: #ffffff;
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 0 12px 12px 12px;
+      padding: 20px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      border: 1px solid var(--border);
+    }
+
+    /* Blank State Card Styling */
+    .empty-state-card {
+      border-radius: 12px !important;
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    .empty-state-card h3 {
+      font-size: 1.5rem;
+      color: var(--primary);
+      margin: 0 0 10px 0;
+    }
+
+    .empty-state-card p {
+      color: #64748b;
+      font-size: 1rem;
+      max-width: 460px;
+      margin: 0 auto 24px auto;
+      line-height: 1.5;
+    }
+
+    .input-group {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    input, textarea, select, button {
+      font-size: 0.95rem;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+
+    button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    button:hover { opacity: 0.9; }
+
+    /* Mode Selector Toggle */
+    .mode-selector {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .mode-btn {
+      padding: 10px 16px;
+      font-size: 0.88rem;
+      background: #f1f5f9;
+      color: #475569;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .mode-btn.active {
+      background: #dbeafe;
+      color: var(--primary);
+      border-color: var(--primary);
+      font-weight: bold;
+    }
+
+    /* Custom Touch Stepper Controls */
+    .stepper-container {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .step-btn {
+      width: 42px;
+      height: 42px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      background: #e2e8f0;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      user-select: none;
+    }
+
+    .step-btn:active { background: #cbd5e1; }
+
+    .q-count-input {
+      width: 65px !important;
+      text-align: center;
+      font-weight: bold;
+      padding: 10px 4px !important;
+    }
+
+    /* Live Question Tag Preview */
+    .preview-box {
+      background: #f8fafc;
+      border: 1px dashed var(--primary);
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 14px;
+    }
+
+    .tag-pill {
+      display: inline-block;
+      background: #e0f2fe;
+      color: #0369a1;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-weight: bold;
+      font-size: 0.8rem;
+      margin: 2px;
+    }
+
+    /* Student Spotlight Badges */
+    .student-badge-high {
+      display: inline-block;
+      background: #dcfce7;
+      color: #15803d;
+      border: 1px solid #86efac;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      margin: 2px;
+    }
+
+    .student-badge-support {
+      display: inline-block;
+      background: #fee2e2;
+      color: #b91c1c;
+      border: 1px solid #fca5a5;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      margin: 2px;
+    }
+
+    /* Assignment Switcher Header */
+    .assignment-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #f1f5f9;
+      padding: 10px 14px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .assignment-select {
+      font-weight: 600;
+      color: var(--primary);
+      background: white;
+      border: 1px solid var(--primary);
+      padding: 8px 12px;
+      border-radius: 6px;
+      flex-grow: 1;
+      max-width: 320px;
+    }
+
+    /* Search & Bulk Selection Bar */
+    .search-container {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 240px;
+      font-size: 0.95rem;
+      border-radius: 8px;
+      border: 1px solid var(--primary);
+      background-color: #f0f7ff;
+    }
+
+    .clear-btn {
+      background: #94a3b8;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 0 16px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .clear-btn:hover { background: #64748b; }
+
+    .bulk-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .bulk-btn {
+      background: #f1f5f9;
+      color: #334155;
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .bulk-btn:hover {
+      background: #e2e8f0;
+      color: var(--primary);
+    }
+
+    .bulk-btn-reset-all {
+      background: #fee2e2;
+      color: #b91c1c;
+      border-color: #fca5a5;
+    }
+
+    .bulk-btn-reset-all:hover {
+      background: #dc2626;
+      color: white;
+    }
+
+    .action-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .legend {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #f8fafc;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      margin-bottom: 16px;
+      border: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .legend-item { display: flex; align-items: center; gap: 6px; font-weight: 600; }
+    .dot { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+    .arrow-divider { color: #94a3b8; font-weight: bold; }
+
+    .student-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .student-name {
+      width: 250px;
+      font-weight: 600;
+      font-size: 0.88rem;
+      line-height: 1.2;
+    }
+
+    .reg-badge {
+      background: #e2e8f0;
+      color: #334155;
+      padding: 3px 6px;
+      border-radius: 4px;
+      font-size: 0.78rem;
+      font-weight: bold;
+      flex-shrink: 0;
+      min-width: 22px;
+      text-align: center;
+    }
+
+    .q-container { display: flex; gap: 6px; flex-wrap: wrap; flex-grow: 1; }
+
+    /* Question Tap Button Box */
+    .q-btn {
+      min-width: 58px;
+      height: 44px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      color: #64748b;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0 6px;
+      font-size: 0.82rem;
+      white-space: nowrap;
+    }
+
+    .q-btn .sub { font-size: 0.68rem; font-weight: bold; margin-top: 1px; }
+
+    /* Diagnostic 5-Tap State Styling */
+    .q-btn[data-state="correct"] { background: var(--success); color: white; border-color: var(--success); }
+    .q-btn[data-state="concept"] { background: var(--concept); color: white; border-color: var(--concept); }
+    .q-btn[data-state="careless"] { background: var(--careless); color: white; border-color: var(--careless); }
+    .q-btn[data-state="incomplete"] { background: var(--incomplete); color: white; border-color: var(--incomplete); }
+
+    /* Partial Credit Points State Styling */
+    .q-btn[data-state="m2"] { background: var(--success); color: white; border-color: var(--success); }
+    .q-btn[data-state="m15"] { background: var(--orange); color: white; border-color: var(--orange); }
+    .q-btn[data-state="m1"] { background: var(--success); color: white; border-color: var(--success); }
+    .q-btn[data-state="m05"] { background: var(--orange); color: white; border-color: var(--orange); }
+
+    .feedback-preview {
+      font-size: 0.8rem;
+      color: #475569;
+      background: #f8fafc;
+      padding: 8px;
+      border-radius: 6px;
+      margin-top: 6px;
+      border-left: 3px solid var(--primary);
+    }
+
+    /* Score Badge & Quick Stack Container */
+    .score-badge { 
+      font-weight: bold; 
+      min-width: 250px; 
+      text-align: right; 
+      display: flex; 
+      align-items: center; 
+      justify-content: flex-end; 
+      gap: 10px; 
+      flex-shrink: 0;
+    }
+
+    /* Stacked Quick Action Buttons Styling */
+    .quick-action-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      flex-shrink: 0;
+    }
+
+    .quick-btn {
+      padding: 5px 12px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      border-radius: 5px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      line-height: 1.1;
+      white-space: nowrap;
+      text-align: center;
+      transition: all 0.15s ease;
+      touch-action: manipulation;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-all-correct {
+      background: #dcfce7;
+      color: #15803d;
+      border-color: #86efac;
+    }
+    .btn-all-correct:hover {
+      background: #16a34a;
+      color: white;
+    }
+
+    .btn-all-wrong {
+      background: #fee2e2;
+      color: #b91c1c;
+      border-color: #fca5a5;
+    }
+    .btn-all-wrong:hover {
+      background: #dc2626;
+      color: white;
+    }
+
+    .btn-reset-all {
+      background: #f1f5f9;
+      color: #475569;
+      border-color: #cbd5e1;
+    }
+    .btn-reset-all:hover {
+      background: #64748b;
+      color: white;
+    }
+
+    .hidden { display: none !important; }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .stat-card {
+      background: #f8fafc;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .spotlight-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .spotlight-card {
+      background: #f8fafc;
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    /* Modal Overlay Styling */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-card {
+      background: var(--card);
+      padding: 24px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 440px;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.2);
+    }
+
+    .modal-btn-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    /* Toast Banner */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #0f172a;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      z-index: 2000;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      transition: all 0.3s ease;
+    }
+
+    /* Print Specific Styles */
+    #print-area { display: none; }
+
+    @media print {
+      body { background: white !important; color: black !important; padding: 0 !important; margin: 0 !important; }
+      .container, .modal-overlay, .toast { display: none !important; }
+      #print-area { display: block !important; width: 100%; }
+      .page-break { page-break-after: always; break-after: page; }
+      
+      .report-header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #000; padding-bottom: 10px; }
+      .report-table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 11px; }
+      .report-table th, .report-table td { border: 1px solid #333; padding: 6px 8px; text-align: left; }
+      .report-table th { background-color: #f1f5f9 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+      .student-slip {
+        border: 1.5px solid #1e293b;
+        padding: 18px;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        font-size: 12px;
+        box-sizing: border-box;
+      }
+      .slip-header { display: flex; justify-content: space-between; border-bottom: 2px solid #0f172a; padding-bottom: 8px; margin-bottom: 12px; }
+      .slip-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+      .slip-table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+      .slip-table th, .slip-table td { border: 1px solid #cbd5e1; padding: 5px 8px; text-align: center; }
+      .slip-table th { background-color: #f8fafc !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .signature-block { display: flex; justify-content: space-between; margin-top: 30px; padding-top: 10px; }
+      .sig-line { border-top: 1px solid #000; width: 200px; text-align: center; padding-top: 4px; font-size: 11px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>📚 Teacher Companion App</h2>
+
+  <!-- Class Tab Navigation -->
+  <div class="tab-bar" id="tab-bar"></div>
+
+  <!-- Blank Canvas Instructions (Shown when no classes exist) -->
+  <div id="blank-canvas" class="card empty-state-card hidden">
+    <h3>📂 Welcome to Teacher Companion App</h3>
+    <p>Press <strong>+ Add Class</strong> above to create your first class tab and begin setting up assignments.</p>
+    <button onclick="openAddClassModal()" style="font-size: 1rem; padding: 12px 24px;">➕ Add Class Now</button>
+  </div>
+
+  <!-- Setup Card -->
+  <div id="setup-card" class="card hidden">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+      <h3 id="setup-heading" style="margin:0;">1. Setup Assignment Parameters</h3>
+      <button onclick="promptDeleteClass()" style="background: #ef4444; font-size: 0.82rem; padding: 6px 12px;">🗑️ Delete Class Tab</button>
+    </div>
+    
+    <div class="input-group">
+      <input type="text" id="assignment-name" placeholder="Assignment Title (e.g. Science Chapter 3 Worksheet)" style="flex: 2; min-width: 220px;">
+    </div>
+
+    <!-- Tap Cycle Scheme Selection -->
+    <div style="margin-bottom: 12px;">
+      <label style="font-size: 0.85rem; font-weight: bold; color: #475569; display: block; margin-bottom: 6px;">Grading Scheme / Tap Cycle System:</label>
+      <div class="mode-selector">
+        <button type="button" id="btn-scheme-diag" class="mode-btn active" onclick="setGradingScheme('diagnostic')">Diagnostic Feedback (5-Tap: ✓, C, ⚡, ...)</button>
+        <button type="button" id="btn-scheme-pts" class="mode-btn" onclick="setGradingScheme('points')">Partial Credit Points (5-Tap: 2m, 1.5m, 1m, 0.5m)</button>
+      </div>
+    </div>
+
+    <!-- Question Mode Structure Options -->
+    <div style="margin-bottom: 8px;">
+      <label style="font-size: 0.85rem; font-weight: bold; color: #475569; display: block; margin-bottom: 6px;">Question Breakdown Structure:</label>
+      <div class="mode-selector">
+        <button type="button" id="btn-mode-std" class="mode-btn active" onclick="setQMode('standard')">Standard (1, 2, 3)</button>
+        <button type="button" id="btn-mode-uni" class="mode-btn" onclick="setQMode('uniform')">Uniform Parts (1a, 1b, 2a, 2b)</button>
+        <button type="button" id="btn-mode-cust" class="mode-btn" onclick="setQMode('custom')">Custom Pattern (1a, 1b, 2, 3a)</button>
+        <button type="button" id="btn-mode-free" class="mode-btn" onclick="setQMode('freeform')">Freeform Custom (Type Labels)</button>
+      </div>
+    </div>
+
+    <!-- Dynamic Control: Standard -->
+    <div id="ctrl-standard" class="input-group">
+      <div style="display: flex; flex-direction: column; gap: 4px;">
+        <label style="font-size: 0.75rem; font-weight: bold; color: #64748b;">Total Questions:</label>
+        <div class="stepper-container">
+          <button type="button" class="step-btn" onclick="adjustValue('q-count', -1)">−</button>
+          <input type="number" id="q-count" class="q-count-input" value="5" min="1" max="30" oninput="updateQPreview()">
+          <button type="button" class="step-btn" onclick="adjustValue('q-count', 1)">+</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dynamic Control: Uniform Sub-questions -->
+    <div id="ctrl-uniform" class="input-group hidden">
+      <div style="display: flex; flex-direction: column; gap: 4px;">
+        <label style="font-size: 0.75rem; font-weight: bold; color: #64748b;">Main Questions:</label>
+        <div class="stepper-container">
+          <button type="button" class="step-btn" onclick="adjustValue('main-q-count', -1)">−</button>
+          <input type="number" id="main-q-count" class="q-count-input" value="3" min="1" max="15" oninput="updateQPreview()">
+          <button type="button" class="step-btn" onclick="adjustValue('main-q-count', 1)">+</button>
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 4px;">
+        <label style="font-size: 0.75rem; font-weight: bold; color: #64748b;">Parts Per Main Q (a,b,c...):</label>
+        <div class="stepper-container">
+          <button type="button" class="step-btn" onclick="adjustValue('sub-q-count', -1)">−</button>
+          <input type="number" id="sub-q-count" class="q-count-input" value="2" min="1" max="6" oninput="updateQPreview()">
+          <button type="button" class="step-btn" onclick="adjustValue('sub-q-count', 1)">+</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dynamic Control: Custom Pattern -->
+    <div id="ctrl-custom" class="input-group hidden" style="width: 100%; flex-direction: column; gap: 12px; align-items: flex-start;">
+      <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; width: 100%; background: #f1f5f9; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border);">
+        <label style="font-size: 0.85rem; font-weight: bold; color: #334155;">Step 1: Specify Number of Main Questions:</label>
+        <div class="stepper-container">
+          <button type="button" class="step-btn" onclick="adjustCustomMainCount(-1)">−</button>
+          <input type="number" id="custom-main-count" class="q-count-input" value="3" min="1" max="20" oninput="renderCustomQuestionPrompts()">
+          <button type="button" class="step-btn" onclick="adjustCustomMainCount(1)">+</button>
+        </div>
+        <span style="font-size: 0.8rem; color: #64748b;">(e.g. 3 questions)</span>
+      </div>
+
+      <div style="width: 100%;">
+        <label style="font-size: 0.82rem; font-weight: bold; color: #475569; display: block; margin-bottom: 8px;">Step 2: Prompt subquestions per question (0 = No parts e.g. "Q2", 2 = "a, b"):</label>
+        <div id="custom-prompts-grid" style="display: flex; flex-direction: column; gap: 8px; max-height: 280px; overflow-y: auto; padding-right: 4px;"></div>
+      </div>
+    </div>
+
+    <!-- Dynamic Control: Freeform Custom Text -->
+    <div id="ctrl-freeform" class="input-group hidden" style="width: 100%; flex-direction: column; gap: 8px; align-items: flex-start;">
+      <label style="font-size: 0.85rem; font-weight: bold; color: #475569;">Type question labels (separated by commas or new lines):</label>
+      <textarea id="freeform-q-input" rows="3" style="width: 100%; font-family: monospace;" placeholder="e.g. 1a, 1b, 1c, 2, 3a, 3b, Section B Q1, Bonus" oninput="updateQPreview()">1a, 1b, 1c, 2a, 2b, 3</textarea>
+    </div>
+
+    <!-- Live Preview Box -->
+    <div class="preview-box">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+        <span style="font-size: 0.8rem; font-weight: bold; color: #475569;">Marking Items Preview:</span>
+        <span id="total-items-badge" style="font-size: 0.8rem; font-weight: bold; color: var(--primary);">0 Items</span>
+      </div>
+      <div id="q-preview-container"></div>
+    </div>
+
+    <div class="input-group">
+      <label style="width: 100%; font-size: 0.85rem; font-weight: 600; color: #475569;">Class Roster (Include Reg. No. or format as "Name"):</label>
+      <textarea id="roster-input" rows="8" style="width: 100%; font-family: monospace;" placeholder="01 ALEX SMITH&#10;02 BENJAMIN LEE&#10;03 CLARA TAN" oninput="saveRosterInput()"></textarea>
+    </div>
+
+    <div style="display: flex; gap: 10px;">
+      <button onclick="startSession()" style="flex: 1;">🚀 Start Marking Station</button>
+      <button id="cancel-setup-btn" onclick="cancelSetup()" style="background: #94a3b8;" class="hidden">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Active Marking Card -->
+  <div id="marking-card" class="card hidden">
+    
+    <!-- Multi-Assignment Switcher Toolbar -->
+    <div class="assignment-bar">
+      <span style="font-size: 0.88rem; font-weight: bold; color: #475569;">Active Assignment:</span>
+      <select id="assignment-select" class="assignment-select" onchange="switchAssignment(this.value)"></select>
+      <button onclick="promptNewAssignment()" style="background: #2563eb; font-size: 0.85rem; padding: 8px 14px;">➕ New Assignment</button>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+      <div>
+        <h3 id="session-title" style="margin: 0;">Marking Station</h3>
+        <small id="session-subtitle" style="color: #64748b;"></small>
+      </div>
+      <div class="action-group">
+        <button onclick="openClassReportModal()" style="background: #4f46e5;">📊 Class Report</button>
+        <button onclick="openStudentReportsModal()" style="background: #7c3aed;">📄 Student Slips</button>
+        <button onclick="exportCSV()" style="background: #16a34a;">📥 Export CSV</button>
+        <button onclick="copyToClipboard()" style="background: #0284c7;">📋 Copy Data</button>
+        <button onclick="promptDeleteAssignment()" style="background: #ea580c; font-size: 0.85rem;">🗑️ Delete Assignment</button>
+        <button onclick="promptDeleteClass()" style="background: #ef4444; font-size: 0.85rem;">🗑️ Delete Class Tab</button>
+      </div>
+    </div>
+
+    <!-- Live Search & Bulk Controls Toolbar -->
+    <div class="search-container">
+      <input type="text" id="search-input" class="search-box" placeholder="🔍 Search student name or register number (e.g. '05' or 'Alex')..." oninput="filterStudents()">
+      <button id="clear-btn" class="clear-btn hidden" onclick="clearSearch()">✖ Clear</button>
+    </div>
+
+    <div class="bulk-bar">
+      <span style="font-size: 0.82rem; font-weight: bold; color: #64748b;">Bulk Actions:</span>
+      <button class="bulk-btn" onclick="toggleSelectAll(true)">☑️ Select All</button>
+      <button class="bulk-btn" onclick="toggleSelectAll(false)">☐ Unselect All</button>
+      <button class="bulk-btn bulk-btn-reset-all" onclick="resetAllStudentsMarks()">↺ Reset ALL Marks</button>
+    </div>
+
+    <!-- Cycle Legend -->
+    <div class="legend" id="legend-container"></div>
+
+    <div id="student-list"></div>
+  </div>
+
+  <!-- Analytics Card -->
+  <div id="analytics-card" class="card hidden" style="border-radius: 12px;">
+    <h3>📊 Class Yield & Gap Analysis</h3>
+    
+    <!-- Primary Class Metrics -->
+    <div class="stats-grid" id="stats-grid"></div>
+
+    <!-- Pass/Fail & High/Struggling Student Spotlights -->
+    <div class="spotlight-grid">
+      <div class="spotlight-card">
+        <div style="font-size: 0.85rem; font-weight: bold; color: #16a34a; margin-bottom: 6px;">
+          🌟 High Achievers (≥ 80% Mastery) <span id="high-count-badge" style="font-size:0.75rem; color:#475569;">(0)</span>
+        </div>
+        <div id="high-achievers-list" style="min-height: 28px;">
+          <em style="font-size: 0.8rem; color: #94a3b8;">None recorded yet</em>
+        </div>
+      </div>
+
+      <div class="spotlight-card">
+        <div style="font-size: 0.85rem; font-weight: bold; color: #dc2626; margin-bottom: 6px;">
+          ⚠️ Needs Improvement (&lt; 50% Mastery) <span id="support-count-badge" style="font-size:0.75rem; color:#475569;">(0)</span>
+        </div>
+        <div id="support-needed-list" style="min-height: 28px;">
+          <em style="font-size: 0.8rem; color: #94a3b8;">None recorded yet</em>
+        </div>
+      </div>
+    </div>
+
+    <hr style="margin: 20px 0; border: 0; border-top: 1px solid var(--border);">
+
+    <!-- Pareto Chart Section Wrapper -->
+    <div id="pareto-chart-wrapper">
+      <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 8px; margin-bottom: 10px;">
+        <div>
+          <h4 style="margin: 0; color: #1e293b; font-size: 1rem;">📉 Mistake Frequency Pareto Analysis (80/20 Rule)</h4>
+          <p style="font-size: 0.8rem; color: #64748b; margin: 2px 0 0 0;">Identifies high-impact bottleneck questions. Bars show mark losses per question; line shows cumulative error concentration.</p>
+        </div>
+        <div style="display: flex; gap: 14px; font-size: 0.78rem; font-weight: bold;">
+          <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 10px; height: 10px; background: #dc2626; border-radius: 2px; display: inline-block;"></span> Mark Loss</span>
+          <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 10px; height: 10px; background: #2563eb; border-radius: 50%; display: inline-block;"></span> Cumulative %</span>
+          <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 12px; height: 0; border-top: 2px dashed #ca8a04; display: inline-block;"></span> 80% Threshold</span>
+        </div>
+      </div>
+
+      <div style="position: relative; width: 100%; height: 260px; background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 10px; box-sizing: border-box;">
+        <canvas id="paretoCanvas" style="width: 100%; height: 100%; display: block;"></canvas>
+      </div>
+    </div>
+
+    <!-- Empty State Notice when no marks or losses are recorded -->
+    <div id="pareto-empty-msg" class="hidden" style="text-align: center; padding: 24px 20px; background: #f8fafc; border: 1px dashed var(--border); border-radius: 8px; color: #64748b; font-weight: 600; margin-top: 10px; font-size: 0.92rem;">
+      🎉 No mistakes or mark losses recorded for this assignment yet.
+    </div>
+  </div>
+</div>
+
+<!-- Modal 1: Add New Class Tab -->
+<div id="add-class-modal" class="modal-overlay hidden">
+  <div class="modal-card">
+    <h3 style="margin-top:0;">➕ Add New Class</h3>
+    <p style="font-size: 0.85rem; color: #64748b;">Enter the class name below to create a new class tab:</p>
+    <input type="text" id="new-class-input" placeholder="e.g. Primary 6 Honor" style="width: 100%; margin-bottom: 16px;">
+    <div style="display: flex; justify-content: flex-end; gap: 8px;">
+      <button onclick="closeModal('add-class-modal')" style="background: #94a3b8;">Cancel</button>
+      <button onclick="confirmAddClass()" style="background: var(--primary);">Add Class Tab</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 2: New Assignment Roster Prompt -->
+<div id="new-assignment-modal" class="modal-overlay hidden">
+  <div class="modal-card">
+    <h3 style="margin-top:0; color: var(--primary);">📝 New Assignment Parameters</h3>
+    <p style="font-size: 0.9rem; color: #475569; line-height: 1.4;">
+      Would you like to <strong>duplicate the existing student roster</strong> for <strong id="dup-class-name"></strong>?
+    </p>
+    <p style="font-size: 0.82rem; color: #64748b; line-height: 1.3;">
+      • <strong>Duplicate Roster:</strong> Keeps student names and register numbers, resetting assignment title and question breakdown structure.<br>
+      • <strong>Blank Roster:</strong> Clears student data for a fresh setup.
+    </p>
+    <div class="modal-btn-stack">
+      <button onclick="setupNewAssignment(true)" style="background: var(--primary); padding: 12px;">📋 Duplicate Roster</button>
+      <button onclick="setupNewAssignment(false)" style="background: #64748b; padding: 12px;">✏️ Blank Roster</button>
+      <button onclick="closeModal('new-assignment-modal')" style="background: #cbd5e1; color: #334155;">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 3: Delete Class Confirmation -->
+<div id="delete-class-modal" class="modal-overlay hidden">
+  <div class="modal-card">
+    <h3 style="margin-top:0; color: var(--danger);">🗑️ Delete Class Tab</h3>
+    <p id="delete-modal-msg" style="font-size: 0.9rem; color: #475569; line-height: 1.4;"></p>
+    <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px;">
+      <button onclick="closeModal('delete-class-modal')" style="background: #94a3b8;">Cancel</button>
+      <button id="confirm-delete-btn" onclick="executeDeleteClass()" style="background: var(--danger);">Delete Class</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 4: Delete Assignment Confirmation -->
+<div id="delete-assignment-modal" class="modal-overlay hidden">
+  <div class="modal-card">
+    <h3 style="margin-top:0; color: var(--danger);">🗑️ Delete Assignment</h3>
+    <p id="delete-assign-msg" style="font-size: 0.9rem; color: #475569; line-height: 1.4;"></p>
+    <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px;">
+      <button onclick="closeModal('delete-assignment-modal')" style="background: #94a3b8;">Cancel</button>
+      <button onclick="executeDeleteAssignment()" style="background: var(--danger);">Delete Assignment</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 5: Class Summary Report -->
+<div id="class-report-modal" class="modal-overlay hidden">
+  <div class="modal-card" style="max-width: 850px; width: 95%; max-height: 90vh; overflow-y: auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+      <h3 style="margin:0; color: var(--primary);">📊 Individual Class Report Summary</h3>
+      <div style="display: flex; gap: 8px;">
+        <button onclick="printClassReport()" style="background: #16a34a;">🖨️ Print Class Report</button>
+        <button onclick="closeModal('class-report-modal')" style="background: #94a3b8;">Close</button>
+      </div>
+    </div>
+    <div id="class-report-preview" style="background: white; padding: 15px; border: 1px solid var(--border); border-radius: 8px;"></div>
+  </div>
+</div>
+
+<!-- Modal 6: Individual Student Slips Report -->
+<div id="student-report-modal" class="modal-overlay hidden">
+  <div class="modal-card" style="max-width: 750px; width: 95%; max-height: 90vh; overflow-y: auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+      <h3 style="margin:0; color: var(--primary);">📄 Student Individual Report Slips</h3>
+      <div style="display: flex; gap: 8px; align-items: center;">
+        <select id="report-student-select" onchange="renderStudentReportsPreview()" style="padding: 6px 10px; font-size: 0.88rem;"></select>
+        <button onclick="printStudentSlips()" style="background: #16a34a;">🖨️ Print Selected Slips</button>
+        <button onclick="closeModal('student-report-modal')" style="background: #94a3b8;">Close</button>
+      </div>
+    </div>
+    <div id="student-report-preview" style="background: white; padding: 15px; border: 1px solid var(--border); border-radius: 8px;"></div>
+  </div>
+</div>
+
+<!-- Hidden Print Area -->
+<div id="print-area"></div>
+
+<!-- Toast Banner -->
+<div id="toast" class="toast hidden"></div>
+
+<script>
+  let classData = [];
+  let activeClassIdx = 0;
+  let activeQMode = 'standard'; 
+  let activeGradingScheme = 'diagnostic'; 
+  let isEditingParameters = false;
+  let tabClickTimer = null; // Timer variable for tab click debouncing
+
+  const SCHEME_CONFIG = {
+    diagnostic: {
+      states: ['unmarked', 'correct', 'concept', 'careless', 'incomplete'],
+      labels: { unmarked: '', correct: '✓', concept: 'C', careless: '⚡', incomplete: '...' },
+      points: { unmarked: 0, correct: 1, concept: 0, careless: 0, incomplete: 0 },
+      maxPerQ: 1
+    },
+    points: {
+      states: ['unmarked', 'm2', 'm15', 'm1', 'm05'],
+      labels: { unmarked: '0m', m2: '2m', m15: '1.5m', m1: '1m', m05: '0.5m' },
+      points: { unmarked: 0, m2: 2, m15: 1.5, m1: 1, m05: 0.5 },
+      maxPerQ: 2
+    }
+  };
+
+  /* LOCAL STORAGE PERSISTENCE HELPERS */
+  function saveData() {
+    try {
+      localStorage.setItem('teacherApp_classData', JSON.stringify(classData));
+      localStorage.setItem('teacherApp_activeClassIdx', activeClassIdx.toString());
+    } catch (e) {
+      console.error("Could not save to localStorage", e);
+    }
+  }
+
+  function loadSavedData() {
+    const savedClassData = localStorage.getItem('teacherApp_classData');
+    const savedActiveIdx = localStorage.getItem('teacherApp_activeClassIdx');
+    if (savedClassData) {
+      try {
+        classData = JSON.parse(savedClassData);
+      } catch (e) {
+        console.error("Could not parse saved class data", e);
+      }
+    }
+    if (savedActiveIdx !== null) {
+      activeClassIdx = parseInt(savedActiveIdx, 10) || 0;
+      if (activeClassIdx >= classData.length) activeClassIdx = Math.max(0, classData.length - 1);
+    }
+  }
+
+  function formatDate(d = new Date()) {
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
+
+  window.onload = () => {
+    loadSavedData();
+    renderTabs();
+    renderCustomQuestionPrompts();
+    updateQPreview();
+    loadClassView();
+
+    window.addEventListener('resize', () => {
+      const analyticsCard = document.getElementById('analytics-card');
+      if (analyticsCard && !analyticsCard.classList.contains('hidden')) {
+        updateAnalytics();
+      }
+    });
+  };
+
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.innerText = msg;
+    toast.classList.remove('hidden');
+    setTimeout(() => { toast.classList.add('hidden'); }, 3000);
+  }
+
+  function closeModal(id) {
+    document.getElementById(id).classList.add('hidden');
+  }
+
+  /* RENDER TAB BAR WITH DEBOUNCED SINGLE-CLICK & ENHANCED DOUBLE-CLICK EDITING */
+  function renderTabs() {
+    const tabBar = document.getElementById('tab-bar');
+    tabBar.innerHTML = '';
+
+    classData.forEach((cls, idx) => {
+      const btn = document.createElement('button');
+      btn.className = `tab-btn ${idx === activeClassIdx ? 'active' : ''}`;
+      btn.innerText = cls.name;
+      btn.title = "Double-click to rename class";
+
+      // Single click switches tab (debounced so double-click doesn't re-render DOM mid-click)
+      btn.onclick = (e) => {
+        if (btn.querySelector('input')) return; // Ignore single-click if actively editing
+
+        if (tabClickTimer) {
+          clearTimeout(tabClickTimer);
+          tabClickTimer = null;
+        }
+
+        tabClickTimer = setTimeout(() => {
+          switchTab(idx);
+          tabClickTimer = null;
+        }, 220);
+      };
+
+      // Double click cancels single-click timer and initiates inline rename
+      btn.ondblclick = (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+
+        if (tabClickTimer) {
+          clearTimeout(tabClickTimer);
+          tabClickTimer = null;
+        }
+
+        makeTabEditable(btn, idx);
+      };
+
+      tabBar.appendChild(btn);
+    });
+
+    const addBtn = document.createElement('button');
+    addBtn.className = 'tab-btn add-tab';
+    addBtn.innerText = '➕ Add Class';
+    addBtn.onclick = openAddClassModal;
+    tabBar.appendChild(addBtn);
+  }
+
+  /* INLINE TAB EDITING LOGIC */
+  function makeTabEditable(btn, idx) {
+    const currentName = classData[idx].name;
+    btn.innerHTML = '';
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'tab-rename-input';
+    input.value = currentName;
+    input.style.width = Math.max(80, currentName.length * 10) + 'px';
+
+    // Prevent click events inside the input field from firing tab click actions
+    input.onclick = (e) => e.stopPropagation();
+    input.ondblclick = (e) => e.stopPropagation();
+
+    // Dynamically expand input width as user types
+    input.oninput = () => {
+      input.style.width = Math.max(80, input.value.length * 10) + 'px';
+    };
+
+    let isSaved = false;
+
+    const commitRename = () => {
+      if (isSaved) return;
+      isSaved = true;
+
+      const newName = input.value.trim();
+      if (newName && newName !== currentName) {
+        classData[idx].name = newName;
+        saveData();
+        showToast(`✏️ Class renamed to "${newName}"`);
+      }
+      renderTabs();
+      loadClassView();
+    };
+
+    input.onblur = commitRename;
+
+    input.onkeydown = (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        input.blur(); // Triggers blur commit
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        isSaved = true; // Cancel rename without saving
+        renderTabs();
+      }
+    };
+
+    btn.appendChild(input);
+    input.focus();
+    input.select();
+  }
+
+  function saveCurrentSetupState() {
+    const setupCard = document.getElementById('setup-card');
+    if (setupCard && !setupCard.classList.contains('hidden') && classData[activeClassIdx]) {
+      const cls = classData[activeClassIdx];
+      const rawRoster = document.getElementById('roster-input').value;
+      cls.roster = rawRoster.split('\n').map(s => s.trim()).filter(s => s.length > 0);
+    }
+  }
+
+  function saveRosterInput() {
+    const cls = classData[activeClassIdx];
+    if (!cls) return;
+    const rawRoster = document.getElementById('roster-input').value;
+    cls.roster = rawRoster.split('\n').map(s => s.trim()).filter(s => s.length > 0);
+    saveData();
+  }
+
+  function switchTab(index) {
+    saveCurrentSetupState();
+    activeClassIdx = index;
+    isEditingParameters = false;
+    clearSearch();
+    saveData();
+    renderTabs();
+    loadClassView();
+  }
+
+  function setGradingScheme(scheme) {
+    activeGradingScheme = scheme;
+    document.getElementById('btn-scheme-diag').classList.toggle('active', scheme === 'diagnostic');
+    document.getElementById('btn-scheme-pts').classList.toggle('active', scheme === 'points');
+  }
+
+  function setQMode(mode) {
+    activeQMode = mode;
+    
+    document.getElementById('btn-mode-std').classList.toggle('active', mode === 'standard');
+    document.getElementById('btn-mode-uni').classList.toggle('active', mode === 'uniform');
+    document.getElementById('btn-mode-cust').classList.toggle('active', mode === 'custom');
+    document.getElementById('btn-mode-free').classList.toggle('active', mode === 'freeform');
+
+    document.getElementById('ctrl-standard').classList.toggle('hidden', mode !== 'standard');
+    document.getElementById('ctrl-uniform').classList.toggle('hidden', mode !== 'uniform');
+    document.getElementById('ctrl-custom').classList.toggle('hidden', mode !== 'custom');
+    document.getElementById('ctrl-freeform').classList.toggle('hidden', mode !== 'freeform');
+
+    if (mode === 'custom') {
+      const container = document.getElementById('custom-prompts-grid');
+      if (!container.children.length) {
+        renderCustomQuestionPrompts();
+      }
+    }
+
+    updateQPreview();
+  }
+
+  function adjustValue(elementId, delta) {
+    const input = document.getElementById(elementId);
+    let val = parseInt(input.value) || 1;
+    val += delta;
+    if (val < parseInt(input.min)) val = parseInt(input.min);
+    if (val > parseInt(input.max)) val = parseInt(input.max);
+    input.value = val;
+    updateQPreview();
+  }
+
+  function renderCustomQuestionPrompts() {
+    const countInput = document.getElementById('custom-main-count');
+    let mainCount = parseInt(countInput.value) || 1;
+    if (mainCount < 1) mainCount = 1;
+    if (mainCount > 20) mainCount = 20;
+
+    const container = document.getElementById('custom-prompts-grid');
+    
+    let currentValues = {};
+    for (let i = 1; i <= 20; i++) {
+      const inp = document.getElementById(`custom-sub-${i}`);
+      if (inp) currentValues[i] = inp.value;
+    }
+
+    let html = '';
+    for (let i = 1; i <= mainCount; i++) {
+      let val = currentValues[i] !== undefined ? currentValues[i] : 2;
+      html += `
+        <div style="display: flex; align-items: center; justify-between; background: #f8fafc; padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border);">
+          <div style="font-weight: 600; font-size: 0.85rem; color: #334155; min-width: 90px;">Question ${i}</div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 0.78rem; color: #64748b;">Subquestions:</span>
+            <div class="stepper-container">
+              <button type="button" class="step-btn" style="width:32px; height:32px; font-size:1rem;" onclick="adjustCustomSubCount(${i}, -1)">−</button>
+              <input type="number" id="custom-sub-${i}" class="q-count-input" style="width:45px !important; padding:4px !important;" value="${val}" min="0" max="8" oninput="updateQPreview()">
+              <button type="button" class="step-btn" style="width:32px; height:32px; font-size:1rem;" onclick="adjustCustomSubCount(${i}, 1)">+</button>
+            </div>
+          </div>
+          <div id="custom-sub-lbl-${i}" style="font-size: 0.78rem; font-weight: bold; color: var(--primary); min-width: 95px; text-align: right;"></div>
+        </div>
+      `;
+    }
+    container.innerHTML = html;
+    updateQPreview();
+  }
+
+  function adjustCustomMainCount(delta) {
+    const input = document.getElementById('custom-main-count');
+    let val = parseInt(input.value) || 1;
+    val += delta;
+    if (val < 1) val = 1;
+    if (val > 20) val = 20;
+    input.value = val;
+    renderCustomQuestionPrompts();
+  }
+
+  function adjustCustomSubCount(qNum, delta) {
+    const input = document.getElementById(`custom-sub-${qNum}`);
+    if (!input) return;
+    let val = parseInt(input.value) || 0;
+    val += delta;
+    if (val < 0) val = 0;
+    if (val > 8) val = 8;
+    input.value = val;
+    updateQPreview();
+  }
+
+  function getQLabelsFromSetup() {
+    if (activeQMode === 'standard') {
+      const count = parseInt(document.getElementById('q-count').value) || 5;
+      let labels = [];
+      for (let i = 1; i <= count; i++) labels.push(`Q${i}`);
+      return labels;
+    } else if (activeQMode === 'uniform') {
+      const mainCount = parseInt(document.getElementById('main-q-count').value) || 3;
+      const subCount = parseInt(document.getElementById('sub-q-count').value) || 2;
+      const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+      let labels = [];
+      for (let i = 1; i <= mainCount; i++) {
+        for (let j = 0; j < Math.min(subCount, letters.length); j++) {
+          labels.push(`${i}${letters[j]}`);
+        }
+      }
+      return labels;
+    } else if (activeQMode === 'custom') {
+      const mainCount = parseInt(document.getElementById('custom-main-count').value) || 1;
+      const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
+      let labels = [];
+
+      for (let i = 1; i <= mainCount; i++) {
+        const subInput = document.getElementById(`custom-sub-${i}`);
+        const subCount = subInput ? (parseInt(subInput.value) || 0) : 0;
+
+        if (subCount === 0) {
+          labels.push(`${i}`);
+        } else {
+          for (let j = 0; j < Math.min(subCount, letters.length); j++) {
+            labels.push(`${i}${letters[j]}`);
+          }
+        }
+      }
+      return labels.length > 0 ? labels : ['1'];
+    } else if (activeQMode === 'freeform') {
+      const raw = document.getElementById('freeform-q-input').value;
+      let labels = raw.split(/[\n,]+/).map(s => s.trim()).filter(s => s.length > 0);
+      return labels.length > 0 ? labels : ['Q1'];
+    }
+    return ['Q1', 'Q2', 'Q3', 'Q4', 'Q5'];
+  }
+
+  function updateQPreview() {
+    const labels = getQLabelsFromSetup();
+    const container = document.getElementById('q-preview-container');
+    const badge = document.getElementById('total-items-badge');
+
+    if (activeQMode === 'custom') {
+      const mainCount = parseInt(document.getElementById('custom-main-count').value) || 1;
+      const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+      for (let i = 1; i <= mainCount; i++) {
+        const lblSpan = document.getElementById(`custom-sub-lbl-${i}`);
+        const subInput = document.getElementById(`custom-sub-${i}`);
+        if (lblSpan && subInput) {
+          const subCount = parseInt(subInput.value) || 0;
+          if (subCount === 0) {
+            lblSpan.innerText = `${i}`;
+          } else {
+            let parts = [];
+            for (let j = 0; j < Math.min(subCount, letters.length); j++) {
+              parts.push(`${i}${letters[j]}`);
+            }
+            lblSpan.innerText = parts.join(', ');
+          }
+        }
+      }
+    }
+
+    badge.innerText = `${labels.length} Marking Items`;
+    container.innerHTML = labels.map(lbl => `<span class="tag-pill">${lbl}</span>`).join(' ');
+  }
+
+  function openAddClassModal() {
+    document.getElementById('new-class-input').value = '';
+    document.getElementById('add-class-modal').classList.remove('hidden');
+    document.getElementById('new-class-input').focus();
+  }
+
+  function confirmAddClass() {
+    const input = document.getElementById('new-class-input');
+    const className = input.value.trim();
+
+    if (!className) {
+      showToast("⚠️ Please enter a valid class name.");
+      return;
+    }
+
+    saveCurrentSetupState();
+
+    classData.push({
+      name: className,
+      roster: [],
+      activeAssignmentIdx: 0,
+      assignments: []
+    });
+
+    closeModal('add-class-modal');
+    activeClassIdx = classData.length - 1;
+    isEditingParameters = false;
+    clearSearch();
+    saveData();
+    renderTabs();
+    loadClassView();
+    showToast(`✅ Class tab "${className}" added.`);
+  }
+
+  function promptNewAssignment() {
+    const cls = classData[activeClassIdx];
+    document.getElementById('dup-class-name').innerText = cls.name;
+    document.getElementById('new-assignment-modal').classList.remove('hidden');
+  }
+
+  function setupNewAssignment(duplicateRoster) {
+    closeModal('new-assignment-modal');
+    const cls = classData[activeClassIdx];
+    
+    isEditingParameters = true;
+    
+    document.getElementById('assignment-name').value = '';
+
+    if (duplicateRoster && cls.roster.length > 0) {
+      document.getElementById('roster-input').value = cls.roster.join('\n');
+      showToast("📋 Roster duplicated! Set your assignment parameters.");
+    } else {
+      document.getElementById('roster-input').value = '';
+      showToast("✏️ Blank roster ready.");
+    }
+
+    updateQPreview();
+    loadClassView();
+  }
+
+  function cancelSetup() {
+    isEditingParameters = false;
+    loadClassView();
+  }
+
+  function promptDeleteClass() {
+    if (classData.length === 0) return;
+    const msg = document.getElementById('delete-modal-msg');
+    const deleteBtn = document.getElementById('confirm-delete-btn');
+    const currentClass = classData[activeClassIdx];
+
+    const clsName = currentClass.name;
+    msg.innerHTML = `Are you sure you want to delete <strong>"${clsName}"</strong>?<br><br>All roster data and all assignments under this class tab will be permanently removed.`;
+    deleteBtn.style.display = 'block';
+
+    document.getElementById('delete-class-modal').classList.remove('hidden');
+  }
+
+  function executeDeleteClass() {
+    if (classData.length === 0) return;
+    const currentClass = classData[activeClassIdx];
+    const deletedName = currentClass.name;
+
+    classData.splice(activeClassIdx, 1);
+    if (activeClassIdx >= classData.length) {
+      activeClassIdx = Math.max(0, classData.length - 1);
+    }
+
+    isEditingParameters = false;
+    closeModal('delete-class-modal');
+    clearSearch();
+    saveData();
+    renderTabs();
+    loadClassView();
+    showToast(`🗑️ Class tab "${deletedName}" deleted.`);
+  }
+
+  function promptDeleteAssignment() {
+    const cls = classData[activeClassIdx];
+    if (!cls || cls.assignments.length === 0) return;
+
+    const currentAssignment = cls.assignments[cls.activeAssignmentIdx];
+    document.getElementById('delete-assign-msg').innerHTML = `Are you sure you want to delete <strong>"${currentAssignment.assignment}"</strong>?<br><br>All scores recorded for this assignment will be deleted.`;
+    document.getElementById('delete-assignment-modal').classList.remove('hidden');
+  }
+
+  function executeDeleteAssignment() {
+    const cls = classData[activeClassIdx];
+    if (!cls) return;
+
+    const removedTitle = cls.assignments[cls.activeAssignmentIdx].assignment;
+
+    cls.assignments.splice(cls.activeAssignmentIdx, 1);
+    if (cls.activeAssignmentIdx >= cls.assignments.length) {
+      cls.activeAssignmentIdx = Math.max(0, cls.assignments.length - 1);
+    }
+
+    closeModal('delete-assignment-modal');
+    clearSearch();
+    saveData();
+    loadClassView();
+    showToast(`🗑️ Assignment "${removedTitle}" deleted.`);
+  }
+
+  function loadClassView() {
+    const blankCanvas = document.getElementById('blank-canvas');
+    const setupCard = document.getElementById('setup-card');
+    const markingCard = document.getElementById('marking-card');
+    const analyticsCard = document.getElementById('analytics-card');
+
+    if (classData.length === 0) {
+      blankCanvas.classList.remove('hidden');
+      setupCard.classList.add('hidden');
+      markingCard.classList.add('hidden');
+      analyticsCard.classList.add('hidden');
+      return;
+    }
+
+    blankCanvas.classList.add('hidden');
+    const cls = classData[activeClassIdx];
+    document.getElementById('setup-heading').innerText = `1. Setup Assignment Parameters (${cls.name})`;
+
+    const cancelBtn = document.getElementById('cancel-setup-btn');
+
+    if (isEditingParameters || cls.assignments.length === 0) {
+      if (cls.assignments.length > 0 && isEditingParameters) {
+        cancelBtn.classList.remove('hidden');
+      } else {
+        cancelBtn.classList.add('hidden');
+        document.getElementById('assignment-name').value = '';
+        document.getElementById('roster-input').value = cls.roster.join('\n');
+      }
+
+      setupCard.classList.remove('hidden');
+      markingCard.classList.add('hidden');
+      analyticsCard.classList.add('hidden');
+      updateQPreview();
+    } else {
+      setupCard.classList.add('hidden');
+      markingCard.classList.remove('hidden');
+      analyticsCard.classList.remove('hidden');
+      
+      populateAssignmentDropdown();
+      renderMarkingStation();
+      updateAnalytics();
+    }
+  }
+
+  function populateAssignmentDropdown() {
+    const cls = classData[activeClassIdx];
+    const select = document.getElementById('assignment-select');
+    select.innerHTML = '';
+
+    cls.assignments.forEach((assign, idx) => {
+      const opt = document.createElement('option');
+      opt.value = idx;
+      opt.innerText = assign.assignment;
+      if (idx === cls.activeAssignmentIdx) opt.selected = true;
+      select.appendChild(opt);
+    });
+  }
+
+  function switchAssignment(index) {
+    const cls = classData[activeClassIdx];
+    cls.activeAssignmentIdx = parseInt(index, 10);
+    clearSearch();
+    saveData();
+    renderMarkingStation();
+    updateAnalytics();
+  }
+
+  function parseRosterLine(line, defaultIndex) {
+    let regNo = String(defaultIndex + 1).padStart(2, '0');
+    let name = line.trim();
+
+    const match = line.trim().match(/^(\d+)[\.\)\s\-]+(.+)/);
+    if (match) {
+      regNo = String(parseInt(match[1], 10)).padStart(2, '0');
+      name = match[2].trim();
+    }
+
+    return { regNo, name };
+  }
+
+  function startSession() {
+    const cls = classData[activeClassIdx];
+    const assignmentTitle = document.getElementById('assignment-name').value.trim() || `Worksheet ${cls.assignments.length + 1}`;
+    const qLabels = getQLabelsFromSetup();
+    const rawRoster = document.getElementById('roster-input').value;
+
+    if (!qLabels || qLabels.length === 0) {
+      showToast('⚠️ Please define at least one question label.');
+      return;
+    }
+
+    const rosterList = rawRoster.split('\n').map(s => s.trim()).filter(s => s.length > 0);
+    cls.roster = rosterList;
+
+    const newAssignmentObj = {
+      assignment: assignmentTitle,
+      gradingScheme: activeGradingScheme,
+      qLabels: qLabels,
+      studentData: rosterList.map((line, idx) => {
+        const parsed = parseRosterLine(line, idx);
+        return {
+          regNo: parsed.regNo,
+          name: parsed.name,
+          present: false,
+          answers: new Array(qLabels.length).fill('unmarked')
+        };
+      })
+    };
+
+    cls.assignments.push(newAssignmentObj);
+    cls.activeAssignmentIdx = cls.assignments.length - 1;
+    isEditingParameters = false;
+
+    saveData();
+    showToast(`✅ Created assignment "${assignmentTitle}"`);
+    loadClassView();
+  }
+
+  function renderMarkingStation() {
+    const cls = classData[activeClassIdx];
+    const session = cls.assignments[cls.activeAssignmentIdx];
+    if (!session) return;
+
+    const schemeKey = session.gradingScheme || 'diagnostic';
+    const cfg = SCHEME_CONFIG[schemeKey];
+
+    const totalPossibleMarks = session.qLabels.length * cfg.maxPerQ;
+    document.getElementById('session-title').innerText = `${cls.name} — ${session.assignment}`;
+    document.getElementById('session-subtitle').innerText = `${session.qLabels.length} Items (Max ${totalPossibleMarks} Marks) | ${session.studentData.length} Students`;
+
+    const legendContainer = document.getElementById('legend-container');
+    if (schemeKey === 'points') {
+      legendContainer.innerHTML = `
+        <span><strong>5-Tap Partial Credit Cycle:</strong></span>
+        <div class="legend-item"><span class="dot" style="background: #f8fafc; border:1px solid #ccc;"></span> 0 Marks</div>
+        <span class="arrow-divider">&rarr;</span>
+        <div class="legend-item"><span class="dot" style="background: var(--success);"></span> 2 Marks (Green)</div>
+        <span class="arrow-divider">&rarr;</span>
+        <div class="legend-item"><span class="dot" style="background: var(--orange);"></span> 1.5 Marks (Orange)</div>
+        <span class="arrow-divider">&rarr;</span>
+        <div class="legend-item"><span class="dot" style="background: var(--success);"></span> 1 Mark (Green)</div>
+        <span class="arrow-divider">&rarr;</span>
+        <div class="legend-item"><span class="dot" style="background: var(--orange);"></span> 0.5 Mark (Orange)</div>
+      `;
+    } else {
+      legendContainer.innerHTML = `
+        <span><strong>5-Tap Diagnostic Cycle:</strong></span>
+        <div class="legend-item"><span class="dot" style="background: #f8fafc; border:1px solid #ccc;"></span> Unmarked</div>
+        <span class="arrow-divider">&rarr;</span>
+        <div class="legend-item"><span class="dot" style="background: var(--success);"></span> Correct (&check;)</div>
+        <span class="arrow-divider">&rarr;</span>
+        <div class="legend-item"><span class="dot" style="background: var(--concept);"></span> Concept Gap (C)</div>
+        <span class="arrow-divider">&rarr;</span>
+        <div class="legend-item"><span class="dot" style="background: var(--careless);"></span> Careless (⚡)</div>
+        <span class="arrow-divider">&rarr;</span>
+        <div class="legend-item"><span class="dot" style="background: var(--incomplete);"></span> Incomplete (...)</div>
+      `;
+    }
+
+    const list = document.getElementById('student-list');
+    list.innerHTML = '';
+
+    session.studentData.forEach((student, sIdx) => {
+      const container = document.createElement('div');
+      container.className = 'student-card-container';
+      container.style.marginBottom = '14px';
+
+      const row = document.createElement('div');
+      row.className = 'student-row';
+
+      row.innerHTML = `
+        <div class="student-name">
+          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+            <input type="checkbox" id="chk-${sIdx}" ${student.present ? 'checked' : ''} onchange="togglePresent(${sIdx}, this.checked)">
+            <span class="reg-badge">${student.regNo}</span>
+            <span>${student.name}</span>
+          </label>
+        </div>
+        <div class="q-container" id="qs-${sIdx}"></div>
+        <div class="score-badge" id="score-${sIdx}">
+          <span>0 / ${totalPossibleMarks}</span>
+          <div class="quick-action-stack">
+            <button type="button" class="quick-btn btn-all-correct" onclick="markAllCorrect(${sIdx})">✓ All Correct</button>
+            <button type="button" class="quick-btn btn-all-wrong" onclick="markAllWrong(${sIdx})">⚡ All Wrong</button>
+            <button type="button" class="quick-btn btn-reset-all" onclick="resetAllAnswers(${sIdx})">↺ Reset All</button>
+          </div>
+          <button onclick="printIndividualSlip(${sIdx})" style="background: #6366f1; font-size: 0.8rem; padding: 8px 12px; border-radius: 6px;" title="Print Student Slip">🖨️ Slip</button>
+        </div>
+      `;
+
+      container.appendChild(row);
+
+      const fbBox = document.createElement('div');
+      fbBox.className = 'feedback-preview';
+      fbBox.id = `fb-${sIdx}`;
+      container.appendChild(fbBox);
+
+      list.appendChild(container);
+
+      const qContainer = row.querySelector(`#qs-${sIdx}`);
+      for (let q = 0; q < session.qLabels.length; q++) {
+        const labelText = session.qLabels[q];
+        const st = student.answers[q] || 'unmarked';
+        const btn = document.createElement('button');
+        btn.className = 'q-btn';
+        btn.id = `btn-${sIdx}-${q}`;
+        btn.dataset.state = st;
+        btn.innerHTML = `<span>${labelText}</span><span class="sub">${cfg.labels[st] !== undefined ? cfg.labels[st] : ''}</span>`;
+        btn.onclick = () => cycleState(sIdx, q);
+        qContainer.appendChild(btn);
+      }
+
+      updateStudentUI(sIdx);
+    });
+
+    filterStudents();
+  }
+
+  function setAllStudentAnswers(sIdx, targetState) {
+    const cls = classData[activeClassIdx];
+    const session = cls.assignments[cls.activeAssignmentIdx];
+    if (!session || !session.studentData[sIdx]) return;
+
+    session.studentData[sIdx].present = true;
+    const chk = document.getElementById(`chk-${sIdx}`);
+    if (chk) chk.checked = true;
+
+    const schemeKey = session.gradingScheme || 'diagnostic';
+    const cfg = SCHEME_CONFIG[schemeKey];
+
+    for (let q = 0; q < session.qLabels.length; q++) {
+      session.studentData[sIdx].answers[q] = targetState;
+      const btn = document.getElementById(`btn-${sIdx}-${q}`);
+      if (btn) {
+        btn.dataset.state = targetState;
+        const subSpan = btn.querySelector('.sub');
+        if (subSpan) subSpan.innerText = cfg.labels[targetState] !== undefined ? cfg.labels[targetState] : '';
+      }
+    }
+
+    saveData();
+    updateStudentUI(sIdx);
+    updateAnalytics();
+  }
+
+  function markAllCorrect(sIdx) {
+    const cls = classData[activeClassIdx];
+    const session = cls.assignments[cls.activeAssignmentIdx];
+    const schemeKey = session.gradingScheme || 'diagnostic';
+    const targetState = schemeKey === 'points' ? 'm2' : 'correct';
+    setAllStudentAnswers(sIdx, targetState);
+  }
+
+  function markAllWrong(sIdx) {
+    const cls = classData[activeClassIdx];
+    const session = cls.assignments[cls.activeAssignmentIdx];
+    const schemeKey = session.gradingScheme || 'diagnostic';
+    const targetState = schemeKey === 'points' ? 'unmarked' : 'concept';
+    setAllStudentAnswers(sIdx, targetState);
+  }
+
+  function resetAllAnswers(sIdx) {
+    const cls = classData[activeClassIdx];
+    const session = cls.assignments[cls.activeAssignmentIdx];
+    if (!session || !session.studentData[sIdx]) return;
+
+    session.studentData[sIdx].present = false;
+    const chk = document.getElementById(`chk-${sIdx}`);
+    if (chk) chk.checked = false;
+
+    const schemeKey = session.gradingScheme || 'diagnostic';
+    const cfg = SCHEME_CONFIG[schemeKey];
+
+    for (let q = 0; q < session.qLabels.length; q++) {
+      session.studentData[sIdx].answers[q] = 'unmarked';
+      const btn = document.getElementById(`btn-${sIdx}-${q}`);
+      if (btn) {
+        btn.dataset.state = 'unmarked';
+        const subSpan = btn.querySelector('.sub');
+        if (subSpan) subSpan.innerText = cfg.labels['unmarked'] !== undefined ? cfg.labels['unmarked'] : '';
+      }
+    }
+
+    saveData();
+    updateStudentUI(sIdx);
+    updateAnalytics();
+  }
+
+  function resetAllStudentsMarks() {
+    const cls = classData[activeClassIdx];
+    const session = cls.assignments[cls.activeAssignmentIdx];
+    if (!session) return;
+
+    const confirmReset = confirm(`Are you sure you want to reset ALL recorded marks for all ${session.studentData.length} students in "${session.assignment}"?`);
+    if (!confirmReset) return;
+
+    session.studentData.forEach((student) => {
+      student.present = false;
+      for (let q = 0; q < session.qLabels.length; q++) {
+        student.answers[q] = 'unmarked';
+      }
+    });
+
+    saveData();
+    renderMarkingStation();
+    updateAnalytics();
+    showToast("↺ All student marks have been reset!");
+  }
+
+  function filterStudents() {
+    const input = document.getElementById('search-input');
+    const clearBtn = document.getElementById('clear-btn');
+    const query = input.value.toLowerCase().trim();
+
+    if (query.length > 0) {
+      clearBtn.classList.remove('hidden');
+    } else {
+      clearBtn.classList.add('hidden');
+    }
+
+    const cls = classData[activeClassIdx];
+    if (!cls) return; // Fix: Prevent unhandled TypeError when classData is empty
+    const session = cls.assignments[cls.activeAssignmentIdx];
+    if (!session) return;
+
+    const containers = document.querySelectorAll('.student-card-container');
+
+    session.studentData.forEach((student, sIdx) => {
+      const container = containers[sIdx];
+      if (!container) return;
+
+      const fullText = `${student.regNo} ${student.name}`.toLowerCase();
+
+      if (fullText.includes(query)) {
+        container.style.display = '';
+      } else {
+        container.style.display = 'none';
+      }
+    });
+  }
+
+  function clearSearch() {
+    const input = document.getElementById('search-input');
+    input.value = '';
+    filterStudents();
+  }
+
+  function toggleSelectAll(selectBool) {
+    const cls = classData[activeClassIdx];
+    const session = cls.assignments[cls.activeAssignmentIdx];
+    if (!session) return;
+
+    session.studentData.forEach((student, sIdx) => {
+      student.present = selectBool;
+      const chk = document.getElementById(`chk-${sIdx}`);
+      if (chk) chk.checked = selectBool;
+      updateStudentUI(sIdx);
+    });
+
+    saveData();
+    updateAnalytics();
+    showToast(selectBool ? "☑️ All students selected." : "☐ All students unselected.");
+  }
+
+  function cycleState(sIdx, qIdx) {
+    const cls = classData[activeClassIdx];
+    const session = cls.assignments[cls.activeAssignmentIdx];
+    const schemeKey = session.gradingScheme || 'diagnostic';
+    const cfg = SCHEME_CONFIG[schemeKey];
+
+    if (!session.studentData[sIdx].present) {
+      session.studentData[sIdx].present = true;
+      const chk = document.getElementById(`chk-${sIdx}`);
+      if (chk) chk.checked = true;
+    }
+
+    let currentState = session.studentData[sIdx].answers[qIdx];
+    let currIndex = cfg.states.indexOf(currentState);
+    if (currIndex === -1) currIndex = 0;
+
+    let nextIndex = (currIndex + 1) % cfg.states.length;
+    let nextState = cfg.states[nextIndex];
+
+    session.studentData[sIdx].answers[qIdx] = nextState;
+
+    const btn = document.getElementById(`btn-${sIdx}-${qIdx}`);
+    btn.dataset.state = nextState;
+    btn.querySelector('.sub').innerText = cfg.labels[nextState];
+
+    saveData();
+    updateStudentUI(sIdx);
+    updateAnalytics();
+  }
+
+  function togglePresent(sIdx, isPresent) {
+    const cls = classData[activeClassIdx];
+    const session = cls.assignments[cls.activeAssignmentIdx];
+
+    session.studentData[sIdx].present = isPresent;
+    saveData();
+    updateStudentUI(sIdx);
+    updateAnalytics();
+  }
+
+  function updateStudentUI(sIdx) {
+    const cls = classData[activeClassIdx];
+    const session = cls.assignments[cls.activeAssignmentIdx];
+    const student = session.studentData[sIdx];
+    const schemeKey = session.gradingScheme || 'diagnostic';
+    const cfg = SCHEME_CONFIG[schemeKey];
+
+    const totalPossibleMarks = session.qLabels.length * cfg.maxPerQ;
+
+    let totalEarned = 0;
+    student.answers.forEach(st => {
+      totalEarned += (cfg.points[st] || 0);
+    });
+
+    const displayEarned = Number.isInteger(totalEarned) ? totalEarned : totalEarned.toFixed(1);
+    
+    const scoreBadge = document.getElementById(`score-${sIdx}`);
+    if (scoreBadge) {
+      scoreBadge.querySelector('span').innerText = `${displayEarned} / ${totalPossibleMarks}`;
+    }
+
+    const feedbackBox = document.getElementById(`fb-${sIdx}`);
+    if (!student.present) {
+      feedbackBox.innerText = "Status: Absent / Homework Not Submitted.";
+      return;
+    }
+
+    let pct = Math.round((totalEarned / totalPossibleMarks) * 100) || 0;
+    let note = "";
+
+    if (schemeKey === 'points') {
+      let part15List = [], part1List = [], part05List = [], zeroList = [];
+      student.answers.forEach((state, idx) => {
+        const lbl = session.qLabels[idx];
+        if (state === 'm15') part15List.push(lbl);
+        else if (state === 'm1') part1List.push(lbl);
+        else if (state === 'm05') part05List.push(lbl);
+        else if (state === 'unmarked') zeroList.push(lbl);
+      });
+
+      if (totalEarned === totalPossibleMarks) {
+        note = `[100%] Outstanding performance! Full credit across all questions.`;
+      } else {
+        note = `[${pct}%] Solid effort! `;
+        if (part15List.length > 0) note += `Earned 1.5m on ${part15List.join(', ')}. `;
+        if (part1List.length > 0) note += `Earned 1m on ${part1List.join(', ')}. `;
+        if (part05List.length > 0) note += `Earned 0.5m on ${part05List.join(', ')}. `;
+        if (zeroList.length > 0) note += `No marks on ${zeroList.join(', ')}. `;
+        note += `Review partial/unmarked questions for full credit.`;
+      }
+    } else {
+      let conceptGap = [], carelessGap = [], incompleteGap = [];
+      student.answers.forEach((state, idx) => {
+        const lbl = session.qLabels[idx];
+        if (state === 'concept') conceptGap.push(lbl);
+        if (state === 'careless') carelessGap.push(lbl);
+        if (state === 'incomplete') incompleteGap.push(lbl);
+      });
+
+      note = `[${pct}%] Great effort! `;
+      if (conceptGap.length > 0) note += `Review core concepts on ${conceptGap.join(', ')}. `;
+      if (carelessGap.length > 0) note += `Double-check work on ${carelessGap.join(', ')} (careless errors). `;
+      if (incompleteGap.length > 0) note += `Complete unfinished questions on ${incompleteGap.join(', ')}. `;
+      if (totalEarned === totalPossibleMarks) note = `[100%] Outstanding performance! Perfect score.`;
+    }
+
+    feedbackBox.innerText = `Auto-Feedback: ${note}`;
+  }
+
+  function updateAnalytics() {
+    const cls = classData[activeClassIdx];
+    const session = cls.assignments[cls.activeAssignmentIdx];
+    if (!session) return;
+
+    const schemeKey = session.gradingScheme || 'diagnostic';
+    const cfg = SCHEME_CONFIG[schemeKey];
+    const totalPossiblePerStudent = session.qLabels.length * cfg.maxPerQ;
+
+    let totalPossibleAll = 0;
+    let totalEarnedAll = 0;
+    let passCount = 0;
+    let failCount = 0;
+
+    let highAchievers = [];
+    let needsSupport = [];
+
+    let counts = { m2: 0, m15: 0, m1: 0, m05: 0, concept: 0, careless: 0, incomplete: 0, unmarked: 0 };
+    let qLostMarks = new Array(session.qLabels.length).fill(0);
+
+    const activeStudents = session.studentData.filter(s => s.present);
+
+    activeStudents.forEach(student => {
+      let studentEarned = 0;
+
+      student.answers.forEach((state, qIdx) => {
+        totalPossibleAll += cfg.maxPerQ;
+        const pts = cfg.points[state] || 0;
+        studentEarned += pts;
+        totalEarnedAll += pts;
+        if (counts[state] !== undefined) counts[state]++;
+        qLostMarks[qIdx] += (cfg.maxPerQ - pts);
+      });
+
+      let pct = totalPossiblePerStudent > 0 ? (studentEarned / totalPossiblePerStudent) * 100 : 0;
+
+      if (pct >= 50) {
+        passCount++;
+      } else {
+        failCount++;
+      }
+
+      if (pct >= 80) {
+        highAchievers.push({ regNo: student.regNo, name: student.name, scorePct: Math.round(pct) });
+      } else if (pct < 50) {
+        needsSupport.push({ regNo: student.regNo, name: student.name, scorePct: Math.round(pct) });
+      }
+    });
+
+    highAchievers.sort((a, b) => b.scorePct - a.scorePct || a.regNo.localeCompare(b.regNo));
+    needsSupport.sort((a, b) => b.scorePct - a.scorePct || a.regNo.localeCompare(b.regNo));
+
+    let overallYield = totalPossibleAll > 0 ? Math.round((totalEarnedAll / totalPossibleAll) * 100) : 0;
+    let maxLost = Math.max(...qLostMarks);
+    let topBottleneckIdx = qLostMarks.indexOf(maxLost);
+    let topBottleneckLabel = session.qLabels[topBottleneckIdx] || 'None';
+
+    const statsGrid = document.getElementById('stats-grid');
+
+    statsGrid.innerHTML = `
+      <div class="stat-card">
+        <small>Overall Class Yield</small>
+        <div style="font-size: 1.4rem; font-weight: bold; color: var(--primary);">${overallYield}%</div>
+      </div>
+      <div class="stat-card">
+        <small>Pass / Fail (≥50%)</small>
+        <div style="font-size: 1.1rem; font-weight: bold; margin-top:4px;">
+          <span style="color: var(--success);">🟢 Pass: ${passCount}</span> &nbsp;|&nbsp; 
+          <span style="color: var(--danger);">🔴 Fail: ${failCount}</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <small>${schemeKey === 'points' ? 'Mark Distribution' : 'Primary Gap Breakdown'}</small>
+        <div style="font-size: 0.82rem; font-weight: bold; margin-top:4px; line-height: 1.3;">
+          ${schemeKey === 'points' 
+            ? `🟢 2m: ${counts.m2} | 🟠 1.5m: ${counts.m15}<br>🟢 1m: ${counts.m1} | 🟠 0.5m: ${counts.m05}` 
+            : `🔴 Concept: ${counts.concept} | 🟠 Careless: ${counts.careless}`}
+        </div>
+      </div>
+      <div class="stat-card">
+        <small>Highest Mark-Loss Item</small>
+        <div style="font-size: 0.92rem; font-weight: bold; color: var(--concept); margin-top:4px;">
+          ${maxLost > 0 ? `${topBottleneckLabel} (${maxLost} marks lost)` : 'None flagged'}
+        </div>
+      </div>
+    `;
+
+    const highContainer = document.getElementById('high-achievers-list');
+    document.getElementById('high-count-badge').innerText = `(${highAchievers.length})`;
+    if (highAchievers.length === 0) {
+      highContainer.innerHTML = `<em style="font-size: 0.8rem; color: #94a3b8;">No students with ≥80% yet</em>`;
+    } else {
+      highContainer.innerHTML = highAchievers.map(s => `<span class="student-badge-high" title="${s.name}">${s.regNo}. ${s.name} (${s.scorePct}%)</span>`).join('');
+    }
+
+    const supportContainer = document.getElementById('support-needed-list');
+    document.getElementById('support-count-badge').innerText = `(${needsSupport.length})`;
+    if (needsSupport.length === 0) {
+      supportContainer.innerHTML = `<em style="font-size: 0.8rem; color: #94a3b8;">No students failing (&lt;50%)</em>`;
+    } else {
+      supportContainer.innerHTML = needsSupport.map(s => `<span class="student-badge-support" title="${s.name}">${s.regNo}. ${s.name} (${s.scorePct}%)</span>`).join('');
+    }
+
+    const paretoWrapper = document.getElementById('pareto-chart-wrapper');
+    const paretoEmptyMsg = document.getElementById('pareto-empty-msg');
+    const totalLoss = qLostMarks.reduce((sum, val) => sum + val, 0);
+
+    if (totalLoss === 0) {
+      if (paretoWrapper) paretoWrapper.classList.add('hidden');
+      if (paretoEmptyMsg) paretoEmptyMsg.classList.remove('hidden');
+    } else {
+      if (paretoWrapper) paretoWrapper.classList.remove('hidden');
+      if (paretoEmptyMsg) paretoEmptyMsg.classList.add('hidden');
+
+      let paretoData = session.qLabels.map((lbl, idx) => ({
+        label: lbl,
+        loss: qLostMarks[idx]
+      }));
+
+      paretoData.sort((a, b) => b.loss - a.loss);
+      renderParetoChart(paretoData, 'paretoCanvas');
+    }
+  }
+
+  function renderParetoChart(qData, canvasId = 'paretoCanvas') {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+
+    canvas.width = (rect.width || 700) * dpr;
+    canvas.height = (rect.height || 240) * dpr;
+    ctx.scale(dpr, dpr);
+
+    const width = rect.width || 700;
+    const height = rect.height || 240;
+
+    ctx.clearRect(0, 0, width, height);
+
+    const totalLoss = qData.reduce((sum, item) => sum + item.loss, 0);
+    if (totalLoss === 0) return;
+
+    const paddingLeft = 40;
+    const paddingRight = 45;
+    const paddingTop = 30;
+    const paddingBottom = 35;
+
+    const chartW = width - paddingLeft - paddingRight;
+    const chartH = height - paddingTop - paddingBottom;
+
+    const maxLoss = Math.max(...qData.map(d => d.loss), 1);
+
+    const gridSteps = 4;
+    ctx.strokeStyle = "#e2e8f0";
+    ctx.lineWidth = 1;
+    ctx.fillStyle = "#64748b";
+    ctx.font = "10px -apple-system, sans-serif";
+
+    for (let i = 0; i <= gridSteps; i++) {
+      const y = paddingTop + chartH - (i / gridSteps) * chartH;
+
+      ctx.beginPath();
+      ctx.moveTo(paddingLeft, y);
+      ctx.lineTo(paddingLeft + chartW, y);
+      ctx.stroke();
+
+      const lossVal = Math.round((maxLoss / gridSteps) * i * 10) / 10;
+      ctx.textAlign = "right";
+      ctx.fillText(lossVal, paddingLeft - 6, y + 3);
+
+      const pctVal = Math.round((100 / gridSteps) * i) + "%";
+      ctx.textAlign = "left";
+      ctx.fillText(pctVal, paddingLeft + chartW + 6, y + 3);
+    }
+
+    const numBars = qData.length;
+    const colWidth = chartW / numBars;
+    const barWidth = Math.max(Math.min(colWidth * 0.55, 36), 8);
+
+    let cumLoss = 0;
+    const cumPoints = [];
+
+    qData.forEach((d, idx) => {
+      const xCenter = paddingLeft + (idx + 0.5) * colWidth;
+      const barH = (d.loss / maxLoss) * chartH;
+      const barX = xCenter - barWidth / 2;
+      const barY = paddingTop + chartH - barH;
+
+      ctx.fillStyle = d.loss > 0 ? "#dc2626" : "#cbd5e1";
+      ctx.fillRect(barX, barY, barWidth, barH);
+
+      if (d.loss > 0) {
+        ctx.fillStyle = "#0f172a";
+        ctx.textAlign = "center";
+        ctx.font = "bold 10px -apple-system, sans-serif";
+        ctx.fillText(d.loss % 1 === 0 ? d.loss : d.loss.toFixed(1), xCenter, barY - 4);
+      }
+
+      ctx.fillStyle = "#334155";
+      ctx.textAlign = "center";
+      ctx.font = "bold 11px -apple-system, sans-serif";
+      ctx.fillText(d.label, xCenter, paddingTop + chartH + 18);
+
+      cumLoss += d.loss;
+      const cumPct = cumLoss / totalLoss;
+      const lineY = paddingTop + chartH - cumPct * chartH;
+      cumPoints.push({ x: xCenter, y: lineY, pct: Math.round(cumPct * 100) });
+    });
+
+    const y80 = paddingTop + chartH - 0.8 * chartH;
+    ctx.setLineDash([4, 4]);
+    ctx.strokeStyle = "#ca8a04";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(paddingLeft, y80);
+    ctx.lineTo(paddingLeft + chartW, y80);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.strokeStyle = "#2563eb";
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    cumPoints.forEach((pt, idx) => {
+      if (idx === 0) ctx.moveTo(pt.x, pt.y);
+      else ctx.lineTo(pt.x, pt.y);
+    });
+    ctx.stroke();
+
+    cumPoints.forEach((pt) => {
+      ctx.fillStyle = "#2563eb";
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, 4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "#ffffff";
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, 2, 0, Math.PI * 2);
+      ctx.fill();
+    });
+  }
+
+  function openClassReportModal() {
+    const cls = classData[activeClassIdx];
+    const session = cls.assignments[cls.activeAssignmentIdx];
+    if (!session) return;
+
+    const schemeKey = session.gradingScheme || 'diagnostic';
+    const cfg = SCHEME_CONFIG[schemeKey];
+    const totalPossibleMarks = session.qLabels.length * cfg.maxPerQ;
+
+    let presentStudents = session.studentData.filter(s => s.present);
+    let totalMarksEarned = 0;
+    let passCount = 0;
+    let failCount = 0;
+
+    let highAchievers = [];
+    let needsSupport = [];
+    let qLostMarks = new Array(session.qLabels.length).fill(0);
+
+    session.studentData.forEach(s => {
+      if (!s.present) return;
+      let sMarks = 0;
+      s.answers.forEach((st, qIdx) => {
+        const pts = (cfg.points[st] || 0);
+        sMarks += pts;
+        qLostMarks[qIdx] += (cfg.maxPerQ - pts);
+      });
+      totalMarksEarned += sMarks;
+
+      let pct = totalPossibleMarks > 0 ? (sMarks / totalPossibleMarks) * 100 : 0;
+
+      if (pct >= 50) passCount++;
+      else failCount++;
+
+      if (pct >= 80) highAchievers.push({ regNo: s.regNo, name: s.name, pct: Math.round(pct) });
+      else if (pct < 50) needsSupport.push({ regNo: s.regNo, name: s.name, pct: Math.round(pct) });
+    });
+
+    highAchievers.sort((a, b) => b.pct - a.pct || a.regNo.localeCompare(b.regNo));
+    needsSupport.sort((a, b) => b.pct - a.pct || a.regNo.localeCompare(b.regNo));
+
+    const highAchieversFormatted = highAchievers.map(s => `${s.regNo}. ${s.name} (${s.pct}%)`).join(', ');
+    const needsSupportFormatted = needsSupport.map(s => `${s.regNo}. ${s.name} (${s.pct}%)`).join(', ');
+
+    let overallYield = (presentStudents.length * totalPossibleMarks) > 0 ? 
+      Math.round((totalMarksEarned / (presentStudents.length * totalPossibleMarks)) * 100) : 0;
+
+    let paretoData = session.qLabels.map((lbl, idx) => ({
+      label: lbl,
+      loss: qLostMarks[idx]
+    })).sort((a, b) => b.loss - a.loss);
+
+    let totalLoss = qLostMarks.reduce((sum, val) => sum + val, 0);
+
+    let html = `
+      <div class="report-header">
+        <h2 style="margin:0 0 4px 0;">Class Performance Summary Report</h2>
+        <div style="font-size: 0.9rem; color: #475569;">
+          Class: <strong>${cls.name}</strong> | Assignment: <strong>${session.assignment}</strong>
+        </div>
+        <div style="font-size: 0.8rem; color: #64748b; margin-top: 4px;">
+          Generated on: ${formatDate()} | System: ${schemeKey === 'points' ? 'Partial Credit Points' : 'Diagnostic Feedback'}
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 15px; background: #f8fafc; padding: 12px; border-radius: 6px; font-size: 0.85rem; border: 1px solid var(--border);">
+        <div><strong>Total Enrolled:</strong> ${session.studentData.length}</div>
+        <div><strong>Present/Submitted:</strong> ${presentStudents.length}</div>
+        <div><strong>Class Average Yield:</strong> ${overallYield}%</div>
+        <div><strong>Pass Count (≥50%):</strong> <span style="color:var(--success); font-weight:bold;">${passCount}</span></div>
+        <div><strong>Fail Count (&lt;50%):</strong> <span style="color:var(--danger); font-weight:bold;">${failCount}</span></div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; font-size: 0.82rem;">
+        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 10px; border-radius: 6px;">
+          <strong style="color: #16a34a;">🌟 High Achievers (≥80%):</strong><br>
+          ${highAchievers.length > 0 ? highAchieversFormatted : '<em>None</em>'}
+        </div>
+        <div style="background: #fef2f2; border: 1px solid #fecaca; padding: 10px; border-radius: 6px;">
+          <strong style="color: #dc2626;">⚠️ Needs Support (&lt;50%):</strong><br>
+          ${needsSupport.length > 0 ? needsSupportFormatted : '<em>None</em>'}
+        </div>
+      </div>
+
+      ${totalLoss > 0 ? `
+        <div style="margin-bottom: 20px; background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
+            <div>
+              <h4 style="margin: 0; color: #1e293b; font-size: 0.95rem;">📉 Mistake Frequency Pareto Analysis (80/20 Rule)</h4>
+              <p style="font-size: 0.78rem; color: #64748b; margin: 2px 0 0 0;">Identifies high-impact bottleneck questions for class remediation.</p>
+            </div>
+            <div style="display: flex; gap: 10px; font-size: 0.72rem; font-weight: bold;">
+              <span style="display: flex; align-items: center; gap: 3px;"><span style="width: 8px; height: 8px; background: #dc2626; border-radius: 2px; display: inline-block;"></span> Mark Loss</span>
+              <span style="display: flex; align-items: center; gap: 3px;"><span style="width: 8px; height: 8px; background: #2563eb; border-radius: 50%; display: inline-block;"></span> Cum %</span>
+              <span style="display: flex; align-items: center; gap: 3px;"><span style="width: 10px; height: 0; border-top: 2px dashed #ca8a04; display: inline-block;"></span> 80% Threshold</span>
+            </div>
+          </div>
+          <div style="position: relative; width: 100%; height: 210px;">
+            <canvas id="reportParetoCanvas" style="width: 100%; height: 100%; display: block;"></canvas>
+          </div>
+        </div>
+      ` : ''}
+
+      <table class="report-table">
+        <thead>
+          <tr>
+            <th>Reg</th>
+            <th>Student Name</th>
+            <th>Status</th>
+            <th>Score</th>
+            <th>%</th>
+            <th>Item Breakdown</th>
+            <th>Auto-Feedback</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    session.studentData.forEach((student, sIdx) => {
+      let totalEarned = 0;
+      let itemDetails = [];
+      student.answers.forEach((st, qIdx) => {
+        totalEarned += (cfg.points[st] || 0);
+        const qTag = session.qLabels[qIdx];
+        const label = cfg.labels[st] || st;
+        itemDetails.push(`${qTag}:${label || '-'}`);
+      });
+
+      const displayEarned = Number.isInteger(totalEarned) ? totalEarned : totalEarned.toFixed(1);
+      const pct = student.present ? Math.round((totalEarned / totalPossibleMarks) * 100) : 0;
+      const fbText = document.getElementById(`fb-${sIdx}`) ? 
+        document.getElementById(`fb-${sIdx}`).innerText.replace('Auto-Feedback: ', '') : '';
+
+      html += `
+        <tr>
+          <td>${student.regNo}</td>
+          <td><strong>${student.name}</strong></td>
+          <td>${student.present ? 'Present' : 'Absent'}</td>
+          <td>${displayEarned} / ${totalPossibleMarks}</td>
+          <td>${student.present ? pct + '%' : '-'}</td>
+          <td style="font-size:0.75rem; font-family: monospace;">${itemDetails.join(' | ')}</td>
+          <td style="font-size:0.75rem;">${fbText}</td>
+        </tr>
+      `;
+    });
+
+    html += `
+        </tbody>
+      </table>
+    `;
+
+    document.getElementById('class-report-preview').innerHTML = html;
+    document.getElementById('class-report-modal').classList.remove('hidden');
+
+    if (totalLoss > 0) {
+      setTimeout(() => {
+        renderParetoChart(paretoData, 'reportParetoCanvas');
+      }, 50);
+    }
+  }
+
+  function printClassReport() {
+    const reportContent = document.getElementById('class-report-preview').innerHTML;
+    document.getElementById('print-area').innerHTML = reportContent;
+    
+    const origCanvas = document.getElementById('reportParetoCanvas');
+    if (origCanvas) {
+      const printCanvas = document.getElementById('print-area').querySelector('#reportParetoCanvas');
+      if (printCanvas) {
+        const printCtx = printCanvas.getContext('2d');
+        printCanvas.width = origCanvas.width;
+        printCanvas.height = origCanvas.height;
+        printCtx.drawImage(origCanvas, 0, 0);
+      }
+    }
+
+    window.print();
+  }
+
+  function openStudentReportsModal() {
+    const cls = classData[activeClassIdx];
+    const session = cls.assignments[cls.activeAssignmentIdx];
+    if (!session) return;
+
+    const select = document.getElementById('report-student-select');
+    select.innerHTML = '<option value="all">🖨️ Print All Student Slips</option>';
+
+    session.studentData.forEach((student, sIdx) => {
+      const opt = document.createElement('option');
+      opt.value = sIdx;
+      opt.innerText = `${student.regNo} - ${student.name}`;
+      select.appendChild(opt);
+    });
+
+    renderStudentReportsPreview();
+    document.getElementById('student-report-modal').classList.remove('hidden');
+  }
+
+  function renderStudentReportsPreview() {
+    const cls = classData[activeClassIdx];
+    const session = cls.assignments[cls.activeAssignmentIdx];
+    if (!session) return;
+
+    const selectVal = document.getElementById('report-student-select').value;
+    const previewContainer = document.getElementById('student-report-preview');
+    
+    let html = '';
+
+    if (selectVal === 'all') {
+      session.studentData.forEach((student, sIdx) => {
+        html += generateStudentSlipHTML(sIdx);
+        if (sIdx < session.studentData.length - 1) {
+          html += '<div class="page-break"></div>';
+        }
+      });
+    } else {
+      const sIdx = parseInt(selectVal, 10);
+      html = generateStudentSlipHTML(sIdx);
+    }
+
+    previewContainer.innerHTML = html;
+  }
+
+  function generateStudentSlipHTML(sIdx) {
+    const cls = classData[activeClassIdx];
+    const session = cls.assignments[cls.activeAssignmentIdx];
+    const student = session.studentData[sIdx];
+    const schemeKey = session.gradingScheme || 'diagnostic';
+    const cfg = SCHEME_CONFIG[schemeKey];
+    const totalPossibleMarks = session.qLabels.length * cfg.maxPerQ;
+
+    let totalEarned = 0;
+    student.answers.forEach(st => { totalEarned += (cfg.points[st] || 0); });
+    const displayEarned = Number.isInteger(totalEarned) ? totalEarned : totalEarned.toFixed(1);
+    const pct = student.present ? Math.round((totalEarned / totalPossibleMarks) * 100) : 0;
+    const fbText = document.getElementById(`fb-${sIdx}`) ? 
+      document.getElementById(`fb-${sIdx}`).innerText.replace('Auto-Feedback: ', '') : '';
+
+    let tableRows = '';
+    session.qLabels.forEach((qLabel, qIdx) => {
+      const st = student.answers[qIdx] || 'unmarked';
+      const pts = cfg.points[st] || 0;
+      const tagLabel = cfg.labels[st] || st;
+
+      tableRows += `
+        <tr>
+          <td><strong>${qLabel}</strong></td>
+          <td>${tagLabel || '-'}</td>
+          <td>${pts} / ${cfg.maxPerQ}</td>
+        </tr>
+      `;
+    });
+
+    return `
+      <div class="student-slip">
+        <div class="slip-header">
+          <div>
+            <h3 style="margin:0;">Student Performance Progress Slip</h3>
+            <small>${cls.name} — ${session.assignment}</small>
+          </div>
+          <div style="text-align: right;">
+            <strong>Date:</strong> ${formatDate()}
+          </div>
+        </div>
+
+        <div class="slip-grid">
+          <div><strong>Student Name:</strong> ${student.name}</div>
+          <div><strong>Reg No:</strong> ${student.regNo}</div>
+          <div><strong>Status:</strong> ${student.present ? 'Submitted / Present' : 'Absent / Not Submitted'}</div>
+          <div><strong>Overall Result:</strong> ${displayEarned} / ${totalPossibleMarks} (${pct}%)</div>
+        </div>
+
+        <table class="slip-table">
+          <thead>
+            <tr>
+              <th>Question Item</th>
+              <th>Diagnostic Tag</th>
+              <th>Marks</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${tableRows}
+          </tbody>
+        </table>
+
+        <div style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 10px; border-radius: 6px; margin-top: 10px;">
+          <strong>Teacher Feedback & Guidance:</strong><br>
+          <span>${fbText}</span>
+        </div>
+
+        <div class="signature-block">
+          <div class="sig-line">Teacher's Signature & Date</div>
+          <div class="sig-line">Parent / Guardian Signature</div>
+        </div>
+      </div>
+    `;
+  }
+
+  function printStudentSlips() {
+    const reportContent = document.getElementById('student-report-preview').innerHTML;
+    document.getElementById('print-area').innerHTML = reportContent;
+    window.print();
+  }
+
+  function printIndividualSlip(sIdx) {
+    const html = generateStudentSlipHTML(sIdx);
+    document.getElementById('print-area').innerHTML = html;
+    window.print();
+  }
+
+  function exportCSV() {
+    const cls = classData[activeClassIdx];
+    const session = cls.assignments[cls.activeAssignmentIdx];
+    const schemeKey = session.gradingScheme || 'diagnostic';
+    const cfg = SCHEME_CONFIG[schemeKey];
+    const totalPossibleMarks = session.qLabels.length * cfg.maxPerQ;
+
+    let csvRows = ["Class,Assignment,Grading System,Reg No,Student,Present,Score,Percentage,Pass/Fail,Auto Feedback"];
+
+    session.studentData.forEach((student, sIdx) => {
+      let totalEarned = 0;
+      student.answers.forEach(st => { totalEarned += (cfg.points[st] || 0); });
+      const displayEarned = Number.isInteger(totalEarned) ? totalEarned : totalEarned.toFixed(1);
+      const pct = Math.round((totalEarned / totalPossibleMarks) * 100) || 0;
+      const passFailStr = pct >= 50 ? 'PASS' : 'FAIL';
+      const fbText = document.getElementById(`fb-${sIdx}`).innerText.replace('Auto-Feedback: ', '').replace(/"/g, '""');
+      
+      const scoreFormatted = `=""${displayEarned}/${totalPossibleMarks}""`;
+
+      csvRows.push(`"${cls.name}","${session.assignment}","${schemeKey === 'points' ? 'Partial Credit Points (5-Tap)' : 'Diagnostic Feedback (5-Tap)'}","${student.regNo}","${student.name}","${student.present ? 'Yes' : 'No'}","${scoreFormatted}","${pct}%","${passFailStr}","${fbText}"`);
+    });
+
+    const csvString = "\uFEFF" + csvRows.join("\n");
+    const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `Grading_${cls.name}_${session.assignment}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  function copyToClipboard() {
+    const cls = classData[activeClassIdx];
+    const session = cls.assignments[cls.activeAssignmentIdx];
+    const schemeKey = session.gradingScheme || 'diagnostic';
+    const cfg = SCHEME_CONFIG[schemeKey];
+    const totalPossibleMarks = session.qLabels.length * cfg.maxPerQ;
+
+    let tsvRows = ["Class\tAssignment\tGrading System\tReg No\tStudent\tPresent\tScore\tPercentage\tPass/Fail\tAuto Feedback"];
+
+    session.studentData.forEach((student, sIdx) => {
+      let totalEarned = 0;
+      student.answers.forEach(st => { totalEarned += (cfg.points[st] || 0); });
+      const displayEarned = Number.isInteger(totalEarned) ? totalEarned : totalEarned.toFixed(1);
+      const pct = Math.round((totalEarned / totalPossibleMarks) * 100) || 0;
+      const passFailStr = pct >= 50 ? 'PASS' : 'FAIL';
+      const fbText = document.getElementById(`fb-${sIdx}`).innerText.replace('Auto-Feedback: ', '');
+      
+      const scoreFormatted = `="${displayEarned}/${totalPossibleMarks}"`;
+
+      tsvRows.push(`${cls.name}\t${session.assignment}\t${schemeKey === 'points' ? 'Partial Credit Points (5-Tap)' : 'Diagnostic Feedback (5-Tap)'}\t${student.regNo}\t${student.name}\t${student.present ? 'Yes' : 'No'}\t${scoreFormatted}\t${pct}%\t${passFailStr}\t${fbText}`);
+    });
+
+    navigator.clipboard.writeText(tsvRows.join("\n")).then(() => {
+      showToast("📋 Assignment data copied to clipboard!");
+    }).catch(() => {
+      showToast("⚠️ Clipboard blocked. Please use CSV export.");
+    });
+  }
+</script>
+
+</body>
+</html>

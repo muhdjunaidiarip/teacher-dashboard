@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Classroom Hub V6 Pro</title>
+  <style>
+    :root {
+      --bg-main: #0f172a;
+      --card-bg: rgba(30, 41, 59, 0.75);
+      --card-bg-solid: #1e293b;
+      --card-border: rgba(255, 255, 255, 0.08);
+      --accent: #6366f1;
+      --accent-glow: rgba(99, 102, 241, 0.4);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --red-glow: #ef4444;
+      --amber-glow: #f59e0b;
+      --green-glow: #10b981;
+      --input-bg: #334155;
+      --input-text: #ffffff;
+      --input-hover: #475569;
+      --slot-bg: #090d16;
+      --highlight-color: #38bdf8;
+      --badge-bg: #1e293b;
+      --item-bg: rgba(255, 255, 255, 0.03);
+      --ring-bg-stroke: rgba(255, 255, 255, 0.08);
+      --modal-bg: #1e293b;
+      --shadow-main: 0 10px 25px -5px rgba(0, 0, 0, 0.35);
+    }
+
+    [data-theme="light"] {
+      --bg-main: #f1f5f9;
+      --card-bg: rgba(255, 255, 255, 0.85);
+      --card-bg-solid: #ffffff;
+      --card-border: rgba(203, 213, 225, 0.8);
+      --accent: #4f46e5;
+      --accent-glow: rgba(79, 70, 229, 0.25);
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --red-glow: #ef4444;
+      --amber-glow: #d97706;
+      --green-glow: #10b981;
+      --input-bg: #e2e8f0;
+      --input-text: #0f172a;
+      --input-hover: #cbd5e1;
+      --slot-bg: #f8fafc;
+      --highlight-color: #0284c7;
+      --badge-bg: #e2e8f0;
+      --item-bg: rgba(0, 0, 0, 0.03);
+      --ring-bg-stroke: rgba(0, 0, 0, 0.08);
+      --modal-bg: #ffffff;
+      --shadow-main: 0 10px 25px -5px rgba(148, 163, 184, 0.25);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      min-height: 100vh;
+      width: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+      gap: 16px;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* FIREWORKS CANVAS OVERLAY */
+    #fireworksCanvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    /* HEADER */
+    header {
+      min-height: 50px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
+      padding: 10px 20px;
+      border-radius: 12px;
+      box-shadow: var(--shadow-main);
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+    .logo { 
+      font-size: 1.2rem; 
+      font-weight: 700; 
+      background: linear-gradient(90deg, #6366f1, #a855f7); 
+      -webkit-background-clip: text; 
+      -webkit-text-fill-color: transparent; 
+    }
+    .header-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+    select, button, input {
+      background: var(--input-bg);
+      color: var(--input-text);
+      border: 1px solid var(--card-border);
+      padding: 7px 12px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.85rem;
+    }
+    button:hover, select:hover { background: var(--input-hover); transform: translateY(-1px); }
+    button.primary { background: var(--accent); color: #fff; box-shadow: 0 0 12px var(--accent-glow); }
+    button.primary:hover { opacity: 0.9; }
+    button.danger { background: rgba(239, 68, 68, 0.15); color: #ef4444; border-color: rgba(239, 68, 68, 0.3); }
+    button.danger:hover { background: #dc2626; color: #fff; }
+
+    /* DASHBOARD GRID */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 340px 1fr 340px;
+      gap: 16px;
+      min-height: calc(100vh - 98px);
+    }
+
+    @media (max-width: 1024px) {
+      .dashboard-grid { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      box-shadow: var(--shadow-main);
+      transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .card-title {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    /* LEFT COLUMN: TRAFFIC LIGHT + TIMER */
+    .left-col { display: flex; flex-direction: column; gap: 12px; }
+
+    .traffic-card { flex: 0 0 auto; align-items: center; padding: 12px 16px; }
+    .traffic-light-capsule {
+      display: flex;
+      gap: 16px;
+      background: var(--slot-bg);
+      padding: 8px 18px;
+      border-radius: 30px;
+      border: 1px solid var(--card-border);
+      transition: background 0.3s ease;
+    }
+    .light {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      opacity: 0.25;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .light.red { background: var(--red-glow); }
+    .light.amber { background: var(--amber-glow); }
+    .light.green { background: var(--green-glow); }
+    .light.red.active { opacity: 1; box-shadow: 0 0 20px var(--red-glow); transform: scale(1.1); }
+    .light.amber.active { opacity: 1; box-shadow: 0 0 20px var(--amber-glow); transform: scale(1.1); }
+    .light.green.active { opacity: 1; box-shadow: 0 0 20px var(--green-glow); transform: scale(1.1); }
+
+    /* TIMER DESIGN */
+    .timer-card { 
+      flex: 1; 
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+      justify-content: flex-start; 
+      padding: 12px 16px;
+      min-height: 320px; 
+    }
+    .timer-ring-container { 
+      position: relative; 
+      width: 235px; 
+      height: 235px; 
+      margin: 2px 0 6px 0; 
+      cursor: pointer;
+      user-select: none;
+      border-radius: 50%;
+      transition: transform 0.15s ease, filter 0.2s ease;
+    }
+    .timer-ring-container:hover {
+      transform: scale(1.02);
+      filter: drop-shadow(0 0 12px var(--accent-glow));
+    }
+    .timer-ring-container:active {
+      transform: scale(0.98);
+    }
+    .timer-ring { transform: rotate(-90deg); width: 100%; height: 100%; }
+    .timer-ring-circle {
+      stroke: var(--accent);
+      stroke-width: 9;
+      stroke-linecap: round;
+      fill: transparent;
+      r: 86;
+      cx: 100;
+      cy: 100;
+      stroke-dasharray: 540.35;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1s linear, stroke 0.3s ease;
+    }
+    .timer-ring-bg { 
+      stroke: var(--ring-bg-stroke); 
+      stroke-width: 9; 
+      fill: transparent; 
+      r: 86; cx: 100; cy: 100; 
+    }
+    .timer-text-overlay {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+    .timer-display { 
+      font-size: 3.4rem; 
+      font-weight: 800; 
+      font-family: monospace; 
+      color: var(--text-main); 
+      line-height: 1;
+    }
+    
+    .timer-controls { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-top: 2px; }
+    .timer-controls button { font-size: 0.75rem; padding: 5px 9px; }
+
+    /* CENTER COLUMN: RANDOM PICKER */
+    .picker-card { flex: 1; align-items: center; justify-content: flex-start; position: relative; overflow: hidden; min-height: 400px; }
+    
+    /* SLOT MACHINE REEL VIEW */
+    .slot-machine-container {
+      width: 100%;
+      height: 250px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .slot-window {
+      width: 95%;
+      height: 140px;
+      background: var(--slot-bg);
+      border: 2px solid var(--accent);
+      border-radius: 16px;
+      box-shadow: inset 0 0 15px rgba(0,0,0,0.15), 0 0 15px var(--accent-glow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+      padding: 10px 16px;
+      transition: background 0.3s ease;
+    }
+    .slot-name-display {
+      font-size: clamp(1.4rem, 4vw, 2.3rem);
+      font-weight: 900;
+      color: var(--highlight-color);
+      text-shadow: 0 0 12px var(--accent-glow);
+      text-align: center;
+      word-break: break-word;
+      line-height: 1.25;
+      max-width: 100%;
+    }
+
+    /* CANVAS WHEEL VIEW - SLIGHTLY LARGER WHEEL */
+    .wheel-container { 
+      position: relative; 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+      margin: 10px 0 4px 0; 
+    }
+    .wheel-pointer {
+      position: absolute;
+      top: -10px;
+      z-index: 10;
+      width: 0; height: 0;
+      border-left: 12px solid transparent;
+      border-right: 12px solid transparent;
+      border-top: 20px solid #f43f5e;
+      filter: drop-shadow(0 3px 5px rgba(0,0,0,0.3));
+    }
+    canvas#wheelCanvas { border-radius: 50%; box-shadow: 0 0 20px rgba(0,0,0,0.25); }
+    .wheel-spin-btn {
+      position: absolute;
+      width: 54px; height: 54px;
+      border-radius: 50%;
+      background: var(--card-bg-solid);
+      color: var(--text-main);
+      border: 3px solid var(--accent);
+      font-weight: 800;
+      font-size: 0.85rem;
+      box-shadow: 0 0 12px var(--accent-glow);
+      display: flex; justify-content: center; align-items: center;
+      cursor: pointer;
+      z-index: 5;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .action-btn-large {
+      margin-top: 15px;
+      padding: 12px 30px;
+      font-size: 1.1rem;
+      border-radius: 30px;
+      letter-spacing: 0.05em;
+    }
+
+    /* WINNER BANNER SHIFTED ONE STEP LOWER */
+    .winner-banner {
+      margin-top: 18px;
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--highlight-color);
+      min-height: 48px;
+      text-align: center;
+      text-shadow: 0 0 15px var(--accent-glow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .winner-banner.pop { animation: winnerPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
+    @keyframes winnerPop {
+      0% { transform: scale(0.6); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .picker-badge {
+      font-size: 0.75rem;
+      background: var(--badge-bg);
+      border: 1px solid var(--card-border);
+      padding: 3px 8px;
+      border-radius: 12px;
+      color: var(--amber-glow);
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* RIGHT COLUMN: SCOREBOARD */
+    .scoreboard-card { flex: 1; min-height: 400px; }
+    .student-list {
+      flex: 1;
+      overflow-y: auto;
+      max-height: 600px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-right: 4px;
+    }
+    .student-list::-webkit-scrollbar { width: 6px; }
+    .student-list::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.3); border-radius: 4px; }
+    
+    .student-item {
+      background: var(--item-bg);
+      border: 1px solid var(--card-border);
+      padding: 10px 14px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.3s ease;
+    }
+    .student-name { font-weight: 600; font-size: 0.95rem; }
+    .score-controls { display: flex; align-items: center; gap: 8px; }
+    .score-badge {
+      font-size: 1.1rem;
+      font-weight: 800;
+      min-width: 32px;
+      text-align: center;
+      color: var(--highlight-color);
+    }
+    .btn-circle {
+      width: 28px; height: 28px;
+      padding: 0;
+      border-radius: 50%;
+      display: flex; justify-content: center; align-items: center;
+      font-size: 1rem; line-height: 0;
+    }
+
+    /* MODAL POPUP */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(6px);
+      display: flex; justify-content: center; align-items: center;
+      z-index: 1000;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+    .modal-overlay.active { opacity: 1; pointer-events: all; }
+    .modal-box {
+      background: var(--modal-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      width: 90%;
+      max-width: 500px;
+      padding: 24px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+      color: var(--text-main);
+      transition: background 0.3s ease;
+    }
+    
+    .tab-header { display: flex; gap: 8px; margin: 12px 0 8px 0; border-bottom: 1px solid var(--card-border); padding-bottom: 8px; }
+    .tab-btn { background: transparent; border: none; color: var(--text-muted); padding: 6px 12px; border-radius: 6px; }
+    .tab-btn.active { background: var(--accent); color: #fff; font-weight: bold; }
+
+    textarea {
+      width: 100%; height: 130px;
+      background: var(--input-bg); color: var(--input-text);
+      border: 1px solid var(--card-border);
+      border-radius: 8px; padding: 10px;
+      font-family: inherit; margin-top: 6px;
+      resize: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- FIREWORKS CANVAS -->
+  <canvas id="fireworksCanvas"></canvas>
+
+  <!-- TOP HEADER -->
+  <header>
+    <div class="logo">⚡ CLASSROOM HUB V6 Pro</div>
+    <div class="header-actions">
+      <button id="themeToggleBtn" onclick="toggleTheme()">☀️ Bright Mode</button>
+      <button id="soundToggleBtn" onclick="toggleSound()">🔊 Sound ON</button>
+      <label for="classSelect" style="font-size: 0.85rem; color: var(--text-muted);">ACTIVE CLASS:</label>
+      <select id="classSelect" onchange="switchClass()"></select>
+      <button class="danger" onclick="deleteCurrentClass()" title="Delete active class">🗑️ Delete Class</button>
+      <button onclick="openModal()">⚙️ Manage Rosters</button>
+    </div>
+  </header>
+
+  <!-- DASHBOARD GRID LAYOUT -->
+  <div class="dashboard-grid">
+    
+    <!-- LEFT PANEL -->
+    <div class="left-col">
+      <!-- Traffic Light Indicator -->
+      <div class="card traffic-card">
+        <div class="card-title">Noise Level Indicator</div>
+        <div class="traffic-light-capsule">
+          <div id="light-red" class="light red" onclick="setLight('red')"></div>
+          <div id="light-amber" class="light amber" onclick="setLight('amber')"></div>
+          <div id="light-green" class="light green active" onclick="setLight('green')"></div>
+        </div>
+      </div>
+
+      <!-- Circular Countdown Timer -->
+      <div class="card timer-card">
+        <div class="card-title">Focus Timer</div>
+        <div class="timer-ring-container" id="timerInteractiveRing" onclick="handleTimerTap(event)">
+          <svg class="timer-ring" viewBox="0 0 200 200">
+            <circle class="timer-ring-bg"/>
+            <circle id="timerProgress" class="timer-ring-circle"/>
+          </svg>
+          <div class="timer-text-overlay">
+            <div class="timer-display" id="timerDisplay">03:00</div>
+          </div>
+        </div>
+        <div class="timer-controls">
+          <button class="primary" onclick="toggleTimer()" id="startBtn">Start</button>
+          <button onclick="resetTimer()">Reset</button>
+          <button onclick="addTime(-60)">-1m</button>
+          <button onclick="addTime(60)">+1m</button>
+          <button onclick="setCustomTime()">Set...</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CENTER PANEL: RANDOM PICKER -->
+    <div class="card picker-card">
+      <div class="card-title" style="width: 100%;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span>Random Student Picker</span>
+          <span id="pickerPoolBadge" class="picker-badge" style="display: none;"></span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+          <select id="pickerTypeSelect" onchange="changePickerType()" style="padding: 2px 6px; font-size: 0.75rem;">
+            <option value="allowDuplicates">🔁 Allow Repeats</option>
+            <option value="noDuplicates">🚫 No Duplicates</option>
+          </select>
+          <button id="resetPoolBtn" style="padding: 2px 8px; font-size: 0.75rem; display: none;" onclick="manualResetPickedPool()" title="Reset drawn students pool">🔄 Reset</button>
+          <button id="modeSlotBtn" style="padding: 2px 8px; font-size: 0.75rem;" class="primary" onclick="setPickerMode('slot')">🎰 Slot</button>
+          <button id="modeWheelBtn" style="padding: 2px 8px; font-size: 0.75rem;" onclick="setPickerMode('wheel')">🎡 Wheel</button>
+        </div>
+      </div>
+
+      <!-- SLOT MACHINE REEL VIEW -->
+      <div id="slotView" class="slot-machine-container">
+        <div class="slot-window">
+          <div class="slot-name-display" id="slotDisplay">READY?</div>
+        </div>
+        <button class="primary action-btn-large" onclick="spinSlotMachine()">🎰 PICK NAME!</button>
+      </div>
+
+      <!-- OPTIMIZED CANVAS WHEEL VIEW -->
+      <div id="wheelView" class="wheel-container" style="display: none;">
+        <div class="wheel-pointer"></div>
+        <canvas id="wheelCanvas" width="260" height="260"></canvas>
+        <div class="wheel-spin-btn" onclick="spinWheel()">SPIN</div>
+      </div>
+
+      <!-- WINNER BANNER -->
+      <div class="winner-banner" id="winnerDisplay"></div>
+    </div>
+
+    <!-- RIGHT PANEL: SCOREBOARD -->
+    <div class="card scoreboard-card">
+      <div class="card-title">
+        <span>Scoreboard</span>
+        <button class="danger" style="padding: 2px 8px; font-size: 0.75rem;" onclick="resetScores()">Reset All</button>
+      </div>
+      <div class="student-list" id="scoreboardGrid"></div>
+    </div>
+
+  </div>
+
+  <!-- MODAL: ROSTER MANAGER -->
+  <div class="modal-overlay" id="rosterModal">
+    <div class="modal-box">
+      <h3>⚙️ Class Rosters Manager</h3>
+      
+      <div class="tab-header">
+        <button class="tab-btn active" id="tabWheelBtn" onclick="switchRosterTab('wheel')">🎡 Picker Roster</button>
+        <button class="tab-btn" id="tabScoreBtn" onclick="switchRosterTab('score')">🏆 Scoreboard Roster</button>
+      </div>
+
+      <div id="wheelTabContent">
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 10px;">Names for Random Picker (one per line):</p>
+        <textarea id="wheelRosterInput"></textarea>
+      </div>
+
+      <div id="scoreTabContent" style="display: none;">
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 10px;">Names/Teams for Scoreboard (one per line):</p>
+        <textarea id="scoreboardRosterInput"></textarea>
+      </div>
+
+      <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px;">
+        <button onclick="addNewClass()">+ New Class</button>
+        <button class="primary" onclick="saveRoster()">Save Rosters</button>
+        <button onclick="closeModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- SYNTHESIZED SOUND ENGINE (WEB AUDIO API) ---
+    let soundEnabled = true;
+    let audioCtx = null;
+
+    function getAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      const btn = document.getElementById('soundToggleBtn');
+      btn.innerText = soundEnabled ? '🔊 Sound ON' : '🔇 Sound OFF';
+    }
+
+    function playTickSound() {
+      if (!soundEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(450, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(120, ctx.currentTime + 0.03);
+        gain.gain.setValueAtTime(0.15, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.03);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.03);
+      } catch (e) {}
+    }
+
+    function playWinSound() {
+      if (!soundEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+        notes.forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.09);
+          gain.gain.setValueAtTime(0.2, ctx.currentTime + idx * 0.09);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.09 + 0.3);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(ctx.currentTime + idx * 0.09);
+          osc.stop(ctx.currentTime + idx * 0.09 + 0.3);
+        });
+      } catch (e) {}
+    }
+
+    function playAlarmSound() {
+      if (!soundEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        const times = [0, 0.18, 0.36, 0.54];
+        times.forEach(t => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(880, ctx.currentTime + t);
+          gain.gain.setValueAtTime(0.15, ctx.currentTime + t);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + t + 0.12);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(ctx.currentTime + t);
+          osc.stop(ctx.currentTime + t + 0.12);
+        });
+      } catch (e) {}
+    }
+
+    // --- STATE MANAGEMENT ---
+    let appData = JSON.parse(localStorage.getItem('classroomDataV6')) || {
+      theme: 'dark',
+      currentClass: 'Class 1A',
+      pickerMode: 'slot',
+      pickerType: 'allowDuplicates',
+      classes: {
+        'Class 1A': {
+          wheelNames: Array.from({length: 40}, (_, i) => `Student ${i + 1}`),
+          pickedNames: [],
+          scoreboard: [
+            { name: 'Team Alpha', score: 0 },
+            { name: 'Team Beta', score: 0 },
+            { name: 'Team Gamma', score: 0 }
+          ]
+        }
+      }
+    };
+
+    if (!appData.theme) appData.theme = 'dark';
+    if (!appData.pickerType) appData.pickerType = 'allowDuplicates';
+    for (let c in appData.classes) {
+      if (!appData.classes[c].pickedNames) appData.classes[c].pickedNames = [];
+    }
+
+    function saveData() {
+      localStorage.setItem('classroomDataV6', JSON.stringify(appData));
+    }
+
+    // --- THEME SWITCHING ENGINE ---
+    function applyTheme(theme) {
+      appData.theme = theme;
+      document.documentElement.setAttribute('data-theme', theme);
+      const btn = document.getElementById('themeToggleBtn');
+      if (btn) {
+        btn.innerText = theme === 'dark' ? '☀️ Bright Mode' : '🌙 Dark Mode';
+      }
+      saveData();
+      drawWheel();
+    }
+
+    function toggleTheme() {
+      const newTheme = appData.theme === 'dark' ? 'light' : 'dark';
+      applyTheme(newTheme);
+    }
+
+    function getAvailableNames() {
+      const cls = appData.classes[appData.currentClass];
+      if (!cls || !cls.wheelNames) return [];
+      
+      if (appData.pickerType === 'noDuplicates') {
+        const picked = cls.pickedNames || [];
+        return cls.wheelNames.filter(name => !picked.includes(name));
+      }
+      return cls.wheelNames;
+    }
+
+    function changePickerType() {
+      appData.pickerType = document.getElementById('pickerTypeSelect').value;
+      saveData();
+      updatePickerBadge();
+      drawWheel();
+    }
+
+    function updatePickerBadge() {
+      const badge = document.getElementById('pickerPoolBadge');
+      const resetBtn = document.getElementById('resetPoolBtn');
+      const cls = appData.classes[appData.currentClass];
+      
+      if (appData.pickerType === 'noDuplicates') {
+        const total = cls ? cls.wheelNames.length : 0;
+        const available = getAvailableNames().length;
+        badge.innerText = `Remaining: ${available}/${total}`;
+        badge.style.display = 'inline-flex';
+        resetBtn.style.display = 'inline-block';
+      } else {
+        badge.style.display = 'none';
+        resetBtn.style.display = 'none';
+      }
+    }
+
+    function manualResetPickedPool() {
+      const cls = appData.classes[appData.currentClass];
+      if (cls) {
+        cls.pickedNames = [];
+        saveData();
+        updatePickerBadge();
+        drawWheel();
+        document.getElementById('winnerDisplay').innerText = '';
+        document.getElementById('slotDisplay').innerText = 'READY?';
+      }
+    }
+
+    // --- CLASS MANAGEMENT & DELETION ---
+    function initClassSelect() {
+      const select = document.getElementById('classSelect');
+      select.innerHTML = '';
+      for (let className in appData.classes) {
+        let opt = document.createElement('option');
+        opt.value = className;
+        opt.innerText = className;
+        if (className === appData.currentClass) opt.selected = true;
+        select.appendChild(opt);
+      }
+      loadCurrentClass();
+    }
+
+    function switchClass() {
+      appData.currentClass = document.getElementById('classSelect').value;
+      saveData();
+      loadCurrentClass();
+    }
+
+    function loadCurrentClass() {
+      const cls = appData.classes[appData.currentClass] || { wheelNames: [], scoreboard: [], pickedNames: [] };
+      document.getElementById('wheelRosterInput').value = (cls.wheelNames || []).join('\n');
+      document.getElementById('scoreboardRosterInput').value = (cls.scoreboard || []).map(s => s.name).join('\n');
+      document.getElementById('pickerTypeSelect').value = appData.pickerType || 'allowDuplicates';
+      document.getElementById('winnerDisplay').innerText = '';
+      document.getElementById('slotDisplay').innerText = 'READY?';
+      
+      updatePickerBadge();
+      renderScoreboard();
+      drawWheel();
+      setPickerMode(appData.pickerMode || 'slot');
+    }
+
+    function deleteCurrentClass() {
+      const classKeys = Object.keys(appData.classes);
+      if (classKeys.length <= 1) {
+        alert("You cannot delete the only remaining class!");
+        return;
+      }
+
+      if (confirm(`Are you sure you want to delete "${appData.currentClass}"?`)) {
+        delete appData.classes[appData.currentClass];
+        const remainingKeys = Object.keys(appData.classes);
+        appData.currentClass = remainingKeys[0];
+        saveData();
+        initClassSelect();
+      }
+    }
+
+    function setPickerMode(mode) {
+      appData.pickerMode = mode;
+      saveData();
+      const slotView = document.getElementById('slotView');
+      const wheelView = document.getElementById('wheelView');
+      const btnSlot = document.getElementById('modeSlotBtn');
+      const btnWheel = document.getElementById('modeWheelBtn');
+
+      document.getElementById('winnerDisplay').innerText = '';
+      
+      if (mode === 'slot') {
+        slotView.style.display = 'flex';
+        wheelView.style.display = 'none';
+        btnSlot.classList.add('primary');
+        btnWheel.classList.remove('primary');
+        document.getElementById('slotDisplay').innerText = 'READY?';
+      } else {
+        slotView.style.display = 'none';
+        wheelView.style.display = 'flex';
+        btnWheel.classList.add('primary');
+        btnSlot.classList.remove('primary');
+        drawWheel();
+      }
+    }
+
+    function switchRosterTab(tab) {
+      if (tab === 'wheel') {
+        document.getElementById('wheelTabContent').style.display = 'block';
+        document.getElementById('scoreTabContent').style.display = 'none';
+        document.getElementById('tabWheelBtn').classList.add('active');
+        document.getElementById('tabScoreBtn').classList.remove('active');
+      } else {
+        document.getElementById('wheelTabContent').style.display = 'none';
+        document.getElementById('scoreTabContent').style.display = 'block';
+        document.getElementById('tabWheelBtn').classList.remove('active');
+        document.getElementById('tabScoreBtn').classList.add('active');
+      }
+    }
+
+    function saveRoster() {
+      const cls = appData.classes[appData.currentClass];
+      
+      const wheelLines = document.getElementById('wheelRosterInput').value.split('\n').filter(n => n.trim() !== '');
+      cls.wheelNames = wheelLines.map(n => n.trim());
+
+      cls.pickedNames = (cls.pickedNames || []).filter(n => cls.wheelNames.includes(n));
+
+      const scoreLines = document.getElementById('scoreboardRosterInput').value.split('\n').filter(n => n.trim() !== '');
+      const existingScoreboard = cls.scoreboard || [];
+      
+      cls.scoreboard = scoreLines.map(name => {
+        const found = existingScoreboard.find(s => s.name === name.trim());
+        return { name: name.trim(), score: found ? found.score : 0 };
+      });
+
+      saveData();
+      loadCurrentClass();
+      closeModal();
+    }
+
+    function addNewClass() {
+      const name = prompt("Enter new class name:");
+      if (name && !appData.classes[name]) {
+        appData.classes[name] = { wheelNames: [], scoreboard: [], pickedNames: [] };
+        appData.currentClass = name;
+        saveData();
+        initClassSelect();
+      }
+    }
+
+    function openModal() { document.getElementById('rosterModal').classList.add('active'); }
+    function closeModal() { document.getElementById('rosterModal').classList.remove('active'); }
+
+    // --- TRAFFIC LIGHT ---
+    function setLight(color) {
+      document.querySelectorAll('.light').forEach(l => l.classList.remove('active'));
+      document.getElementById(`light-${color}`).classList.add('active');
+    }
+
+    // --- CIRCULAR TIMER ---
+    let totalTime = 180;
+    let remainingTime = 180;
+    let timerInterval = null;
+    let timerClickTimeout = null;
+    const circlePerimeter = 2 * Math.PI * 86;
+
+    function handleTimerTap(event) {
+      if (timerClickTimeout !== null) {
+        clearTimeout(timerClickTimeout);
+        timerClickTimeout = null;
+        resetTimer();
+      } else {
+        timerClickTimeout = setTimeout(() => {
+          timerClickTimeout = null;
+          toggleTimer();
+        }, 250);
+      }
+    }
+
+    function updateTimerDisplay() {
+      let mins = Math.floor(remainingTime / 60);
+      let secs = remainingTime % 60;
+      document.getElementById('timerDisplay').innerText = 
+        `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+      
+      const offset = circlePerimeter - (remainingTime / totalTime) * circlePerimeter;
+      document.getElementById('timerProgress').style.strokeDashoffset = isNaN(offset) ? 0 : offset;
+    }
+
+    function toggleTimer() {
+      const btn = document.getElementById('startBtn');
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        btn.innerText = "Start";
+      } else {
+        if (remainingTime <= 0) return;
+        btn.innerText = "Pause";
+        timerInterval = setInterval(() => {
+          if (remainingTime > 0) {
+            remainingTime--;
+            updateTimerDisplay();
+          } else {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            btn.innerText = "Start";
+            playAlarmSound();
+            triggerFireworks();
+            alert("⏰ Time is up!");
+          }
+        }, 1000);
+      }
+    }
+
+    function resetTimer() {
+      if (timerInterval) toggleTimer();
+      remainingTime = totalTime;
+      updateTimerDisplay();
+    }
+
+    function addTime(seconds) {
+      remainingTime = Math.max(0, remainingTime + seconds);
+      if (remainingTime > totalTime) totalTime = remainingTime;
+      if (totalTime <= 0) totalTime = 180;
+      updateTimerDisplay();
+    }
+
+    function setCustomTime() {
+      const mins = prompt("Enter custom time in minutes:", "3");
+      if (mins && !isNaN(mins)) {
+        totalTime = parseInt(mins) * 60;
+        remainingTime = totalTime;
+        updateTimerDisplay();
+      }
+    }
+
+    // --- SCOREBOARD ---
+    function renderScoreboard() {
+      const container = document.getElementById('scoreboardGrid');
+      container.innerHTML = '';
+      const cls = appData.classes[appData.currentClass] || { scoreboard: [] };
+
+      cls.scoreboard.forEach((student, index) => {
+        const item = document.createElement('div');
+        item.className = 'student-item';
+        item.innerHTML = `
+          <span class="student-name">${student.name}</span>
+          <div class="score-controls">
+            <button class="btn-circle" onclick="changeScore(${index}, -1)">-</button>
+            <span class="score-badge">${student.score}</span>
+            <button class="btn-circle" onclick="changeScore(${index}, 1)">+</button>
+          </div>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function changeScore(index, delta) {
+      appData.classes[appData.currentClass].scoreboard[index].score += delta;
+      saveData();
+      renderScoreboard();
+    }
+
+    function resetScores() {
+      if (confirm("Reset all scores to 0?")) {
+        appData.classes[appData.currentClass].scoreboard.forEach(s => s.score = 0);
+        saveData();
+        renderScoreboard();
+      }
+    }
+
+    // --- SLOT MACHINE SHUFFLER ---
+    let isSlotSpinning = false;
+    function spinSlotMachine() {
+      if (isSlotSpinning) return;
+      const cls = appData.classes[appData.currentClass];
+      if (!cls || !cls.wheelNames || cls.wheelNames.length === 0) {
+        return alert("Please add names to the picker roster first!");
+      }
+
+      let available = getAvailableNames();
+      if (available.length === 0) {
+        alert("All students have been picked! Resetting student pool now.");
+        cls.pickedNames = [];
+        saveData();
+        updatePickerBadge();
+        available = getAvailableNames();
+      }
+
+      isSlotSpinning = true;
+      const winnerDisplay = document.getElementById('winnerDisplay');
+      const slotDisplay = document.getElementById('slotDisplay');
+      winnerDisplay.classList.remove('pop');
+      winnerDisplay.innerText = '';
+
+      let counter = 0;
+      let speed = 40;
+      let maxSpins = Math.floor(Math.random() * 20) + 35;
+
+      function shuffleStep() {
+        const randomName = available[Math.floor(Math.random() * available.length)];
+        slotDisplay.innerText = randomName;
+        playTickSound();
+        counter++;
+
+        if (counter < maxSpins) {
+          if (counter > maxSpins - 15) speed += 20;
+          if (counter > maxSpins - 5) speed += 60;
+          setTimeout(shuffleStep, speed);
+        } else {
+          isSlotSpinning = false;
+          const finalWinner = available[Math.floor(Math.random() * available.length)];
+          slotDisplay.innerText = finalWinner;
+          winnerDisplay.innerText = `🎉 Congrats!`;
+          winnerDisplay.classList.add('pop');
+          
+          if (appData.pickerType === 'noDuplicates') {
+            cls.pickedNames.push(finalWinner);
+            saveData();
+            updatePickerBadge();
+          }
+
+          playWinSound();
+          triggerFireworks();
+        }
+      }
+
+      shuffleStep();
+    }
+
+    // --- OPTIMIZED SLIGHTLY LARGER WHEEL PICKER ---
+    let startAngle = 0;
+    let isSpinning = false;
+    let lastTickAngle = 0;
+    const colors = ['#f43f5e', '#8b5cf6', '#06b6d4', '#10b981', '#f59e0b', '#ec4899', '#3b82f6'];
+
+    function drawWheel() {
+      const canvas = document.getElementById('wheelCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const students = getAvailableNames();
+      const numOptions = students.length;
+
+      ctx.clearRect(0, 0, 260, 260);
+
+      if (numOptions === 0) {
+        ctx.fillStyle = appData.theme === 'light' ? "#cbd5e1" : "#334155";
+        ctx.beginPath(); ctx.arc(130, 130, 118, 0, 2 * Math.PI); ctx.fill();
+        ctx.fillStyle = appData.theme === 'light' ? "#0f172a" : "#ffffff";
+        ctx.font = "bold 13px Inter, sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("All Picked!", 130, 134);
+        return;
+      }
+
+      const arcSize = (2 * Math.PI) / numOptions;
+
+      for (let i = 0; i < numOptions; i++) {
+        const angle = startAngle + i * arcSize;
+        ctx.fillStyle = colors[i % colors.length];
+        
+        ctx.beginPath();
+        ctx.arc(130, 130, 118, angle, angle + arcSize);
+        ctx.lineTo(130, 130);
+        ctx.fill();
+
+        if (numOptions <= 20) {
+          ctx.save();
+          ctx.fillStyle = "#ffffff";
+          ctx.font = "bold 11px Inter, sans-serif";
+          ctx.translate(130 + Math.cos(angle + arcSize / 2) * 70, 130 + Math.sin(angle + arcSize / 2) * 70);
+          ctx.rotate(angle + arcSize / 2 + Math.PI / 2);
+          const text = students[i];
+          ctx.fillText(text, -ctx.measureText(text).width / 2, 0);
+          ctx.restore();
+        }
+      }
+    }
+
+    function spinWheel() {
+      if (isSpinning) return;
+      const cls = appData.classes[appData.currentClass];
+      if (!cls || !cls.wheelNames || cls.wheelNames.length === 0) {
+        return alert("Please add names first!");
+      }
+
+      let students = getAvailableNames();
+      if (students.length === 0) {
+        alert("All students have been picked! Resetting student pool now.");
+        cls.pickedNames = [];
+        saveData();
+        updatePickerBadge();
+        drawWheel();
+        students = getAvailableNames();
+      }
+
+      isSpinning = true;
+      const winnerDisplay = document.getElementById('winnerDisplay');
+      winnerDisplay.classList.remove('pop');
+      winnerDisplay.innerText = "Spinning...";
+      
+      let spinAngleStart = Math.random() * 10 + 15;
+      let spinTime = 0;
+      let spinTimeTotal = Math.random() * 3000 + 4000;
+      lastTickAngle = startAngle;
+
+      function rotate() {
+        spinTime += 30;
+        if (spinTime >= spinTimeTotal) {
+          isSpinning = false;
+          const degrees = (startAngle * 180 / Math.PI) % 360;
+          const arcd = 360 / students.length;
+          const index = Math.floor((360 - (degrees % 360) + 270) % 360 / arcd) % students.length;
+          const winnerName = students[index];
+
+          winnerDisplay.innerText = `🎉 ${winnerName}!`;
+          winnerDisplay.classList.add('pop');
+
+          if (appData.pickerType === 'noDuplicates') {
+            cls.pickedNames.push(winnerName);
+            saveData();
+            updatePickerBadge();
+            drawWheel();
+          }
+
+          playWinSound();
+          triggerFireworks();
+          return;
+        }
+        const spinAngle = spinAngleStart - (spinTime / spinTimeTotal) * spinAngleStart;
+        startAngle += (spinAngle * Math.PI / 180);
+
+        if (Math.abs(startAngle - lastTickAngle) > (Math.PI / 12)) {
+          playTickSound();
+          lastTickAngle = startAngle;
+        }
+
+        drawWheel();
+        requestAnimationFrame(rotate);
+      }
+      rotate();
+    }
+
+    // --- ANIMATED FIREWORKS ENGINE ---
+    function triggerFireworks() {
+      const canvas = document.getElementById('fireworksCanvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      let particles = [];
+      const particleColors = ['#f43f5e', '#8b5cf6', '#06b6d4', '#10b981', '#f59e0b', '#ec4899', '#3b82f6', '#ffffff'];
+
+      function createExplosion(x, y) {
+        for (let i = 0; i < 55; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = Math.random() * 8 + 2;
+          particles.push({
+            x: x, y: y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed - 2,
+            color: particleColors[Math.floor(Math.random() * particleColors.length)],
+            alpha: 1,
+            decay: Math.random() * 0.02 + 0.015,
+            gravity: 0.12,
+            size: Math.random() * 4 + 2
+          });
+        }
+      }
+
+      createExplosion(window.innerWidth * 0.3, window.innerHeight * 0.4);
+      createExplosion(window.innerWidth * 0.5, window.innerHeight * 0.3);
+      createExplosion(window.innerWidth * 0.7, window.innerHeight * 0.4);
+
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let alive = false;
+
+        particles.forEach(p => {
+          if (p.alpha > 0) {
+            alive = true;
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vy += p.gravity;
+            p.alpha -= p.decay;
+
+            ctx.save();
+            ctx.globalAlpha = Math.max(0, p.alpha);
+            ctx.fillStyle = p.color;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+          }
+        });
+
+        if (alive) {
+          requestAnimationFrame(animate);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+      animate();
+    }
+
+    // Init App
+    window.onload = function() {
+      applyTheme(appData.theme || 'dark');
+      initClassSelect();
+      updateTimerDisplay();
+    };
+  </script>
+</body>
+</html>

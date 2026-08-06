@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LessonFlow - Enhanced Edition</title>
+  <style>
+    :root {
+      --bg-body: #f8fafc;
+      --card-bg: #ffffff;
+      --navy-dark: #0f172a;
+      --navy-primary: #1e3a8a;
+      --navy-accent: #2563eb;
+      --navy-light: #eff6ff;
+      --border-color: #cbd5e1;
+      --text-dark: #0f172a;
+      --text-muted: #64748b;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    body { display: flex; height: 100vh; background-color: var(--bg-body); color: var(--text-dark); overflow: hidden; }
+
+    /* Fullscreen / Sidebar Hidden Mode */
+    body.sidebar-hidden .sidebar {
+      display: none !important;
+    }
+
+    /* Hide browser scrollbars on textareas */
+    textarea {
+      resize: none !important;
+      overflow: hidden !important;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+      line-height: 1.35;
+    }
+    textarea::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Sidebar */
+    .sidebar { width: 280px; background: var(--navy-dark); color: white; display: flex; flex-direction: column; padding: 18px; flex-shrink: 0; }
+    .brand { font-size: 1.3rem; font-weight: 700; margin-bottom: 20px; color: #60a5fa; display: flex; align-items: center; gap: 8px; }
+    
+    .nav-tabs { display: flex; flex-direction: column; gap: 6px; margin-bottom: 15px; }
+    .nav-btn { background: transparent; color: #94a3b8; border: 1px solid transparent; padding: 10px 12px; border-radius: 8px; font-weight: 600; text-align: left; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: space-between; font-size: 0.9rem; }
+    .nav-btn:hover, .nav-btn.active { background: rgba(255, 255, 255, 0.1); color: white; border-color: rgba(255,255,255,0.2); }
+    
+    /* Reset Button in Sidebar */
+    .nav-btn.reset-btn {
+      color: #fca5a5;
+      margin-top: 4px;
+      border: 1px dashed rgba(248, 113, 113, 0.4);
+    }
+    .nav-btn.reset-btn:hover {
+      background: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+      border-color: #f87171;
+    }
+
+    .draft-badge {
+      background: var(--navy-accent);
+      color: white;
+      font-size: 0.68rem;
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .history-title { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; margin: 15px 0 8px 0; font-weight: 700; }
+    .history-list { list-style: none; overflow-y: auto; flex: 1; padding-right: 4px; }
+    
+    /* Subject Folders in Sidebar */
+    .subject-group { margin-bottom: 6px; border-radius: 6px; overflow: hidden; }
+    .subject-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 8px 10px; background: rgba(255, 255, 255, 0.06); color: #e2e8f0;
+      font-size: 0.85rem; font-weight: 600; border-radius: 6px; cursor: pointer;
+      user-select: none; transition: background 0.2s;
+    }
+    .subject-header:hover { background: rgba(255, 255, 255, 0.12); color: white; }
+    .subject-header .folder-icon { font-size: 0.9rem; transition: transform 0.2s; }
+    .subject-header.open .folder-icon { transform: rotate(90deg); }
+    .subject-badge { background: rgba(255, 255, 255, 0.2); color: white; border-radius: 12px; padding: 1px 7px; font-size: 0.72rem; }
+    
+    .subject-content { display: none; padding-left: 10px; margin-top: 4px; flex-direction: column; gap: 3px; }
+    .subject-content.open { display: flex; }
+
+    .history-item { padding: 7px 10px; border-radius: 5px; cursor: pointer; background: rgba(255, 255, 255, 0.03); border: 1px solid transparent; transition: all 0.2s; display: flex; justify-content: space-between; align-items: center; font-size: 0.82rem; color: #cbd5e1; }
+    .history-item:hover, .history-item.active { background: var(--navy-accent); color: white; }
+    .history-item .del-btn { color: #f87171; border: none; background: none; cursor: pointer; font-size: 0.85rem; opacity: 0.7; transition: opacity 0.2s; }
+    .history-item:hover .del-btn { opacity: 1; }
+
+    /* Main Container - Scrollable */
+    .main-content { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; padding: 16px; box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04); max-width: 100%; box-sizing: border-box; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+
+    /* Modern Pulse Glow FX when creating / loading new plan */
+    @keyframes cardPulse {
+      0% { transform: scale(0.995); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.5); }
+      50% { transform: scale(1.003); box-shadow: 0 0 18px 2px rgba(37, 99, 235, 0.3); }
+      100% { transform: scale(1); box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04); }
+    }
+    .card-pulse {
+      animation: cardPulse 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Dashboard Layout */
+    .stats-grid { display: grid; grid-template-columns: 240px 1fr; gap: 15px; margin-bottom: 15px; }
+    .stat-card { background: var(--navy-light); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; display: flex; flex-direction: column; justify-content: center; }
+    .stat-number { font-size: 2.8rem; font-weight: 800; color: var(--navy-primary); margin-top: 2px; line-height: 1; }
+
+    /* Compact Interactive Calendar */
+    .calendar-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; }
+    .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-weight: 700; color: var(--navy-primary); font-size: 0.95rem; }
+    .cal-nav-btn { background: var(--navy-light); border: 1px solid var(--border-color); color: var(--navy-primary); border-radius: 4px; width: 28px; height: 28px; font-weight: bold; cursor: pointer; }
+    .cal-nav-btn:hover { background: var(--navy-primary); color: white; }
+    
+    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; }
+    .cal-day-label { font-size: 0.7rem; color: var(--text-muted); font-weight: 700; padding-bottom: 3px; }
+    .cal-day { padding: 6px 2px; font-size: 0.8rem; border-radius: 4px; background: #f1f5f9; border: 1px solid transparent; cursor: pointer; transition: all 0.2s; position: relative; }
+    .cal-day:hover { border-color: var(--navy-accent); background: #e2e8f0; }
+    .cal-day.has-lesson { background: var(--navy-light); border-color: var(--navy-accent); font-weight: 700; color: var(--navy-primary); }
+    .cal-day.selected { background: var(--navy-primary) !important; color: white !important; font-weight: 700; }
+    .cal-day.today { border-bottom: 2px solid var(--navy-accent); }
+
+    /* Dashboard Split Section */
+    .dashboard-dual-section { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    @media (max-width: 900px) { .dashboard-dual-section { grid-template-columns: 1fr; } }
+
+    .featured-card { border-left: 4px solid var(--navy-accent); background: #ffffff; }
+    .meta-tag { display: inline-block; background: var(--navy-light); color: var(--navy-primary); font-size: 0.75rem; font-weight: 700; padding: 3px 8px; border-radius: 4px; margin-right: 6px; margin-bottom: 4px; }
+
+    /* Compact Form Fields Grid Layouts */
+    .form-grid-row-1 { display: grid; grid-template-columns: 1.2fr 1fr 1.2fr 1.1fr 0.7fr 0.7fr 1fr; gap: 8px; margin-bottom: 8px; }
+    .form-grid-row-2 { display: grid; grid-template-columns: 1fr 2fr 1.2fr 1.2fr; gap: 8px; margin-bottom: 8px; }
+    
+    @media (max-width: 960px) {
+      .form-grid-row-1 { grid-template-columns: repeat(4, 1fr); }
+      .form-grid-row-2 { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .form-grid-row-1, .form-grid-row-2 { grid-template-columns: 1fr; }
+    }
+    
+    .form-group { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .form-group label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; color: var(--text-muted); }
+    
+    .form-group input, .form-group textarea, .form-group select {
+      background: #ffffff;
+      color: var(--text-dark);
+      border: 1px solid var(--border-color);
+      padding: 5px 8px;
+      border-radius: 6px;
+      font-size: 0.83rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      box-sizing: border-box;
+      width: 100%;
+      word-break: break-word;
+      white-space: pre-wrap;
+      min-height: 32px;
+    }
+    .form-group select {
+      cursor: pointer;
+      height: 32px;
+    }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+      border-color: var(--navy-primary);
+      box-shadow: 0 0 0 2px rgba(30, 58, 138, 0.1);
+    }
+
+    /* Print mirror container hidden on screen */
+    .print-value {
+      display: none;
+    }
+
+    /* Document Title Heading */
+    .lesson-title-heading {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--navy-primary);
+      margin-bottom: 12px;
+      padding-bottom: 4px;
+      border-bottom: 2px solid var(--navy-light);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Fixed Table Layout */
+    table.plan-table {
+      width: 100%;
+      table-layout: fixed;
+      border-collapse: collapse;
+      margin-top: 6px;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1.5px solid var(--border-color);
+      box-sizing: border-box;
+    }
+    table.plan-table th {
+      background: var(--navy-primary);
+      color: white;
+      text-align: left;
+      padding: 8px 10px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      border: 1px solid var(--border-color);
+    }
+    table.plan-table td {
+      padding: 3px 4px;
+      border: 1px solid var(--border-color);
+      vertical-align: top;
+      background: white;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+    
+    /* Borderless textareas inside table */
+    table.plan-table textarea {
+      width: 100%;
+      border: none !important;
+      outline: none !important;
+      background: transparent;
+      padding: 4px 6px;
+      font-size: 0.85rem;
+      line-height: 1.35;
+      color: var(--text-dark);
+      min-height: 34px;
+      box-sizing: border-box;
+      word-break: break-word;
+      white-space: pre-wrap;
+      border-radius: 4px;
+      transition: background-color 0.2s;
+    }
+    table.plan-table textarea:focus {
+      background: rgba(37, 99, 235, 0.04);
+    }
+
+    /* Action Buttons */
+    .actions-bar { display: flex; gap: 10px; justify-content: space-between; align-items: center; margin-top: 12px; }
+    .btn { padding: 7px 14px; border-radius: 6px; font-weight: 600; border: none; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 6px; font-size: 0.82rem; }
+    .btn-primary { background: var(--navy-primary); color: white; }
+    .btn-primary:hover { background: var(--navy-dark); }
+    .btn-secondary { background: #e2e8f0; color: var(--text-dark); }
+    .btn-secondary:hover { background: #cbd5e1; }
+    .btn-outline { background: transparent; border: 1px solid var(--navy-primary); color: var(--navy-primary); }
+    .btn-outline:hover { background: var(--navy-light); }
+    .row-del-btn { color: #ef4444; background: none; border: none; cursor: pointer; font-size: 0.9rem; padding: 2px 4px; }
+
+    /* View Navigation */
+    .view-panel { display: none; }
+    .view-panel.active { display: block; }
+
+    /* Toast Notification Effects */
+    .toast-notification {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--navy-dark);
+      color: white;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.25);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 9999;
+      border-left: 4px solid var(--navy-accent);
+      animation: slideInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes slideInUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* Print / PDF Optimization - Completely Prevents Text Truncation */
+    @media print {
+      @page { size: auto; margin: 10mm; }
+      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-shadow: none !important; box-sizing: border-box !important; }
+      html, body { background-color: white !important; color: black !important; height: auto !important; width: 100% !important; overflow: visible !important; margin: 0 !important; padding: 0 !important; }
+      .sidebar, .actions-bar, .no-print, .row-del-btn, #dashboardView, .toast-notification { display: none !important; }
+      .main-content { padding: 0 !important; margin: 0 !important; width: 100% !important; overflow: visible !important; }
+      .card { box-shadow: none !important; border: none !important; padding: 0 !important; background: white !important; width: 100% !important; max-width: 100% !important; }
+      .lesson-title-heading { display: block !important; font-size: 1.4rem !important; font-weight: 800 !important; color: var(--navy-primary) !important; border-bottom: 2px solid var(--navy-primary) !important; margin-bottom: 12px !important; padding-bottom: 4px !important; }
+      
+      /* Hide form elements during print; show print-mirror divs */
+      .form-group input, 
+      .form-group textarea, 
+      .form-group select,
+      table.plan-table textarea { 
+        display: none !important; 
+      }
+
+      .print-value {
+        display: block !important;
+        white-space: pre-wrap !important;
+        word-break: break-word !important;
+        overflow-wrap: break-word !important;
+        font-size: 0.83rem !important;
+        line-height: 1.4 !important;
+        color: #0f172a !important;
+        padding: 4px 6px !important;
+        min-height: 1em;
+      }
+
+      .form-grid-row-1, .form-grid-row-2 { display: grid !important; gap: 8px !important; }
+      .form-group { border: 1px solid #cbd5e1 !important; border-radius: 4px !important; padding: 4px 6px !important; background: #fff !important; }
+      .form-group label { font-size: 0.68rem !important; font-weight: 700 !important; color: #64748b !important; margin-bottom: 2px !important; display: block !important; }
+
+      table.plan-table { 
+        table-layout: fixed !important; 
+        width: 100% !important; 
+        border-collapse: collapse !important; 
+        border: 1.5px solid #cbd5e1 !important; 
+        box-sizing: border-box !important; 
+        page-break-inside: auto !important;
+      }
+      table.plan-table tr {
+        page-break-inside: avoid !important;
+        page-break-after: auto !important;
+      }
+      table.plan-table th { background: var(--navy-primary) !important; color: white !important; padding: 6px 8px !important; border: 1px solid #cbd5e1 !important; font-size: 0.82rem !important; }
+      table.plan-table td { padding: 4px !important; vertical-align: top !important; border: 1px solid #cbd5e1 !important; background: white !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="brand">📘 LessonFlow</div>
+    <div class="nav-tabs">
+      <button class="nav-btn active" id="navDashboard" onclick="switchView('dashboard')">
+        <span>📊 Dashboard</span>
+      </button>
+      <button class="nav-btn" id="navEditor" onclick="createNewLesson()">
+        <span>➕ New Lesson Plan</span>
+        <span id="draftBadge" class="draft-badge" style="display: none;">Draft</span>
+      </button>
+      <button class="nav-btn reset-btn" id="navReset" onclick="resetCurrentPlan()">
+        <span>↺ Reset Form</span>
+      </button>
+    </div>
+
+    <div class="history-title">Saved Subjects & Plans</div>
+    <div class="history-list" id="historyList"></div>
+  </div>
+
+  <!-- Main Content Area -->
+  <div class="main-content">
+    
+    <!-- DASHBOARD VIEW -->
+    <div id="dashboardView" class="view-panel active">
+      <h2 style="margin-bottom: 12px; color: var(--navy-dark); font-size: 1.3rem;">Dashboard Overview</h2>
+      
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span style="color: var(--text-muted); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">Captured Lesson Plans</span>
+          <div class="stat-number" id="totalCount">0</div>
+        </div>
+        
+        <div class="calendar-card">
+          <div class="calendar-header">
+            <button class="cal-nav-btn" onclick="changeMonth(-1)">‹</button>
+            <span id="calendarMonthLabel">Month Year</span>
+            <button class="cal-nav-btn" onclick="changeMonth(1)">›</button>
+          </div>
+          <div class="calendar-grid" id="calendarGrid"></div>
+        </div>
+      </div>
+
+      <!-- Dashboard Split Section -->
+      <div class="dashboard-dual-section">
+        
+        <!-- Current Focused Lesson -->
+        <div class="card featured-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <h3 style="color: var(--navy-primary); font-size: 1.05rem;" id="currentLessonHeader">Current Selected Lesson</h3>
+            <button class="btn btn-primary" id="addForDateBtn" style="display: none; font-size: 0.75rem; padding: 4px 8px;" onclick="createLessonForSelectedDate()">+ Add for Date</button>
+          </div>
+          <div id="currentLessonContainer">
+            <!-- Rendered via JS -->
+          </div>
+        </div>
+
+        <!-- Master List of All Lesson Plans -->
+        <div class="card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <h3 style="color: var(--navy-primary); font-size: 1.05rem;">All Saved Lessons</h3>
+            <span id="allCountBadge" style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;"></span>
+          </div>
+          <div id="allLessonsList" style="display: flex; flex-direction: column; gap: 8px; max-height: 380px; overflow-y: auto;">
+            <!-- Rendered via JS -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- EDITOR VIEW -->
+    <div id="editorView" class="view-panel">
+      <div class="card" id="editorCard">
+        <!-- Lesson Plan Header Title -->
+        <div class="lesson-title-heading">
+          <span>Lesson Plan</span>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <button class="btn btn-outline no-print fullscreen-toggle-btn" onclick="toggleSidebar()" style="padding: 3px 8px; font-size: 0.75rem;">⛶ Fullscreen</button>
+            <span id="editorStatusTag" style="font-size: 0.75rem; color: var(--navy-accent); font-weight: 600;"></span>
+          </div>
+        </div>
+
+        <!-- Information Row 1 -->
+        <div class="form-grid-row-1">
+          <div class="form-group">
+            <label>Name</label>
+            <textarea id="teacherNameInput" rows="1" placeholder="e.g., Mr. Smith" oninput="autoExpand(this); syncPrintValues();"></textarea>
+            <div class="print-value"></div>
+          </div>
+          <div class="form-group">
+            <label>Class</label>
+            <textarea id="classInput" rows="1" placeholder="e.g., Sec 3A" oninput="autoExpand(this); syncPrintValues();"></textarea>
+            <div class="print-value"></div>
+          </div>
+          <div class="form-group">
+            <label>Subject</label>
+            <textarea id="subjectInput" rows="1" placeholder="e.g., Biology" oninput="autoExpand(this); syncPrintValues();"></textarea>
+            <div class="print-value"></div>
+          </div>
+          <div class="form-group">
+            <label>Date</label>
+            <input type="date" id="dateInput" onchange="renderCalendar(); syncPrintValues();">
+            <div class="print-value"></div>
+          </div>
+          <div class="form-group">
+            <label>Term</label>
+            <select id="termInput" onchange="syncPrintValues();">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3" selected>3</option>
+              <option value="4">4</option>
+            </select>
+            <div class="print-value"></div>
+          </div>
+          <div class="form-group">
+            <label>WW</label>
+            <select id="wwInput" onchange="syncPrintValues();">
+              <option value="01">01</option>
+              <option value="02">02</option>
+              <option value="03">03</option>
+              <option value="04" selected>04</option>
+              <option value="05">05</option>
+              <option value="06">06</option>
+              <option value="07">07</option>
+              <option value="08">08</option>
+              <option value="09">09</option>
+              <option value="10">10</option>
+              <option value="11">11</option>
+              <option value="12">12</option>
+              <option value="13">13</option>
+              <option value="14">14</option>
+              <option value="15">15</option>
+            </select>
+            <div class="print-value"></div>
+          </div>
+          <div class="form-group">
+            <label>Duration</label>
+            <textarea id="durationInput" rows="1" placeholder="e.g., 50 mins" oninput="autoExpand(this); syncPrintValues();"></textarea>
+            <div class="print-value"></div>
+          </div>
+        </div>
+
+        <!-- Information Row 2 -->
+        <div class="form-grid-row-2">
+          <div class="form-group">
+            <label>Chapter</label>
+            <textarea id="chapterInput" rows="1" placeholder="e.g., Chapter 3" oninput="autoExpand(this); syncPrintValues();"></textarea>
+            <div class="print-value"></div>
+          </div>
+          <div class="form-group">
+            <label>Topics</label>
+            <textarea id="topicInput" rows="1" placeholder="e.g., Photosynthesis & Ecosystems" oninput="autoExpand(this); syncPrintValues();"></textarea>
+            <div class="print-value"></div>
+          </div>
+          <div class="form-group">
+            <label>Standards</label>
+            <textarea id="standardsInput" rows="1" placeholder="e.g., NGSS: HS-LS2-3" oninput="autoExpand(this); syncPrintValues();"></textarea>
+            <div class="print-value"></div>
+          </div>
+          <div class="form-group">
+            <label>Materials</label>
+            <textarea id="materialsInput" rows="1" placeholder="e.g., Projector, slides" oninput="autoExpand(this); syncPrintValues();"></textarea>
+            <div class="print-value"></div>
+          </div>
+        </div>
+
+        <!-- Information Row 3: Objectives -->
+        <div class="form-group" style="margin-bottom: 10px;">
+          <label>Lesson Objectives</label>
+          <textarea id="objectivesInput" rows="1" placeholder="1. Describe photosynthesis stages..." oninput="autoExpand(this); syncPrintValues();"></textarea>
+          <div class="print-value"></div>
+        </div>
+
+        <!-- Table Details -->
+        <div style="font-weight: 700; margin: 10px 0 6px 0; color: var(--navy-primary); font-size: 0.9rem;">Lesson Plan Details</div>
+        <table class="plan-table">
+          <thead>
+            <tr>
+              <th style="width: 25%;">Segment</th>
+              <th style="width: 15%;">Duration</th>
+              <th style="width: 38%;">Activities / Description</th>
+              <th style="width: 22%;">Purpose</th>
+              <th class="no-print" style="width: 28px;"></th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+
+        <button class="btn btn-secondary btn-outline no-print" style="margin-top: 8px;" onclick="addTableRow()">+ Add Row</button>
+
+        <div class="actions-bar">
+          <button class="btn btn-primary" onclick="saveCurrentLesson()">💾 Save Lesson Plan</button>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-secondary no-print fullscreen-toggle-btn" onclick="toggleSidebar()">⛶ Fullscreen</button>
+            <button class="btn btn-secondary" onclick="exportPDF()">🖨️ Print / Export PDF</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    let lessons = [];
+    let currentId = null; 
+    let calendarViewDate = new Date();
+    let selectedCalendarDate = null;
+    let openSubjects = new Set(); 
+    let isPopulating = false; 
+
+    const defaultSegments = [
+      {
+        segment: "1. Introduction / Set Induction\nBrief activity or question to engage pupils and introduce topic",
+        duration: "",
+        activities: "",
+        purpose: "Capture attention and activate prior knowledge"
+      },
+      {
+        segment: "2. Development / Main Activity\nGuided practice, group work, discussions, hands-on activities etc.",
+        duration: "",
+        activities: "",
+        purpose: "Deliver main content and engage pupils"
+      },
+      {
+        segment: "3. Consolidation / Recap\nSummarise key ideas, clarify doubts",
+        duration: "",
+        activities: "",
+        purpose: "Reinforce learning and check understanding"
+      },
+      {
+        segment: "4. Assessment / Reflection\nExit ticket, mini quiz, worksheet, class sharing, self-reflection",
+        duration: "",
+        activities: "",
+        purpose: "Gauge pupil understanding and inform next steps"
+      }
+    ];
+
+    window.onload = function() {
+      const stored = localStorage.getItem('lessonFlow_navy_data');
+      if (stored) {
+        lessons = JSON.parse(stored);
+      } else {
+        lessons = [createDefaultLesson()];
+        saveToLocalStorage();
+      }
+
+      document.getElementById('editorView').addEventListener('input', autoSaveDraft);
+      document.getElementById('editorView').addEventListener('change', autoSaveDraft);
+
+      updateDraftBadge(hasDraftSaved());
+
+      if (lessons.length > 0) {
+        currentId = lessons[0].id;
+        const initialSubj = lessons[0].subject || 'Uncategorized';
+        openSubjects.add(initialSubj);
+      }
+      updateDashboard();
+      renderSidebar();
+    };
+
+    function toggleSidebar() {
+      document.body.classList.toggle('sidebar-hidden');
+      const isHidden = document.body.classList.contains('sidebar-hidden');
+      const btns = document.querySelectorAll('.fullscreen-toggle-btn');
+      btns.forEach(btn => {
+        btn.innerHTML = isHidden ? '🗗 Exit Fullscreen' : '⛶ Fullscreen';
+      });
+      setTimeout(() => triggerAllExpands(), 50);
+    }
+
+    function createDefaultLesson() {
+      return {
+        id: Date.now(),
+        teacherName: "Mr. Alex Tan",
+        className: "Grade 9A",
+        chapter: "Chapter 3",
+        topic: "Photosynthesis & Ecosystems",
+        term: "3",
+        ww: "04",
+        date: new Date().toISOString().split('T')[0],
+        subject: "Biology",
+        duration: "50 mins",
+        objectives: "1. Define photosynthesis and cellular respiration.\n2. Compare roles of producers and consumers.",
+        standards: "NGSS: HS-LS2-3",
+        materials: "Projector, slides, food web cards",
+        table: JSON.parse(JSON.stringify(defaultSegments))
+      };
+    }
+
+    function createBlankLesson(presetDate = null) {
+      return {
+        id: 'draft',
+        teacherName: "",
+        className: "",
+        chapter: "",
+        topic: "",
+        term: "1",
+        ww: "01",
+        date: presetDate || new Date().toISOString().split('T')[0],
+        subject: "",
+        duration: "",
+        objectives: "",
+        standards: "",
+        materials: "",
+        table: JSON.parse(JSON.stringify(defaultSegments))
+      };
+    }
+
+    function showToast(message, icon = '✨') {
+      const existing = document.querySelector('.toast-notification');
+      if (existing) existing.remove();
+
+      const toast = document.createElement('div');
+      toast.className = 'toast-notification';
+      toast.innerHTML = `<span style="font-size: 1.1rem;">${icon}</span> <span>${message}</span>`;
+      document.body.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(15px)';
+        toast.style.transition = 'all 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 2400);
+    }
+
+    function triggerCardPulse() {
+      const card = document.getElementById('editorCard');
+      card.classList.remove('card-pulse');
+      void card.offsetWidth; 
+      card.classList.add('card-pulse');
+    }
+
+    function getLessonTitle(lesson) {
+      const termStr = lesson.term ? `T${lesson.term}` : '';
+      const wwNum = lesson.ww ? (parseInt(lesson.ww, 10) || lesson.ww) : '';
+      const wwStr = wwNum ? `W${wwNum}` : '';
+      const prefix = `${termStr}${wwStr}`.trim();
+      const topic = lesson.topic || 'Untitled Lesson';
+      return prefix ? `${prefix} ${topic}` : topic;
+    }
+
+    function switchView(view) {
+      document.querySelectorAll('.view-panel').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+      
+      if(view === 'dashboard') {
+        document.body.classList.remove('sidebar-hidden');
+        const btns = document.querySelectorAll('.fullscreen-toggle-btn');
+        btns.forEach(btn => { btn.innerHTML = '⛶ Fullscreen'; });
+        document.getElementById('dashboardView').classList.add('active');
+        document.getElementById('navDashboard').classList.add('active');
+        updateDashboard();
+      } else {
+        document.getElementById('editorView').classList.add('active');
+        document.getElementById('navEditor').classList.add('active');
+      }
+    }
+
+    function autoExpand(textarea, extraPadding = 6) {
+      textarea.style.height = 'auto';
+      textarea.style.height = (textarea.scrollHeight + extraPadding) + 'px';
+    }
+
+    function triggerAllExpands(extraPadding = 8) {
+      document.querySelectorAll('#editorView textarea').forEach(ta => autoExpand(ta, extraPadding));
+      syncPrintValues();
+    }
+
+    /* Synchronizes form fields and table contents with printable mirror elements */
+    function syncPrintValues() {
+      // Form groups sync
+      document.querySelectorAll('#editorView .form-group').forEach(group => {
+        const input = group.querySelector('input, textarea, select');
+        let printVal = group.querySelector('.print-value');
+        if (!printVal) {
+          printVal = document.createElement('div');
+          printVal.className = 'print-value';
+          group.appendChild(printVal);
+        }
+        if (input) {
+          if (input.tagName === 'SELECT') {
+            printVal.textContent = input.options[input.selectedIndex]?.text || input.value;
+          } else {
+            printVal.textContent = input.value;
+          }
+        }
+      });
+
+      // Table cells sync
+      document.querySelectorAll('#tableBody tr').forEach(tr => {
+        tr.querySelectorAll('td').forEach(td => {
+          const textarea = td.querySelector('textarea');
+          if (textarea) {
+            let printVal = td.querySelector('.print-value');
+            if (!printVal) {
+              printVal = document.createElement('div');
+              printVal.className = 'print-value';
+              td.appendChild(printVal);
+            }
+            printVal.textContent = textarea.value;
+          }
+        });
+      });
+    }
+
+    window.addEventListener('beforeprint', () => {
+      syncPrintValues();
+      triggerAllExpands(10);
+    });
+
+    function addTableRow(segment = '', duration = '', activities = '', purpose = '') {
+      const tbody = document.getElementById('tableBody');
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>
+          <textarea placeholder="Segment" oninput="autoExpand(this); syncPrintValues();">${segment}</textarea>
+          <div class="print-value"></div>
+        </td>
+        <td>
+          <textarea placeholder="Duration" oninput="autoExpand(this); syncPrintValues();">${duration}</textarea>
+          <div class="print-value"></div>
+        </td>
+        <td>
+          <textarea placeholder="Activities" oninput="autoExpand(this); syncPrintValues();">${activities}</textarea>
+          <div class="print-value"></div>
+        </td>
+        <td>
+          <textarea placeholder="Purpose" oninput="autoExpand(this); syncPrintValues();">${purpose}</textarea>
+          <div class="print-value"></div>
+        </td>
+        <td class="no-print" style="text-align: center;">
+          <button class="row-del-btn" onclick="deleteRow(this)">✕</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+      setTimeout(() => {
+        triggerAllExpands();
+        syncPrintValues();
+      }, 0);
+      
+      if (!isPopulating) {
+        autoSaveDraft();
+      }
+    }
+
+    function deleteRow(btn) {
+      btn.closest('tr').remove();
+      if (!isPopulating) {
+        autoSaveDraft();
+      }
+      syncPrintValues();
+    }
+
+    function getCurrentFormData() {
+      const rows = [];
+      document.querySelectorAll('#tableBody tr').forEach(tr => {
+        const textareas = tr.querySelectorAll('textarea');
+        if (textareas.length >= 4) {
+          rows.push({
+            segment: textareas[0].value,
+            duration: textareas[1].value,
+            activities: textareas[2].value,
+            purpose: textareas[3].value
+          });
+        }
+      });
+
+      return {
+        id: currentId === 'draft' ? 'draft' : (currentId || Date.now()),
+        teacherName: document.getElementById('teacherNameInput').value,
+        className: document.getElementById('classInput').value,
+        chapter: document.getElementById('chapterInput').value,
+        topic: document.getElementById('topicInput').value,
+        term: document.getElementById('termInput').value,
+        ww: document.getElementById('wwInput').value,
+        date: document.getElementById('dateInput').value,
+        subject: document.getElementById('subjectInput').value,
+        duration: document.getElementById('durationInput').value,
+        objectives: document.getElementById('objectivesInput').value,
+        standards: document.getElementById('standardsInput').value,
+        materials: document.getElementById('materialsInput').value,
+        table: rows
+      };
+    }
+
+    function autoSaveDraft() {
+      if (isPopulating) return; 
+      
+      if (currentId === 'draft') {
+        const formData = getCurrentFormData();
+        localStorage.setItem('lessonFlow_active_draft', JSON.stringify(formData));
+        updateDraftBadge(true);
+        document.getElementById('editorStatusTag').innerText = '• Unsaved Draft';
+      }
+      syncPrintValues();
+    }
+
+    function hasDraftSaved() {
+      return !!localStorage.getItem('lessonFlow_active_draft');
+    }
+
+    function updateDraftBadge(show) {
+      const badge = document.getElementById('draftBadge');
+      if (badge) {
+        badge.style.display = show ? 'inline-block' : 'none';
+      }
+    }
+
+    function populateFormFields(lesson) {
+      isPopulating = true; 
+
+      document.getElementById('teacherNameInput').value = lesson.teacherName || '';
+      document.getElementById('classInput').value = lesson.className || lesson.class || '';
+      document.getElementById('chapterInput').value = lesson.chapter || '';
+      document.getElementById('topicInput').value = lesson.topic || '';
+      document.getElementById('termInput').value = lesson.term || '1';
+      document.getElementById('wwInput').value = lesson.ww || '01';
+      document.getElementById('dateInput').value = lesson.date || '';
+      document.getElementById('subjectInput').value = lesson.subject || '';
+      document.getElementById('durationInput').value = lesson.duration || '';
+      document.getElementById('objectivesInput').value = lesson.objectives || '';
+      document.getElementById('standardsInput').value = lesson.standards || '';
+      document.getElementById('materialsInput').value = lesson.materials || '';
+
+      const tbody = document.getElementById('tableBody');
+      tbody.innerHTML = '';
+      (lesson.table || []).forEach(row => {
+        addTableRow(row.segment, row.duration, row.activities, row.purpose);
+      });
+
+      isPopulating = false; 
+
+      const isDraftWithData = (lesson.id === 'draft' && hasDraftSaved());
+      document.getElementById('editorStatusTag').innerText = isDraftWithData ? '• Unsaved Draft' : '';
+
+      syncPrintValues();
+    }
+
+    function loadLesson(id) {
+      if (currentId === 'draft' && hasDraftSaved()) {
+        autoSaveDraft();
+      }
+
+      const lesson = lessons.find(l => l.id === id);
+      if (!lesson) return;
+
+      currentId = lesson.id;
+      const subj = (lesson.subject && lesson.subject.trim()) ? lesson.subject.trim() : 'Uncategorized';
+      openSubjects.add(subj);
+
+      populateFormFields(lesson);
+      switchView('editor');
+      renderSidebar();
+      setTimeout(() => triggerAllExpands(), 0);
+    }
+
+    function createNewLesson(presetDate = null) {
+      let lessonToLoad;
+      let toastMsg = "";
+
+      if (currentId === 'draft' && hasDraftSaved()) {
+        autoSaveDraft();
+      }
+
+      const savedDraftStr = localStorage.getItem('lessonFlow_active_draft');
+
+      if (savedDraftStr && !presetDate) {
+        lessonToLoad = JSON.parse(savedDraftStr);
+        currentId = 'draft';
+        toastMsg = "Restored your active lesson plan draft!";
+        updateDraftBadge(true);
+      } else {
+        lessonToLoad = createBlankLesson(presetDate);
+        currentId = 'draft';
+        toastMsg = presetDate ? `New Lesson Plan created for ${presetDate}` : "New Lesson Plan created!";
+        updateDraftBadge(false);
+      }
+
+      populateFormFields(lessonToLoad);
+      switchView('editor');
+      renderSidebar();
+      triggerCardPulse();
+      showToast(toastMsg, "✨");
+      setTimeout(() => triggerAllExpands(), 0);
+    }
+
+    function resetCurrentPlan() {
+      if (confirm('Are you sure you want to clear the editor fields and restart with a fresh lesson plan?')) {
+        localStorage.removeItem('lessonFlow_active_draft');
+        currentId = 'draft';
+        
+        const freshLesson = createBlankLesson();
+        populateFormFields(freshLesson);
+        
+        updateDraftBadge(false);
+        document.getElementById('editorStatusTag').innerText = '';
+        
+        switchView('editor');
+        renderSidebar();
+        triggerCardPulse();
+        showToast("Form contents reset! Draft cleared.", "↺");
+        setTimeout(() => triggerAllExpands(), 0);
+      }
+    }
+
+    function createLessonForSelectedDate() {
+      if (selectedCalendarDate) {
+        createNewLesson(selectedCalendarDate);
+      }
+    }
+
+    function setCurrentFocusLesson(id) {
+      currentId = id;
+      const lesson = lessons.find(l => l.id === id);
+      if (lesson) {
+        const subj = (lesson.subject && lesson.subject.trim()) ? lesson.subject.trim() : 'Uncategorized';
+        openSubjects.add(subj);
+      }
+      renderSidebar();
+      updateDashboard();
+    }
+
+    function saveCurrentLesson() {
+      const data = getCurrentFormData();
+      
+      if (data.id === 'draft') {
+        data.id = Date.now();
+      }
+
+      const index = lessons.findIndex(l => l.id === data.id);
+      
+      if (index > -1) {
+        lessons[index] = data;
+      } else {
+        lessons.unshift(data);
+      }
+
+      currentId = data.id;
+      const subj = (data.subject && data.subject.trim()) ? data.subject.trim() : 'Uncategorized';
+      openSubjects.add(subj);
+
+      localStorage.removeItem('lessonFlow_active_draft');
+      updateDraftBadge(false);
+
+      saveToLocalStorage();
+      renderSidebar();
+      populateFormFields(data);
+      showToast('Lesson plan saved successfully!', '💾');
+    }
+
+    function deleteLesson(id, event) {
+      if (event) event.stopPropagation();
+      if (confirm('Delete this lesson plan?')) {
+        lessons = lessons.filter(l => l.id !== id);
+        if (currentId === id) {
+          currentId = lessons.length > 0 ? lessons[0].id : null;
+        }
+        saveToLocalStorage();
+        renderSidebar();
+        updateDashboard();
+        showToast('Lesson plan deleted.', '🗑️');
+      }
+    }
+
+    function saveToLocalStorage() {
+      localStorage.setItem('lessonFlow_navy_data', JSON.stringify(lessons));
+    }
+
+    function toggleSubjectFolder(subj) {
+      if (openSubjects.has(subj)) {
+        openSubjects.delete(subj);
+      } else {
+        openSubjects.add(subj);
+      }
+      renderSidebar();
+    }
+
+    function renderSidebar() {
+      const container = document.getElementById('historyList');
+      container.innerHTML = '';
+
+      if (lessons.length === 0) {
+        container.innerHTML = '<div style="color: #94a3b8; font-size: 0.8rem; font-style: italic;">No saved plans.</div>';
+        return;
+      }
+
+      const groups = {};
+      lessons.forEach(l => {
+        const subj = (l.subject && l.subject.trim()) ? l.subject.trim() : 'Uncategorized';
+        if (!groups[subj]) groups[subj] = [];
+        groups[subj].push(l);
+      });
+
+      Object.keys(groups).sort().forEach(subj => {
+        const groupLessons = groups[subj];
+        const isOpen = openSubjects.has(subj);
+
+        const groupEl = document.createElement('div');
+        groupEl.className = 'subject-group';
+
+        const headerEl = document.createElement('div');
+        headerEl.className = `subject-header ${isOpen ? 'open' : ''}`;
+        headerEl.onclick = () => toggleSubjectFolder(subj);
+        headerEl.innerHTML = `
+          <span><span class="folder-icon" style="display:inline-block; margin-right: 4px;">▶</span> 📁 ${subj}</span>
+          <span class="subject-badge">${groupLessons.length}</span>
+        `;
+        groupEl.appendChild(headerEl);
+
+        const contentEl = document.createElement('div');
+        contentEl.className = `subject-content ${isOpen ? 'open' : ''}`;
+
+        groupLessons.forEach(lesson => {
+          const itemEl = document.createElement('div');
+          itemEl.className = `history-item ${lesson.id === currentId ? 'active' : ''}`;
+          itemEl.onclick = () => loadLesson(lesson.id);
+          
+          const fullTitle = getLessonTitle(lesson);
+          itemEl.innerHTML = `
+            <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 170px;" title="${fullTitle}">📄 ${fullTitle}</span>
+            <button class="del-btn no-print" onclick="deleteLesson(${lesson.id}, event)">✕</button>
+          `;
+          contentEl.appendChild(itemEl);
+        });
+
+        groupEl.appendChild(contentEl);
+        container.appendChild(groupEl);
+      });
+    }
+
+    function updateDashboard() {
+      document.getElementById('totalCount').innerText = lessons.length;
+      document.getElementById('allCountBadge').innerText = `${lessons.length} plans`;
+      renderCalendar();
+      renderDashboardDualView();
+    }
+
+    function changeMonth(delta) {
+      calendarViewDate.setMonth(calendarViewDate.getMonth() + delta);
+      renderCalendar();
+    }
+
+    function selectDate(dateStr) {
+      selectedCalendarDate = (selectedCalendarDate === dateStr) ? null : dateStr;
+      renderCalendar();
+      renderDashboardDualView();
+    }
+
+    function renderDashboardDualView() {
+      const focusContainer = document.getElementById('currentLessonContainer');
+      const allContainer = document.getElementById('allLessonsList');
+      const headerTitle = document.getElementById('currentLessonHeader');
+      const addDateBtn = document.getElementById('addForDateBtn');
+
+      focusContainer.innerHTML = '';
+      allContainer.innerHTML = '';
+
+      let focusLesson = lessons.find(l => l.id === currentId);
+      
+      if (selectedCalendarDate) {
+        headerTitle.innerText = `Lessons for ${selectedCalendarDate}`;
+        addDateBtn.style.display = 'inline-block';
+        const dateLessons = lessons.filter(l => l.date === selectedCalendarDate);
+        if (dateLessons.length > 0) {
+          focusLesson = dateLessons[0];
+        } else {
+          focusLesson = null;
+        }
+      } else {
+        headerTitle.innerText = 'Current Focused Lesson';
+        addDateBtn.style.display = 'none';
+        if (!focusLesson && lessons.length > 0) {
+          focusLesson = lessons[0];
+        }
+      }
+
+      if (focusLesson) {
+        const fullTitle = getLessonTitle(focusLesson);
+        focusContainer.innerHTML = `
+          <div style="margin-bottom: 8px;">
+            <h4 style="font-size: 1.1rem; color: var(--navy-dark); font-weight: 700;">${fullTitle}</h4>
+            <div style="margin-top: 6px;">
+              ${focusLesson.chapter ? `<span class="meta-tag">📖 ${focusLesson.chapter}</span>` : ''}
+              <span class="meta-tag">📚 ${focusLesson.subject || 'No Subject'}</span>
+              <span class="meta-tag">🏫 ${focusLesson.className || 'No Class'}</span>
+              <span class="meta-tag">📅 ${focusLesson.date || 'No Date'}</span>
+            </div>
+          </div>
+          <div style="font-size: 0.85rem; color: var(--text-dark); margin-bottom: 12px; line-height: 1.4;">
+            <strong>Objectives:</strong>
+            <div style="color: var(--text-muted); white-space: pre-wrap; margin-top: 2px;">${focusLesson.objectives || 'None specified.'}</div>
+          </div>
+          <div style="display: flex; gap: 8px; margin-top: 10px;">
+            <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="loadLesson(${focusLesson.id})">✏️ Open & Edit</button>
+            <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="loadLesson(${focusLesson.id}); setTimeout(() => exportPDF(), 200);">🖨️ Quick Print</button>
+          </div>
+        `;
+      } else {
+        focusContainer.innerHTML = `<div style="color: var(--text-muted); font-style: italic; font-size: 0.88rem; padding: 10px 0;">No lesson selected or available for this date filter.</div>`;
+      }
+
+      if (lessons.length === 0) {
+        allContainer.innerHTML = `<div style="color: var(--text-muted); font-style: italic; font-size: 0.88rem;">No saved lesson plans yet.</div>`;
+        return;
+      }
+
+      lessons.forEach(lesson => {
+        const isSelected = lesson.id === (focusLesson ? focusLesson.id : null);
+        const itemCard = document.createElement('div');
+        itemCard.style.cssText = `
+          padding: 10px 12px; border-radius: 6px; border: 1px solid ${isSelected ? 'var(--navy-accent)' : 'var(--border-color)'};
+          background: ${isSelected ? 'var(--navy-light)' : '#ffffff'}; cursor: pointer; transition: all 0.15s;
+          display: flex; justify-content: space-between; align-items: center;
+        `;
+        itemCard.onclick = () => setCurrentFocusLesson(lesson.id);
+        
+        const fullTitle = getLessonTitle(lesson);
+        itemCard.innerHTML = `
+          <div>
+            <div style="font-weight: 700; color: var(--navy-primary); font-size: 0.88rem;">${fullTitle}</div>
+            <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">
+              ${lesson.subject || 'General'} • ${lesson.className || 'N/A'} • 📅 ${lesson.date}
+            </div>
+          </div>
+          <button class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.75rem;" onclick="event.stopPropagation(); loadLesson(${lesson.id});">Edit</button>
+        `;
+        allContainer.appendChild(itemCard);
+      });
+    }
+
+    function renderCalendar() {
+      const calendarGrid = document.getElementById('calendarGrid');
+      calendarGrid.innerHTML = '';
+
+      const year = calendarViewDate.getFullYear();
+      const month = calendarViewDate.getMonth();
+
+      document.getElementById('calendarMonthLabel').innerText = calendarViewDate.toLocaleDateString('default', { month: 'long', year: 'numeric' });
+
+      const dayLabels = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+      dayLabels.forEach(d => {
+        const lbl = document.createElement('div');
+        lbl.className = 'cal-day-label';
+        lbl.innerText = d;
+        calendarGrid.appendChild(lbl);
+      });
+
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      for (let i = 0; i < firstDay; i++) {
+        calendarGrid.appendChild(document.createElement('div'));
+      }
+
+      const activeDates = lessons.map(l => l.date);
+      const todayStr = new Date().toISOString().split('T')[0];
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const dayEl = document.createElement('div');
+        
+        let classes = ['cal-day'];
+        if (activeDates.includes(dateStr)) classes.push('has-lesson');
+        if (dateStr === todayStr) classes.push('today');
+        if (dateStr === selectedCalendarDate) classes.push('selected');
+
+        dayEl.className = classes.join(' ');
+        dayEl.innerText = day;
+        dayEl.onclick = () => selectDate(dateStr);
+
+        calendarGrid.appendChild(dayEl);
+      }
+    }
+
+    function exportPDF() {
+      syncPrintValues();
+      triggerAllExpands(10);
+      window.print();
+    }
+  </script>
+</body>
+</html>
