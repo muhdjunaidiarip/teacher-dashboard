@@ -366,30 +366,9 @@
       <span>EduHub</span>
     </div>
 
-    <!-- App Tabs Navigation -->
+    <!-- App Tabs Navigation (Dynamically Rendered) -->
     <div class="nav-tabs-wrapper">
-      <ul class="nav-tabs">
-        <li>
-          <button class="tab-btn" onclick="switchApp('app-grading', 'apps/app1-teachercompanionapp/', this)">
-            ⚡Smart Grading System
-          </button>
-        </li>
-        <li>
-          <button class="tab-btn" onclick="switchApp('app-placevalue', 'apps/app2-interactiveplacevalues/', this)">
-            🚀 Interactive Place Values
-          </button>
-        </li>
-        <li>
-          <button class="tab-btn" onclick="switchApp('app-classroom', 'apps/app3-classroomhub/', this)">
-            🎴 Classroom Hub
-          </button>
-        </li>
-        <li>
-          <button class="tab-btn" onclick="switchApp('app-lesson', 'apps/app4-lessonplan/', this)">
-            💡 My Lesson Plan
-          </button>
-        </li>
-      </ul>
+      <ul class="nav-tabs" id="nav-tabs"></ul>
     </div>
 
     <!-- Quick Actions -->
@@ -400,7 +379,7 @@
     </div>
   </header>
 
-  <main>
+  <main id="main-container">
     <!-- 1. Home Dashboard View -->
     <div id="home-view" class="view-content active">
       <div class="home-container">
@@ -421,31 +400,8 @@
           <h3 class="section-title">Classroom App Library</h3>
         </div>
 
-        <div class="app-grid">
-          <div class="app-card" onclick="triggerAppTab(0)">
-            <div class="app-card-icon">⚡</div>
-            <div class="app-card-title">Smart Grading System</div>
-            <div class="app-card-desc">A Smart Grading System that will help you track students' progress timely and effectively.</div>
-          </div>
-
-          <div class="app-card" onclick="triggerAppTab(1)">
-            <div class="app-card-icon">🚀</div>
-            <div class="app-card-title">Interactive Place Values</div>
-            <div class="app-card-desc">A comprehensive interactive place values app which includes decimals and re-grouping capability.</div>
-          </div>
-
-          <div class="app-card" onclick="triggerAppTab(2)">
-            <div class="app-card-icon">🎴</div>
-            <div class="app-card-title">Classroom Hub</div>
-            <div class="app-card-desc">Your teacher companion page to keep your students entertained.</div>
-          </div>
-
-          <div class="app-card" onclick="triggerAppTab(3)">
-            <div class="app-card-icon">💡</div>
-            <div class="app-card-title">My Lesson Plan</div>
-            <div class="app-card-desc">Planning your lesson now is made easier with this Smart Lesson Plan app.</div>
-          </div>
-        </div>
+        <!-- App Grid (Dynamically Rendered) -->
+        <div class="app-grid" id="app-grid"></div>
 
         <!-- Quick Classroom Utility Cards -->
         <div class="info-grid">
@@ -467,68 +423,124 @@
       </div>
     </div>
 
-    <!-- 2. Independent Persistent App Stages (iframes) -->
-    <iframe id="app-grading" class="view-content app-frame" title="Smart Grading System"></iframe>
-    <iframe id="app-placevalue" class="view-content app-frame" title="Interactive Place Values"></iframe>
-    <iframe id="app-classroom" class="view-content app-frame" title="Classroom Hub"></iframe>
-    <iframe id="app-lesson" class="view-content app-frame" title="My Lesson Plan"></iframe>
+    <!-- Persistent App IFrames (Dynamically Rendered) -->
+    <div id="iframe-container" style="height: 100%; width: 100%;"></div>
   </main>
 
   <script>
+    // Central Registry for Dashboard Applications
+    const APPS = [
+      {
+        id: 'app-grading',
+        title: 'Smart Grading System',
+        icon: '⚡',
+        path: 'apps/app1-teachercompanionapp/index.html',
+        desc: "A Smart Grading System that will help you track students' progress timely and effectively."
+      },
+      {
+        id: 'app-placevalue',
+        title: 'Interactive Place Values',
+        icon: '🚀',
+        path: 'apps/app2-interactiveplacevalues/index.html',
+        desc: 'A comprehensive interactive place values app which includes decimals and re-grouping capability.'
+      },
+      {
+        id: 'app-classroom',
+        title: 'Classroom Hub',
+        icon: '🎴',
+        path: 'apps/app3-classroomhub/index.html',
+        desc: 'Your teacher companion page to keep your students entertained.'
+      },
+      {
+        id: 'app-lesson',
+        title: 'My Lesson Plan',
+        icon: '💡',
+        path: 'apps/app4-lessonplan/index.html',
+        desc: 'Planning your lesson now is made easier with this Smart Lesson Plan app.'
+      },
+      {
+        id: 'app-lessonob',
+        title: 'Lesson Observation',
+        icon: '📋',
+        path: 'apps/app5-lessonob/index.html',
+        desc: 'Conduct, record, and evaluate classroom lesson observations seamlessly.'
+      }
+    ];
+
     /**
-     * Show Home View and hide all app frames without destroying them
+     * Initialize Dashboard Elements dynamically from configuration
+     */
+    function initDashboard() {
+      const navTabs = document.getElementById('nav-tabs');
+      const appGrid = document.getElementById('app-grid');
+      const iframeContainer = document.getElementById('iframe-container');
+
+      APPS.forEach((app) => {
+        // 1. Build Navigation Tab Button
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <button class="tab-btn" id="tab-${app.id}" onclick="switchApp('${app.id}')">
+            ${app.icon} ${app.title}
+          </button>`;
+        navTabs.appendChild(li);
+
+        // 2. Build Home Dashboard Grid Card
+        const card = document.createElement('div');
+        card.className = 'app-card';
+        card.onclick = () => switchApp(app.id);
+        card.innerHTML = `
+          <div class="app-card-icon">${app.icon}</div>
+          <div class="app-card-title">${app.title}</div>
+          <div class="app-card-desc">${app.desc}</div>`;
+        appGrid.appendChild(card);
+
+        // 3. Build Persistent IFrame Container
+        const iframe = document.createElement('iframe');
+        iframe.id = app.id;
+        iframe.className = 'view-content app-frame';
+        iframe.title = app.title;
+        iframe.dataset.src = app.path;
+        iframeContainer.appendChild(iframe);
+      });
+
+      // Display formatted date
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      document.getElementById('current-date').textContent = new Date().toLocaleDateString(undefined, options);
+    }
+
+    /**
+     * Show Home Dashboard View
      */
     function showHome() {
-      // Hide all iframe views
       document.querySelectorAll('.app-frame').forEach(frame => frame.classList.remove('active'));
-      
-      // Activate Home View
-      document.getElementById('home-view').classList.add('active');
-      
-      // Clear active styling on navigation tabs
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById('home-view').classList.add('active');
     }
 
     /**
-     * Switch between persistent apps without reloading them
+     * Switch to requested app view, lazy-loading iframe on demand
      */
-    function switchApp(frameId, url, btnElement) {
-      // Hide home view
+    function switchApp(appId) {
       document.getElementById('home-view').classList.remove('active');
 
-      // Hide all app frames
-      document.querySelectorAll('.app-frame').forEach(frame => frame.classList.remove('active'));
-
-      const targetFrame = document.getElementById(frameId);
-      if (targetFrame) {
-        // Lazy-load the iframe URL on first click so all 4 don't load simultaneously
-        if (!targetFrame.getAttribute('src')) {
-          targetFrame.src = url;
+      document.querySelectorAll('.app-frame').forEach(frame => {
+        if (frame.id === appId) {
+          if (!frame.src) {
+            frame.src = frame.dataset.src; // Lazy-load URL on first switch
+          }
+          frame.classList.add('active');
+        } else {
+          frame.classList.remove('active');
         }
-        
-        // Display the requested app frame
-        targetFrame.classList.add('active');
-      }
+      });
 
-      // Update active tab styling
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      if (btnElement) {
-        btnElement.classList.add('active');
-      }
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.id === `tab-${appId}`);
+      });
     }
 
     /**
-     * Helper to open app from home cards
-     */
-    function triggerAppTab(index) {
-      const tabs = document.querySelectorAll('.tab-btn');
-      if (tabs[index]) {
-        tabs[index].click();
-      }
-    }
-
-    /**
-     * Toggle Full Screen view for active application
+     * Fullscreen toggle mechanism
      */
     function toggleFullScreen() {
       const docEl = document.documentElement;
@@ -547,11 +559,7 @@
       }
     }
 
-    // Set today's date dynamically on home hero view
-    document.addEventListener('DOMContentLoaded', () => {
-      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-      document.getElementById('current-date').textContent = new Date().toLocaleDateString(undefined, options);
-    });
+    document.addEventListener('DOMContentLoaded', initDashboard);
   </script>
 </body>
 </html>
