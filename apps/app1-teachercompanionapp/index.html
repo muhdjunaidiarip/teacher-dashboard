@@ -11,7 +11,7 @@
       --text: #0f172a;
       --primary: #2563eb;
       --success: #16a34a;
-      --warning: #ca8a04;
+      --warning: #eab308;
       --orange: #ea580c;
       --concept: #dc2626;
       --careless: #ea580c;
@@ -30,7 +30,6 @@
 
     .container { max-width: 1100px; margin: 0 auto; }
     
-    /* Navigation Class Tabs */
     .tab-bar {
       display: flex;
       gap: 6px;
@@ -65,7 +64,6 @@
       border-style: dashed;
     }
 
-    /* Tab Edit Input Inline Styling */
     .tab-rename-input {
       font-family: inherit;
       font-size: 0.9rem;
@@ -88,7 +86,6 @@
       border: 1px solid var(--border);
     }
 
-    /* Blank State Card Styling */
     .empty-state-card {
       border-radius: 12px !important;
       text-align: center;
@@ -135,12 +132,12 @@
 
     button:hover { opacity: 0.9; }
 
-    /* Mode Selector Toggle */
     .mode-selector {
       display: flex;
       gap: 8px;
       margin-bottom: 12px;
       flex-wrap: wrap;
+      align-items: center;
     }
 
     .mode-btn {
@@ -161,7 +158,6 @@
       font-weight: bold;
     }
 
-    /* Custom Touch Stepper Controls */
     .stepper-container {
       display: flex;
       align-items: center;
@@ -193,7 +189,6 @@
       padding: 10px 4px !important;
     }
 
-    /* Live Question Tag Preview */
     .preview-box {
       background: #f8fafc;
       border: 1px dashed var(--primary);
@@ -213,32 +208,27 @@
       margin: 2px;
     }
 
-    /* Student Spotlight Badges */
-    .student-badge-high {
+    .student-badge-high, .student-badge-support {
       display: inline-block;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      margin: 2px;
+    }
+
+    .student-badge-high {
       background: #dcfce7;
       color: #15803d;
       border: 1px solid #86efac;
-      padding: 4px 8px;
-      border-radius: 6px;
-      font-size: 0.82rem;
-      font-weight: 600;
-      margin: 2px;
     }
 
     .student-badge-support {
-      display: inline-block;
       background: #fee2e2;
       color: #b91c1c;
       border: 1px solid #fca5a5;
-      padding: 4px 8px;
-      border-radius: 6px;
-      font-size: 0.82rem;
-      font-weight: 600;
-      margin: 2px;
     }
 
-    /* Assignment Switcher Header */
     .assignment-bar {
       display: flex;
       align-items: center;
@@ -261,7 +251,6 @@
       max-width: 320px;
     }
 
-    /* Search & Bulk Selection Bar */
     .search-container {
       display: flex;
       gap: 8px;
@@ -378,7 +367,6 @@
 
     .q-container { display: flex; gap: 6px; flex-wrap: wrap; flex-grow: 1; }
 
-    /* Question Tap Button Box */
     .q-btn {
       min-width: 58px;
       height: 44px;
@@ -395,21 +383,21 @@
       padding: 0 6px;
       font-size: 0.82rem;
       white-space: nowrap;
+      transition: all 0.1s ease;
     }
 
     .q-btn .sub { font-size: 0.68rem; font-weight: bold; margin-top: 1px; }
 
-    /* Diagnostic 5-Tap State Styling */
+    /* Diagnostic Scheme Colors */
     .q-btn[data-state="correct"] { background: var(--success); color: white; border-color: var(--success); }
     .q-btn[data-state="concept"] { background: var(--concept); color: white; border-color: var(--concept); }
     .q-btn[data-state="careless"] { background: var(--careless); color: white; border-color: var(--careless); }
     .q-btn[data-state="incomplete"] { background: var(--incomplete); color: white; border-color: var(--incomplete); }
 
-    /* Partial Credit Points State Styling */
-    .q-btn[data-state="m2"] { background: var(--success); color: white; border-color: var(--success); }
-    .q-btn[data-state="m15"] { background: var(--orange); color: white; border-color: var(--orange); }
-    .q-btn[data-state="m1"] { background: var(--success); color: white; border-color: var(--success); }
-    .q-btn[data-state="m05"] { background: var(--orange); color: white; border-color: var(--orange); }
+    /* Partial Credit Scheme Colors (3-Tap System) */
+    .q-btn[data-state="full"] { background: var(--success); color: white; border-color: var(--success); }
+    .q-btn[data-state="wrong"] { background: var(--danger); color: white; border-color: var(--danger); }
+    .q-btn[data-state="partial"] { background: var(--warning); color: #0f172a; border-color: #ca8a04; }
 
     .feedback-preview {
       font-size: 0.8rem;
@@ -421,7 +409,6 @@
       border-left: 3px solid var(--primary);
     }
 
-    /* Score Badge & Quick Stack Container */
     .score-badge { 
       font-weight: bold; 
       min-width: 250px; 
@@ -433,7 +420,6 @@
       flex-shrink: 0;
     }
 
-    /* Stacked Quick Action Buttons Styling */
     .quick-action-stack {
       display: flex;
       flex-direction: column;
@@ -458,35 +444,14 @@
       justify-content: center;
     }
 
-    .btn-all-correct {
-      background: #dcfce7;
-      color: #15803d;
-      border-color: #86efac;
-    }
-    .btn-all-correct:hover {
-      background: #16a34a;
-      color: white;
-    }
+    .btn-all-correct { background: #dcfce7; color: #15803d; border-color: #86efac; }
+    .btn-all-correct:hover { background: #16a34a; color: white; }
 
-    .btn-all-wrong {
-      background: #fee2e2;
-      color: #b91c1c;
-      border-color: #fca5a5;
-    }
-    .btn-all-wrong:hover {
-      background: #dc2626;
-      color: white;
-    }
+    .btn-all-wrong { background: #fee2e2; color: #b91c1c; border-color: #fca5a5; }
+    .btn-all-wrong:hover { background: #dc2626; color: white; }
 
-    .btn-reset-all {
-      background: #f1f5f9;
-      color: #475569;
-      border-color: #cbd5e1;
-    }
-    .btn-reset-all:hover {
-      background: #64748b;
-      color: white;
-    }
+    .btn-reset-all { background: #f1f5f9; color: #475569; border-color: #cbd5e1; }
+    .btn-reset-all:hover { background: #64748b; color: white; }
 
     .hidden { display: none !important; }
     
@@ -497,12 +462,14 @@
       margin-top: 10px;
     }
 
-    .stat-card {
+    .stat-card, .spotlight-card {
       background: #f8fafc;
       padding: 12px;
       border-radius: 8px;
       border: 1px solid var(--border);
     }
+
+    .spotlight-card { padding: 12px 16px; }
 
     .spotlight-grid {
       display: grid;
@@ -511,14 +478,6 @@
       margin-top: 14px;
     }
 
-    .spotlight-card {
-      background: #f8fafc;
-      padding: 12px 16px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-    }
-
-    /* Modal Overlay Styling */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -545,7 +504,6 @@
       margin-top: 16px;
     }
 
-    /* Toast Banner */
     .toast {
       position: fixed;
       bottom: 24px;
@@ -562,7 +520,6 @@
       transition: all 0.3s ease;
     }
 
-    /* Print Specific Styles */
     #print-area { display: none; }
 
     @media print {
@@ -602,7 +559,7 @@
   <!-- Class Tab Navigation -->
   <div class="tab-bar" id="tab-bar"></div>
 
-  <!-- Blank Canvas Instructions (Shown when no classes exist) -->
+  <!-- Blank Canvas Instructions -->
   <div id="blank-canvas" class="card empty-state-card hidden">
     <h3>📂 Welcome to Teacher Companion App</h3>
     <p>Press <strong>+ Add Class</strong> above to create your first class tab and begin setting up assignments.</p>
@@ -617,15 +574,15 @@
     </div>
     
     <div class="input-group">
-      <input type="text" id="assignment-name" placeholder="Assignment Title (e.g. Science Chapter 3 Worksheet)" style="flex: 2; min-width: 220px;">
+      <input type="text" id="assignment-name" placeholder="Assignment Title (e.g. Science Chapter 3 Worksheet)" style="flex: 1; min-width: 280px;">
     </div>
 
-    <!-- Tap Cycle Scheme Selection -->
+    <!-- Tap Cycle Scheme Selection (Diagnostic Feedback Positioned First) -->
     <div style="margin-bottom: 12px;">
-      <label style="font-size: 0.85rem; font-weight: bold; color: #475569; display: block; margin-bottom: 6px;">Grading Scheme / Tap Cycle System:</label>
+      <label style="font-size: 0.85rem; font-weight: bold; color: #475569; display: block; margin-bottom: 6px;">Grading Scheme / Tap System:</label>
       <div class="mode-selector">
-        <button type="button" id="btn-scheme-diag" class="mode-btn active" onclick="setGradingScheme('diagnostic')">Diagnostic Feedback (5-Tap: ✓, C, ⚡, ...)</button>
-        <button type="button" id="btn-scheme-pts" class="mode-btn" onclick="setGradingScheme('points')">Partial Credit Points (5-Tap: 2m, 1.5m, 1m, 0.5m)</button>
+        <button type="button" id="btn-scheme-diag" class="mode-btn active" onclick="setGradingScheme('diagnostic')">Diagnostic Feedback (5-Tap: ✓, Concept, Careless, ...)</button>
+        <button type="button" id="btn-scheme-pts" class="mode-btn" onclick="setGradingScheme('points')">Partial Credit Points (3-Tap: Full, Wrong, Custom Partial)</button>
       </div>
     </div>
 
@@ -640,7 +597,7 @@
       </div>
     </div>
 
-    <!-- Dynamic Control: Standard -->
+    <!-- Dynamic Controls -->
     <div id="ctrl-standard" class="input-group">
       <div style="display: flex; flex-direction: column; gap: 4px;">
         <label style="font-size: 0.75rem; font-weight: bold; color: #64748b;">Total Questions:</label>
@@ -652,7 +609,6 @@
       </div>
     </div>
 
-    <!-- Dynamic Control: Uniform Sub-questions -->
     <div id="ctrl-uniform" class="input-group hidden">
       <div style="display: flex; flex-direction: column; gap: 4px;">
         <label style="font-size: 0.75rem; font-weight: bold; color: #64748b;">Main Questions:</label>
@@ -672,7 +628,6 @@
       </div>
     </div>
 
-    <!-- Dynamic Control: Custom Pattern -->
     <div id="ctrl-custom" class="input-group hidden" style="width: 100%; flex-direction: column; gap: 12px; align-items: flex-start;">
       <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; width: 100%; background: #f1f5f9; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border);">
         <label style="font-size: 0.85rem; font-weight: bold; color: #334155;">Step 1: Specify Number of Main Questions:</label>
@@ -690,7 +645,6 @@
       </div>
     </div>
 
-    <!-- Dynamic Control: Freeform Custom Text -->
     <div id="ctrl-freeform" class="input-group hidden" style="width: 100%; flex-direction: column; gap: 8px; align-items: flex-start;">
       <label style="font-size: 0.85rem; font-weight: bold; color: #475569;">Type question labels (separated by commas or new lines):</label>
       <textarea id="freeform-q-input" rows="3" style="width: 100%; font-family: monospace;" placeholder="e.g. 1a, 1b, 1c, 2, 3a, 3b, Section B Q1, Bonus" oninput="updateQPreview()">1a, 1b, 1c, 2a, 2b, 3</textarea>
@@ -700,9 +654,22 @@
     <div class="preview-box">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
         <span style="font-size: 0.8rem; font-weight: bold; color: #475569;">Marking Items Preview:</span>
-        <span id="total-items-badge" style="font-size: 0.8rem; font-weight: bold; color: var(--primary);">0 Items</span>
+        <span id="total-items-badge" style="font-size: 0.8rem; font-weight: bold; color: var(--primary);">0 Items (Total Max Marks: 0)</span>
       </div>
       <div id="q-preview-container"></div>
+    </div>
+
+    <!-- Per-Question Max Mark Allocation Grid (Default Mark Updated to 1) -->
+    <div style="margin-bottom: 14px; background: #f1f5f9; padding: 12px; border-radius: 8px; border: 1px solid var(--border);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+        <label style="font-size: 0.85rem; font-weight: bold; color: #334155;">Set Marks Attainable Per Question:</label>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <span style="font-size: 0.8rem; color: #64748b;">Set Default Mark:</span>
+          <input type="number" id="default-q-mark" value="1" min="0.5" step="0.5" style="width: 60px; padding: 4px 6px; font-size: 0.85rem;">
+          <button type="button" onclick="applyDefaultMarksToAll()" style="font-size: 0.78rem; padding: 5px 10px; background: #64748b;">Apply To All</button>
+        </div>
+      </div>
+      <div id="q-marks-grid" style="display: flex; gap: 8px; flex-wrap: wrap; max-height: 180px; overflow-y: auto;"></div>
     </div>
 
     <div class="input-group">
@@ -718,8 +685,6 @@
 
   <!-- Active Marking Card -->
   <div id="marking-card" class="card hidden">
-    
-    <!-- Multi-Assignment Switcher Toolbar -->
     <div class="assignment-bar">
       <span style="font-size: 0.88rem; font-weight: bold; color: #475569;">Active Assignment:</span>
       <select id="assignment-select" class="assignment-select" onchange="switchAssignment(this.value)"></select>
@@ -741,7 +706,6 @@
       </div>
     </div>
 
-    <!-- Live Search & Bulk Controls Toolbar -->
     <div class="search-container">
       <input type="text" id="search-input" class="search-box" placeholder="🔍 Search student name or register number (e.g. '05' or 'Alex')..." oninput="filterStudents()">
       <button id="clear-btn" class="clear-btn hidden" onclick="clearSearch()">✖ Clear</button>
@@ -754,20 +718,15 @@
       <button class="bulk-btn bulk-btn-reset-all" onclick="resetAllStudentsMarks()">↺ Reset ALL Marks</button>
     </div>
 
-    <!-- Cycle Legend -->
     <div class="legend" id="legend-container"></div>
-
     <div id="student-list"></div>
   </div>
 
   <!-- Analytics Card -->
   <div id="analytics-card" class="card hidden" style="border-radius: 12px;">
     <h3>📊 Class Yield & Gap Analysis</h3>
-    
-    <!-- Primary Class Metrics -->
     <div class="stats-grid" id="stats-grid"></div>
 
-    <!-- Pass/Fail & High/Struggling Student Spotlights -->
     <div class="spotlight-grid">
       <div class="spotlight-card">
         <div style="font-size: 0.85rem; font-weight: bold; color: #16a34a; margin-bottom: 6px;">
@@ -790,12 +749,11 @@
 
     <hr style="margin: 20px 0; border: 0; border-top: 1px solid var(--border);">
 
-    <!-- Pareto Chart Section Wrapper -->
     <div id="pareto-chart-wrapper">
       <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 8px; margin-bottom: 10px;">
         <div>
           <h4 style="margin: 0; color: #1e293b; font-size: 1rem;">📉 Mistake Frequency Pareto Analysis (80/20 Rule)</h4>
-          <p style="font-size: 0.8rem; color: #64748b; margin: 2px 0 0 0;">Identifies high-impact bottleneck questions. Bars show mark losses per question; line shows cumulative error concentration.</p>
+          <p style="font-size: 0.8rem; color: #64748b; margin: 2px 0 0 0;">Identifies high-impact bottleneck questions based on total marks lost.</p>
         </div>
         <div style="display: flex; gap: 14px; font-size: 0.78rem; font-weight: bold;">
           <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 10px; height: 10px; background: #dc2626; border-radius: 2px; display: inline-block;"></span> Mark Loss</span>
@@ -809,14 +767,13 @@
       </div>
     </div>
 
-    <!-- Empty State Notice when no marks or losses are recorded -->
     <div id="pareto-empty-msg" class="hidden" style="text-align: center; padding: 24px 20px; background: #f8fafc; border: 1px dashed var(--border); border-radius: 8px; color: #64748b; font-weight: 600; margin-top: 10px; font-size: 0.92rem;">
       🎉 No mistakes or mark losses recorded for this assignment yet.
     </div>
   </div>
 </div>
 
-<!-- Modal 1: Add New Class Tab -->
+<!-- Modals -->
 <div id="add-class-modal" class="modal-overlay hidden">
   <div class="modal-card">
     <h3 style="margin-top:0;">➕ Add New Class</h3>
@@ -829,16 +786,11 @@
   </div>
 </div>
 
-<!-- Modal 2: New Assignment Roster Prompt -->
 <div id="new-assignment-modal" class="modal-overlay hidden">
   <div class="modal-card">
     <h3 style="margin-top:0; color: var(--primary);">📝 New Assignment Parameters</h3>
     <p style="font-size: 0.9rem; color: #475569; line-height: 1.4;">
       Would you like to <strong>duplicate the existing student roster</strong> for <strong id="dup-class-name"></strong>?
-    </p>
-    <p style="font-size: 0.82rem; color: #64748b; line-height: 1.3;">
-      • <strong>Duplicate Roster:</strong> Keeps student names and register numbers, resetting assignment title and question breakdown structure.<br>
-      • <strong>Blank Roster:</strong> Clears student data for a fresh setup.
     </p>
     <div class="modal-btn-stack">
       <button onclick="setupNewAssignment(true)" style="background: var(--primary); padding: 12px;">📋 Duplicate Roster</button>
@@ -848,7 +800,6 @@
   </div>
 </div>
 
-<!-- Modal 3: Delete Class Confirmation -->
 <div id="delete-class-modal" class="modal-overlay hidden">
   <div class="modal-card">
     <h3 style="margin-top:0; color: var(--danger);">🗑️ Delete Class Tab</h3>
@@ -860,7 +811,6 @@
   </div>
 </div>
 
-<!-- Modal 4: Delete Assignment Confirmation -->
 <div id="delete-assignment-modal" class="modal-overlay hidden">
   <div class="modal-card">
     <h3 style="margin-top:0; color: var(--danger);">🗑️ Delete Assignment</h3>
@@ -872,7 +822,6 @@
   </div>
 </div>
 
-<!-- Modal 5: Class Summary Report -->
 <div id="class-report-modal" class="modal-overlay hidden">
   <div class="modal-card" style="max-width: 850px; width: 95%; max-height: 90vh; overflow-y: auto;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
@@ -886,7 +835,6 @@
   </div>
 </div>
 
-<!-- Modal 6: Individual Student Slips Report -->
 <div id="student-report-modal" class="modal-overlay hidden">
   <div class="modal-card" style="max-width: 750px; width: 95%; max-height: 90vh; overflow-y: auto;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
@@ -901,36 +849,65 @@
   </div>
 </div>
 
-<!-- Hidden Print Area -->
 <div id="print-area"></div>
-
-<!-- Toast Banner -->
 <div id="toast" class="toast hidden"></div>
 
 <script>
   let classData = [];
   let activeClassIdx = 0;
   let activeQMode = 'standard'; 
-  let activeGradingScheme = 'diagnostic'; 
+  let activeGradingScheme = 'diagnostic'; // Set default grading scheme to diagnostic
   let isEditingParameters = false;
-  let tabClickTimer = null; // Timer variable for tab click debouncing
+  let tabClickTimer = null;
 
-  const SCHEME_CONFIG = {
-    diagnostic: {
-      states: ['unmarked', 'correct', 'concept', 'careless', 'incomplete'],
-      labels: { unmarked: '', correct: '✓', concept: 'C', careless: '⚡', incomplete: '...' },
-      points: { unmarked: 0, correct: 1, concept: 0, careless: 0, incomplete: 0 },
-      maxPerQ: 1
-    },
-    points: {
-      states: ['unmarked', 'm2', 'm15', 'm1', 'm05'],
-      labels: { unmarked: '0m', m2: '2m', m15: '1.5m', m1: '1m', m05: '0.5m' },
-      points: { unmarked: 0, m2: 2, m15: 1.5, m1: 1, m05: 0.5 },
-      maxPerQ: 2
+  /* HELPER CALCULATIONS */
+  const getAssignmentMaxScore = (session) => 
+    (!session || !session.qMaxMarks || !Array.isArray(session.qMaxMarks)) ? 0 :
+    session.qMaxMarks.reduce((sum, m) => sum + (parseFloat(m) || 0), 0);
+
+  function getStudentEarnedScore(student, session) {
+    if (!session || !student || !student.answers || !session.qMaxMarks) return 0;
+    const schemeKey = session.gradingScheme || 'diagnostic';
+    let earned = 0;
+
+    student.answers.forEach((st, qIdx) => {
+      const qMax = parseFloat(session.qMaxMarks[qIdx]) || 0;
+      if (schemeKey === 'points') {
+        if (st === 'full' || st === 'm2') earned += qMax;
+        else if (st === 'partial') {
+          const partialVal = (student.partialMarks && student.partialMarks[qIdx] !== undefined) 
+            ? parseFloat(student.partialMarks[qIdx]) : (qMax / 2);
+          earned += Math.min(qMax, Math.max(0, partialVal));
+        }
+      } else {
+        if (st === 'correct') earned += qMax;
+      }
+    });
+
+    return Math.round(earned * 100) / 100;
+  }
+
+  function getQuestionEarnedMarks(student, qIdx, session) {
+    if (!student || !student.answers) return 0;
+    const schemeKey = session.gradingScheme || 'diagnostic';
+    const qMax = parseFloat(session.qMaxMarks[qIdx]) || 0;
+    const st = student.answers[qIdx];
+
+    if (schemeKey === 'points') {
+      if (st === 'full' || st === 'm2') return qMax;
+      if (st === 'partial') {
+        const partialVal = (student.partialMarks && student.partialMarks[qIdx] !== undefined) 
+          ? parseFloat(student.partialMarks[qIdx]) : (qMax / 2);
+        return Math.min(qMax, Math.max(0, partialVal));
+      }
+      return 0;
     }
-  };
+    return st === 'correct' ? qMax : 0;
+  }
 
-  /* LOCAL STORAGE PERSISTENCE HELPERS */
+  const formatScore = (num) => Number.isInteger(num) ? num.toString() : (Math.round(num * 100) / 100).toString();
+
+  /* PERSISTENCE HELPERS */
   function saveData() {
     try {
       localStorage.setItem('teacherApp_classData', JSON.stringify(classData));
@@ -944,11 +921,8 @@
     const savedClassData = localStorage.getItem('teacherApp_classData');
     const savedActiveIdx = localStorage.getItem('teacherApp_activeClassIdx');
     if (savedClassData) {
-      try {
-        classData = JSON.parse(savedClassData);
-      } catch (e) {
-        console.error("Could not parse saved class data", e);
-      }
+      try { classData = JSON.parse(savedClassData); } 
+      catch (e) { console.error("Could not parse saved class data", e); }
     }
     if (savedActiveIdx !== null) {
       activeClassIdx = parseInt(savedActiveIdx, 10) || 0;
@@ -959,8 +933,7 @@
   function formatDate(d = new Date()) {
     const day = String(d.getDate()).padStart(2, '0');
     const month = String(d.getMonth() + 1).padStart(2, '0');
-    const year = d.getFullYear();
-    return `${day}/${month}/${year}`;
+    return `${day}/${month}/${d.getFullYear()}`;
   }
 
   window.onload = () => {
@@ -985,11 +958,8 @@
     setTimeout(() => { toast.classList.add('hidden'); }, 3000);
   }
 
-  function closeModal(id) {
-    document.getElementById(id).classList.add('hidden');
-  }
+  const closeModal = (id) => document.getElementById(id).classList.add('hidden');
 
-  /* RENDER TAB BAR WITH DEBOUNCED SINGLE-CLICK & ENHANCED DOUBLE-CLICK EDITING */
   function renderTabs() {
     const tabBar = document.getElementById('tab-bar');
     tabBar.innerHTML = '';
@@ -1000,31 +970,19 @@
       btn.innerText = cls.name;
       btn.title = "Double-click to rename class";
 
-      // Single click switches tab (debounced so double-click doesn't re-render DOM mid-click)
-      btn.onclick = (e) => {
-        if (btn.querySelector('input')) return; // Ignore single-click if actively editing
-
-        if (tabClickTimer) {
-          clearTimeout(tabClickTimer);
-          tabClickTimer = null;
-        }
-
+      btn.onclick = () => {
+        if (btn.querySelector('input')) return;
+        if (tabClickTimer) clearTimeout(tabClickTimer);
         tabClickTimer = setTimeout(() => {
           switchTab(idx);
           tabClickTimer = null;
         }, 220);
       };
 
-      // Double click cancels single-click timer and initiates inline rename
       btn.ondblclick = (e) => {
         e.stopPropagation();
         e.preventDefault();
-
-        if (tabClickTimer) {
-          clearTimeout(tabClickTimer);
-          tabClickTimer = null;
-        }
-
+        if (tabClickTimer) clearTimeout(tabClickTimer);
         makeTabEditable(btn, idx);
       };
 
@@ -1038,7 +996,6 @@
     tabBar.appendChild(addBtn);
   }
 
-  /* INLINE TAB EDITING LOGIC */
   function makeTabEditable(btn, idx) {
     const currentName = classData[idx].name;
     btn.innerHTML = '';
@@ -1049,21 +1006,14 @@
     input.value = currentName;
     input.style.width = Math.max(80, currentName.length * 10) + 'px';
 
-    // Prevent click events inside the input field from firing tab click actions
     input.onclick = (e) => e.stopPropagation();
     input.ondblclick = (e) => e.stopPropagation();
-
-    // Dynamically expand input width as user types
-    input.oninput = () => {
-      input.style.width = Math.max(80, input.value.length * 10) + 'px';
-    };
+    input.oninput = () => { input.style.width = Math.max(80, input.value.length * 10) + 'px'; };
 
     let isSaved = false;
-
     const commitRename = () => {
       if (isSaved) return;
       isSaved = true;
-
       const newName = input.value.trim();
       if (newName && newName !== currentName) {
         classData[idx].name = newName;
@@ -1075,16 +1025,9 @@
     };
 
     input.onblur = commitRename;
-
     input.onkeydown = (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        input.blur(); // Triggers blur commit
-      } else if (e.key === 'Escape') {
-        e.preventDefault();
-        isSaved = true; // Cancel rename without saving
-        renderTabs();
-      }
+      if (e.key === 'Enter') { e.preventDefault(); input.blur(); } 
+      else if (e.key === 'Escape') { isSaved = true; renderTabs(); }
     };
 
     btn.appendChild(input);
@@ -1127,31 +1070,28 @@
 
   function setQMode(mode) {
     activeQMode = mode;
-    
-    document.getElementById('btn-mode-std').classList.toggle('active', mode === 'standard');
-    document.getElementById('btn-mode-uni').classList.toggle('active', mode === 'uniform');
-    document.getElementById('btn-mode-cust').classList.toggle('active', mode === 'custom');
-    document.getElementById('btn-mode-free').classList.toggle('active', mode === 'freeform');
+    ['std', 'uni', 'cust', 'free'].forEach(m => {
+      const isMatch = (m === 'std' && mode === 'standard') || 
+                      (m === 'uni' && mode === 'uniform') || 
+                      (m === 'cust' && mode === 'custom') || 
+                      (m === 'free' && mode === 'freeform');
+      document.getElementById(`btn-mode-${m}`).classList.toggle('active', isMatch);
+    });
 
     document.getElementById('ctrl-standard').classList.toggle('hidden', mode !== 'standard');
     document.getElementById('ctrl-uniform').classList.toggle('hidden', mode !== 'uniform');
     document.getElementById('ctrl-custom').classList.toggle('hidden', mode !== 'custom');
     document.getElementById('ctrl-freeform').classList.toggle('hidden', mode !== 'freeform');
 
-    if (mode === 'custom') {
-      const container = document.getElementById('custom-prompts-grid');
-      if (!container.children.length) {
-        renderCustomQuestionPrompts();
-      }
+    if (mode === 'custom' && !document.getElementById('custom-prompts-grid').children.length) {
+      renderCustomQuestionPrompts();
     }
-
     updateQPreview();
   }
 
   function adjustValue(elementId, delta) {
     const input = document.getElementById(elementId);
-    let val = parseInt(input.value) || 1;
-    val += delta;
+    let val = (parseInt(input.value) || 1) + delta;
     if (val < parseInt(input.min)) val = parseInt(input.min);
     if (val > parseInt(input.max)) val = parseInt(input.max);
     input.value = val;
@@ -1159,11 +1099,8 @@
   }
 
   function renderCustomQuestionPrompts() {
-    const countInput = document.getElementById('custom-main-count');
-    let mainCount = parseInt(countInput.value) || 1;
-    if (mainCount < 1) mainCount = 1;
-    if (mainCount > 20) mainCount = 20;
-
+    let mainCount = parseInt(document.getElementById('custom-main-count').value) || 1;
+    mainCount = Math.max(1, Math.min(20, mainCount));
     const container = document.getElementById('custom-prompts-grid');
     
     let currentValues = {};
@@ -1176,7 +1113,7 @@
     for (let i = 1; i <= mainCount; i++) {
       let val = currentValues[i] !== undefined ? currentValues[i] : 2;
       html += `
-        <div style="display: flex; align-items: center; justify-between; background: #f8fafc; padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border);">
+        <div style="display: flex; align-items: center; justify-content: space-between; background: #f8fafc; padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border);">
           <div style="font-weight: 600; font-size: 0.85rem; color: #334155; min-width: 90px;">Question ${i}</div>
           <div style="display: flex; align-items: center; gap: 8px;">
             <span style="font-size: 0.78rem; color: #64748b;">Subquestions:</span>
@@ -1187,8 +1124,7 @@
             </div>
           </div>
           <div id="custom-sub-lbl-${i}" style="font-size: 0.78rem; font-weight: bold; color: var(--primary); min-width: 95px; text-align: right;"></div>
-        </div>
-      `;
+        </div>`;
     }
     container.innerHTML = html;
     updateQPreview();
@@ -1196,35 +1132,27 @@
 
   function adjustCustomMainCount(delta) {
     const input = document.getElementById('custom-main-count');
-    let val = parseInt(input.value) || 1;
-    val += delta;
-    if (val < 1) val = 1;
-    if (val > 20) val = 20;
-    input.value = val;
+    let val = (parseInt(input.value) || 1) + delta;
+    input.value = Math.max(1, Math.min(20, val));
     renderCustomQuestionPrompts();
   }
 
   function adjustCustomSubCount(qNum, delta) {
     const input = document.getElementById(`custom-sub-${qNum}`);
     if (!input) return;
-    let val = parseInt(input.value) || 0;
-    val += delta;
-    if (val < 0) val = 0;
-    if (val > 8) val = 8;
-    input.value = val;
+    let val = (parseInt(input.value) || 0) + delta;
+    input.value = Math.max(0, Math.min(8, val));
     updateQPreview();
   }
 
   function getQLabelsFromSetup() {
+    const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
     if (activeQMode === 'standard') {
       const count = parseInt(document.getElementById('q-count').value) || 5;
-      let labels = [];
-      for (let i = 1; i <= count; i++) labels.push(`Q${i}`);
-      return labels;
+      return Array.from({length: count}, (_, i) => `Q${i+1}`);
     } else if (activeQMode === 'uniform') {
       const mainCount = parseInt(document.getElementById('main-q-count').value) || 3;
       const subCount = parseInt(document.getElementById('sub-q-count').value) || 2;
-      const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
       let labels = [];
       for (let i = 1; i <= mainCount; i++) {
         for (let j = 0; j < Math.min(subCount, letters.length); j++) {
@@ -1234,13 +1162,11 @@
       return labels;
     } else if (activeQMode === 'custom') {
       const mainCount = parseInt(document.getElementById('custom-main-count').value) || 1;
-      const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
       let labels = [];
 
       for (let i = 1; i <= mainCount; i++) {
         const subInput = document.getElementById(`custom-sub-${i}`);
         const subCount = subInput ? (parseInt(subInput.value) || 0) : 0;
-
         if (subCount === 0) {
           labels.push(`${i}`);
         } else {
@@ -1261,7 +1187,6 @@
   function updateQPreview() {
     const labels = getQLabelsFromSetup();
     const container = document.getElementById('q-preview-container');
-    const badge = document.getElementById('total-items-badge');
 
     if (activeQMode === 'custom') {
       const mainCount = parseInt(document.getElementById('custom-main-count').value) || 1;
@@ -1274,18 +1199,62 @@
           if (subCount === 0) {
             lblSpan.innerText = `${i}`;
           } else {
-            let parts = [];
-            for (let j = 0; j < Math.min(subCount, letters.length); j++) {
-              parts.push(`${i}${letters[j]}`);
-            }
-            lblSpan.innerText = parts.join(', ');
+            lblSpan.innerText = Array.from({length: Math.min(subCount, letters.length)}, (_, j) => `${i}${letters[j]}`).join(', ');
           }
         }
       }
     }
 
-    badge.innerText = `${labels.length} Marking Items`;
     container.innerHTML = labels.map(lbl => `<span class="tag-pill">${lbl}</span>`).join(' ');
+    renderMarksAllocationGrid(labels);
+  }
+
+  function renderMarksAllocationGrid(labels) {
+    const grid = document.getElementById('q-marks-grid');
+    const defaultMark = parseFloat(document.getElementById('default-q-mark').value) || 1;
+
+    let existingMarks = [];
+    grid.querySelectorAll('.q-mark-input').forEach(inp => existingMarks.push(parseFloat(inp.value) || defaultMark));
+
+    let html = '';
+    labels.forEach((lbl, idx) => {
+      const markVal = existingMarks[idx] !== undefined ? existingMarks[idx] : defaultMark;
+      html += `
+        <div style="display: flex; align-items: center; gap: 4px; background: white; padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border);">
+          <span style="font-weight: bold; font-size: 0.82rem; color: #334155;">${lbl}:</span>
+          <input type="number" class="q-mark-input" id="qmark-${idx}" value="${markVal}" min="0.5" step="0.5" style="width: 50px; padding: 3px 4px; font-weight: bold; text-align: center;" oninput="updateTotalMaxScoreBadge()">
+          <span style="font-size: 0.75rem; color: #64748b;">m</span>
+        </div>`;
+    });
+
+    grid.innerHTML = html;
+    updateTotalMaxScoreBadge();
+  }
+
+  function applyDefaultMarksToAll() {
+    const defaultMark = parseFloat(document.getElementById('default-q-mark').value) || 1;
+    document.querySelectorAll('.q-mark-input').forEach(inp => {
+      inp.value = defaultMark;
+    });
+    updateTotalMaxScoreBadge();
+  }
+
+  function getQMaxMarksFromSetup() {
+    let marks = [];
+    document.querySelectorAll('.q-mark-input').forEach(inp => {
+      marks.push(parseFloat(inp.value) || 1);
+    });
+    return marks;
+  }
+
+  function updateTotalMaxScoreBadge() {
+    const labels = getQLabelsFromSetup();
+    const marks = getQMaxMarksFromSetup();
+    const totalMax = marks.reduce((sum, m) => sum + m, 0);
+    const badge = document.getElementById('total-items-badge');
+    if (badge) {
+      badge.innerText = `${labels.length} Items (Total Max Marks: ${formatScore(totalMax)})`;
+    }
   }
 
   function openAddClassModal() {
@@ -1295,23 +1264,14 @@
   }
 
   function confirmAddClass() {
-    const input = document.getElementById('new-class-input');
-    const className = input.value.trim();
-
+    const className = document.getElementById('new-class-input').value.trim();
     if (!className) {
       showToast("⚠️ Please enter a valid class name.");
       return;
     }
 
     saveCurrentSetupState();
-
-    classData.push({
-      name: className,
-      roster: [],
-      activeAssignmentIdx: 0,
-      assignments: []
-    });
-
+    classData.push({ name: className, roster: [], activeAssignmentIdx: 0, assignments: [] });
     closeModal('add-class-modal');
     activeClassIdx = classData.length - 1;
     isEditingParameters = false;
@@ -1331,7 +1291,6 @@
   function setupNewAssignment(duplicateRoster) {
     closeModal('new-assignment-modal');
     const cls = classData[activeClassIdx];
-    
     isEditingParameters = true;
     
     document.getElementById('assignment-name').value = '';
@@ -1355,26 +1314,17 @@
 
   function promptDeleteClass() {
     if (classData.length === 0) return;
-    const msg = document.getElementById('delete-modal-msg');
-    const deleteBtn = document.getElementById('confirm-delete-btn');
     const currentClass = classData[activeClassIdx];
-
-    const clsName = currentClass.name;
-    msg.innerHTML = `Are you sure you want to delete <strong>"${clsName}"</strong>?<br><br>All roster data and all assignments under this class tab will be permanently removed.`;
-    deleteBtn.style.display = 'block';
-
+    document.getElementById('delete-modal-msg').innerHTML = `Are you sure you want to delete <strong>"${currentClass.name}"</strong>?<br><br>All roster data and all assignments under this class tab will be permanently removed.`;
     document.getElementById('delete-class-modal').classList.remove('hidden');
   }
 
   function executeDeleteClass() {
     if (classData.length === 0) return;
-    const currentClass = classData[activeClassIdx];
-    const deletedName = currentClass.name;
+    const deletedName = classData[activeClassIdx].name;
 
     classData.splice(activeClassIdx, 1);
-    if (activeClassIdx >= classData.length) {
-      activeClassIdx = Math.max(0, classData.length - 1);
-    }
+    activeClassIdx = Math.max(0, activeClassIdx - 1);
 
     isEditingParameters = false;
     closeModal('delete-class-modal');
@@ -1399,11 +1349,8 @@
     if (!cls) return;
 
     const removedTitle = cls.assignments[cls.activeAssignmentIdx].assignment;
-
     cls.assignments.splice(cls.activeAssignmentIdx, 1);
-    if (cls.activeAssignmentIdx >= cls.assignments.length) {
-      cls.activeAssignmentIdx = Math.max(0, cls.assignments.length - 1);
-    }
+    cls.activeAssignmentIdx = Math.max(0, cls.assignments.length - 1);
 
     closeModal('delete-assignment-modal');
     clearSearch();
@@ -1444,6 +1391,7 @@
       setupCard.classList.remove('hidden');
       markingCard.classList.add('hidden');
       analyticsCard.classList.add('hidden');
+      setGradingScheme(activeGradingScheme);
       updateQPreview();
     } else {
       setupCard.classList.add('hidden');
@@ -1488,14 +1436,15 @@
       regNo = String(parseInt(match[1], 10)).padStart(2, '0');
       name = match[2].trim();
     }
-
     return { regNo, name };
   }
 
   function startSession() {
     const cls = classData[activeClassIdx];
     const assignmentTitle = document.getElementById('assignment-name').value.trim() || `Worksheet ${cls.assignments.length + 1}`;
+    
     const qLabels = getQLabelsFromSetup();
+    const qMaxMarks = getQMaxMarksFromSetup();
     const rawRoster = document.getElementById('roster-input').value;
 
     if (!qLabels || qLabels.length === 0) {
@@ -1510,13 +1459,15 @@
       assignment: assignmentTitle,
       gradingScheme: activeGradingScheme,
       qLabels: qLabels,
+      qMaxMarks: qMaxMarks,
       studentData: rosterList.map((line, idx) => {
         const parsed = parseRosterLine(line, idx);
         return {
           regNo: parsed.regNo,
           name: parsed.name,
           present: false,
-          answers: new Array(qLabels.length).fill('unmarked')
+          answers: new Array(qLabels.length).fill('unmarked'),
+          partialMarks: new Array(qLabels.length).fill(0)
         };
       })
     };
@@ -1535,28 +1486,17 @@
     const session = cls.assignments[cls.activeAssignmentIdx];
     if (!session) return;
 
-    const schemeKey = session.gradingScheme || 'diagnostic';
-    const cfg = SCHEME_CONFIG[schemeKey];
+    if (!session.qMaxMarks) {
+      session.qMaxMarks = new Array(session.qLabels.length).fill(1);
+    }
 
-    const totalPossibleMarks = session.qLabels.length * cfg.maxPerQ;
+    const schemeKey = session.gradingScheme || 'diagnostic';
+    const totalPossibleMarks = getAssignmentMaxScore(session);
     document.getElementById('session-title').innerText = `${cls.name} — ${session.assignment}`;
-    document.getElementById('session-subtitle').innerText = `${session.qLabels.length} Items (Max ${totalPossibleMarks} Marks) | ${session.studentData.length} Students`;
+    document.getElementById('session-subtitle').innerText = `${session.qLabels.length} Items (Total Max ${formatScore(totalPossibleMarks)} Marks) | ${session.studentData.length} Students`;
 
     const legendContainer = document.getElementById('legend-container');
-    if (schemeKey === 'points') {
-      legendContainer.innerHTML = `
-        <span><strong>5-Tap Partial Credit Cycle:</strong></span>
-        <div class="legend-item"><span class="dot" style="background: #f8fafc; border:1px solid #ccc;"></span> 0 Marks</div>
-        <span class="arrow-divider">&rarr;</span>
-        <div class="legend-item"><span class="dot" style="background: var(--success);"></span> 2 Marks (Green)</div>
-        <span class="arrow-divider">&rarr;</span>
-        <div class="legend-item"><span class="dot" style="background: var(--orange);"></span> 1.5 Marks (Orange)</div>
-        <span class="arrow-divider">&rarr;</span>
-        <div class="legend-item"><span class="dot" style="background: var(--success);"></span> 1 Mark (Green)</div>
-        <span class="arrow-divider">&rarr;</span>
-        <div class="legend-item"><span class="dot" style="background: var(--orange);"></span> 0.5 Mark (Orange)</div>
-      `;
-    } else {
+    if (schemeKey === 'diagnostic') {
       legendContainer.innerHTML = `
         <span><strong>5-Tap Diagnostic Cycle:</strong></span>
         <div class="legend-item"><span class="dot" style="background: #f8fafc; border:1px solid #ccc;"></span> Unmarked</div>
@@ -1569,12 +1509,25 @@
         <span class="arrow-divider">&rarr;</span>
         <div class="legend-item"><span class="dot" style="background: var(--incomplete);"></span> Incomplete (...)</div>
       `;
+    } else {
+      legendContainer.innerHTML = `
+        <span><strong>3-Tap Partial Credit Cycle:</strong></span>
+        <div class="legend-item"><span class="dot" style="background: #f8fafc; border:1px solid #ccc;"></span> Unmarked (0m)</div>
+        <span class="arrow-divider">&rarr;</span>
+        <div class="legend-item"><span class="dot" style="background: var(--success);"></span> 1 Tap: Full Marks (Green)</div>
+        <span class="arrow-divider">&rarr;</span>
+        <div class="legend-item"><span class="dot" style="background: var(--danger);"></span> 2 Taps: Wrong / 0 Marks (Red)</div>
+        <span class="arrow-divider">&rarr;</span>
+        <div class="legend-item"><span class="dot" style="background: var(--warning);"></span> 3 Taps: Custom Partial Marks (Yellow)</div>
+      `;
     }
 
     const list = document.getElementById('student-list');
     list.innerHTML = '';
 
     session.studentData.forEach((student, sIdx) => {
+      if (!student.partialMarks) student.partialMarks = new Array(session.qLabels.length).fill(0);
+
       const container = document.createElement('div');
       container.className = 'student-card-container';
       container.style.marginBottom = '14px';
@@ -1592,7 +1545,7 @@
         </div>
         <div class="q-container" id="qs-${sIdx}"></div>
         <div class="score-badge" id="score-${sIdx}">
-          <span>0 / ${totalPossibleMarks}</span>
+          <span>0 / ${formatScore(totalPossibleMarks)}</span>
           <div class="quick-action-stack">
             <button type="button" class="quick-btn btn-all-correct" onclick="markAllCorrect(${sIdx})">✓ All Correct</button>
             <button type="button" class="quick-btn btn-all-wrong" onclick="markAllWrong(${sIdx})">⚡ All Wrong</button>
@@ -1613,13 +1566,9 @@
 
       const qContainer = row.querySelector(`#qs-${sIdx}`);
       for (let q = 0; q < session.qLabels.length; q++) {
-        const labelText = session.qLabels[q];
-        const st = student.answers[q] || 'unmarked';
         const btn = document.createElement('button');
         btn.className = 'q-btn';
         btn.id = `btn-${sIdx}-${q}`;
-        btn.dataset.state = st;
-        btn.innerHTML = `<span>${labelText}</span><span class="sub">${cfg.labels[st] !== undefined ? cfg.labels[st] : ''}</span>`;
         btn.onclick = () => cycleState(sIdx, q);
         qContainer.appendChild(btn);
       }
@@ -1628,6 +1577,63 @@
     });
 
     filterStudents();
+  }
+
+  function cycleState(sIdx, qIdx) {
+    const cls = classData[activeClassIdx];
+    const session = cls.assignments[cls.activeAssignmentIdx];
+    const student = session.studentData[sIdx];
+    const schemeKey = session.gradingScheme || 'diagnostic';
+
+    if (!student.present) {
+      student.present = true;
+      const chk = document.getElementById(`chk-${sIdx}`);
+      if (chk) chk.checked = true;
+    }
+
+    let currentState = student.answers[qIdx];
+
+    if (schemeKey === 'diagnostic') {
+      const states = ['unmarked', 'correct', 'concept', 'careless', 'incomplete'];
+      let currIdx = states.indexOf(currentState);
+      if (currIdx === -1) currIdx = 0;
+      student.answers[qIdx] = states[(currIdx + 1) % states.length];
+    } else {
+      if (currentState === 'unmarked') {
+        student.answers[qIdx] = 'full';
+      } else if (currentState === 'full' || currentState === 'm2') {
+        student.answers[qIdx] = 'wrong';
+      } else if (currentState === 'wrong') {
+        student.answers[qIdx] = 'partial';
+        promptPartialMarks(sIdx, qIdx);
+      } else {
+        student.answers[qIdx] = 'unmarked';
+      }
+    }
+
+    saveData();
+    updateStudentUI(sIdx);
+    updateAnalytics();
+  }
+
+  function promptPartialMarks(sIdx, qIdx) {
+    const cls = classData[activeClassIdx];
+    const session = cls.assignments[cls.activeAssignmentIdx];
+    const student = session.studentData[sIdx];
+    const qLabel = session.qLabels[qIdx];
+    const qMax = parseFloat(session.qMaxMarks[qIdx]) || 1;
+
+    const defaultVal = student.partialMarks[qIdx] > 0 ? student.partialMarks[qIdx] : (qMax / 2);
+    const inputStr = prompt(`Enter marks awarded to ${student.name} for ${qLabel} (Max: ${qMax} marks):`, defaultVal);
+
+    if (inputStr !== null && inputStr.trim() !== "") {
+      let numVal = parseFloat(inputStr);
+      if (isNaN(numVal) || numVal < 0) numVal = 0;
+      if (numVal > qMax) numVal = qMax;
+      student.partialMarks[qIdx] = Math.round(numVal * 100) / 100;
+    } else {
+      student.partialMarks[qIdx] = Math.round((qMax / 2) * 100) / 100;
+    }
   }
 
   function setAllStudentAnswers(sIdx, targetState) {
@@ -1639,17 +1645,8 @@
     const chk = document.getElementById(`chk-${sIdx}`);
     if (chk) chk.checked = true;
 
-    const schemeKey = session.gradingScheme || 'diagnostic';
-    const cfg = SCHEME_CONFIG[schemeKey];
-
     for (let q = 0; q < session.qLabels.length; q++) {
       session.studentData[sIdx].answers[q] = targetState;
-      const btn = document.getElementById(`btn-${sIdx}-${q}`);
-      if (btn) {
-        btn.dataset.state = targetState;
-        const subSpan = btn.querySelector('.sub');
-        if (subSpan) subSpan.innerText = cfg.labels[targetState] !== undefined ? cfg.labels[targetState] : '';
-      }
     }
 
     saveData();
@@ -1660,16 +1657,14 @@
   function markAllCorrect(sIdx) {
     const cls = classData[activeClassIdx];
     const session = cls.assignments[cls.activeAssignmentIdx];
-    const schemeKey = session.gradingScheme || 'diagnostic';
-    const targetState = schemeKey === 'points' ? 'm2' : 'correct';
+    const targetState = (session.gradingScheme || 'diagnostic') === 'diagnostic' ? 'correct' : 'full';
     setAllStudentAnswers(sIdx, targetState);
   }
 
   function markAllWrong(sIdx) {
     const cls = classData[activeClassIdx];
     const session = cls.assignments[cls.activeAssignmentIdx];
-    const schemeKey = session.gradingScheme || 'diagnostic';
-    const targetState = schemeKey === 'points' ? 'unmarked' : 'concept';
+    const targetState = (session.gradingScheme || 'diagnostic') === 'diagnostic' ? 'concept' : 'wrong';
     setAllStudentAnswers(sIdx, targetState);
   }
 
@@ -1682,16 +1677,10 @@
     const chk = document.getElementById(`chk-${sIdx}`);
     if (chk) chk.checked = false;
 
-    const schemeKey = session.gradingScheme || 'diagnostic';
-    const cfg = SCHEME_CONFIG[schemeKey];
-
     for (let q = 0; q < session.qLabels.length; q++) {
       session.studentData[sIdx].answers[q] = 'unmarked';
-      const btn = document.getElementById(`btn-${sIdx}-${q}`);
-      if (btn) {
-        btn.dataset.state = 'unmarked';
-        const subSpan = btn.querySelector('.sub');
-        if (subSpan) subSpan.innerText = cfg.labels['unmarked'] !== undefined ? cfg.labels['unmarked'] : '';
+      if (session.studentData[sIdx].partialMarks) {
+        session.studentData[sIdx].partialMarks[q] = 0;
       }
     }
 
@@ -1705,14 +1694,12 @@
     const session = cls.assignments[cls.activeAssignmentIdx];
     if (!session) return;
 
-    const confirmReset = confirm(`Are you sure you want to reset ALL recorded marks for all ${session.studentData.length} students in "${session.assignment}"?`);
-    if (!confirmReset) return;
+    if (!confirm(`Are you sure you want to reset ALL recorded marks for all ${session.studentData.length} students in "${session.assignment}"?`)) return;
 
     session.studentData.forEach((student) => {
       student.present = false;
-      for (let q = 0; q < session.qLabels.length; q++) {
-        student.answers[q] = 'unmarked';
-      }
+      student.answers.fill('unmarked');
+      if (student.partialMarks) student.partialMarks.fill(0);
     });
 
     saveData();
@@ -1722,40 +1709,25 @@
   }
 
   function filterStudents() {
-    const input = document.getElementById('search-input');
-    const clearBtn = document.getElementById('clear-btn');
-    const query = input.value.toLowerCase().trim();
-
-    if (query.length > 0) {
-      clearBtn.classList.remove('hidden');
-    } else {
-      clearBtn.classList.add('hidden');
-    }
+    const query = document.getElementById('search-input').value.toLowerCase().trim();
+    document.getElementById('clear-btn').classList.toggle('hidden', query.length === 0);
 
     const cls = classData[activeClassIdx];
-    if (!cls) return; // Fix: Prevent unhandled TypeError when classData is empty
+    if (!cls) return;
     const session = cls.assignments[cls.activeAssignmentIdx];
     if (!session) return;
 
     const containers = document.querySelectorAll('.student-card-container');
-
     session.studentData.forEach((student, sIdx) => {
       const container = containers[sIdx];
       if (!container) return;
-
       const fullText = `${student.regNo} ${student.name}`.toLowerCase();
-
-      if (fullText.includes(query)) {
-        container.style.display = '';
-      } else {
-        container.style.display = 'none';
-      }
+      container.style.display = fullText.includes(query) ? '' : 'none';
     });
   }
 
   function clearSearch() {
-    const input = document.getElementById('search-input');
-    input.value = '';
+    document.getElementById('search-input').value = '';
     filterStudents();
   }
 
@@ -1776,40 +1748,9 @@
     showToast(selectBool ? "☑️ All students selected." : "☐ All students unselected.");
   }
 
-  function cycleState(sIdx, qIdx) {
-    const cls = classData[activeClassIdx];
-    const session = cls.assignments[cls.activeAssignmentIdx];
-    const schemeKey = session.gradingScheme || 'diagnostic';
-    const cfg = SCHEME_CONFIG[schemeKey];
-
-    if (!session.studentData[sIdx].present) {
-      session.studentData[sIdx].present = true;
-      const chk = document.getElementById(`chk-${sIdx}`);
-      if (chk) chk.checked = true;
-    }
-
-    let currentState = session.studentData[sIdx].answers[qIdx];
-    let currIndex = cfg.states.indexOf(currentState);
-    if (currIndex === -1) currIndex = 0;
-
-    let nextIndex = (currIndex + 1) % cfg.states.length;
-    let nextState = cfg.states[nextIndex];
-
-    session.studentData[sIdx].answers[qIdx] = nextState;
-
-    const btn = document.getElementById(`btn-${sIdx}-${qIdx}`);
-    btn.dataset.state = nextState;
-    btn.querySelector('.sub').innerText = cfg.labels[nextState];
-
-    saveData();
-    updateStudentUI(sIdx);
-    updateAnalytics();
-  }
-
   function togglePresent(sIdx, isPresent) {
     const cls = classData[activeClassIdx];
     const session = cls.assignments[cls.activeAssignmentIdx];
-
     session.studentData[sIdx].present = isPresent;
     saveData();
     updateStudentUI(sIdx);
@@ -1821,20 +1762,40 @@
     const session = cls.assignments[cls.activeAssignmentIdx];
     const student = session.studentData[sIdx];
     const schemeKey = session.gradingScheme || 'diagnostic';
-    const cfg = SCHEME_CONFIG[schemeKey];
 
-    const totalPossibleMarks = session.qLabels.length * cfg.maxPerQ;
+    const totalPossibleMarks = getAssignmentMaxScore(session);
+    const totalEarned = getStudentEarnedScore(student, session);
+    const displayEarned = formatScore(totalEarned);
 
-    let totalEarned = 0;
-    student.answers.forEach(st => {
-      totalEarned += (cfg.points[st] || 0);
-    });
-
-    const displayEarned = Number.isInteger(totalEarned) ? totalEarned : totalEarned.toFixed(1);
-    
     const scoreBadge = document.getElementById(`score-${sIdx}`);
     if (scoreBadge) {
-      scoreBadge.querySelector('span').innerText = `${displayEarned} / ${totalPossibleMarks}`;
+      scoreBadge.querySelector('span').innerText = `${displayEarned} / ${formatScore(totalPossibleMarks)}`;
+    }
+
+    for (let q = 0; q < session.qLabels.length; q++) {
+      const btn = document.getElementById(`btn-${sIdx}-${q}`);
+      if (!btn) continue;
+
+      const st = student.answers[q] || 'unmarked';
+      const qMax = parseFloat(session.qMaxMarks[q]) || 1;
+      btn.dataset.state = st;
+
+      let subLabel = '';
+      if (schemeKey === 'diagnostic') {
+        const diagLabels = { unmarked: '', correct: '✓', concept: 'C', careless: '⚡', incomplete: '...' };
+        subLabel = diagLabels[st] !== undefined ? diagLabels[st] : '';
+      } else {
+        if (st === 'full' || st === 'm2') subLabel = `${formatScore(qMax)}m`;
+        else if (st === 'wrong') subLabel = `0m`;
+        else if (st === 'partial') {
+          const pVal = (student.partialMarks && student.partialMarks[q] !== undefined) ? student.partialMarks[q] : (qMax / 2);
+          subLabel = `${formatScore(pVal)}m`;
+        } else {
+          subLabel = `-`;
+        }
+      }
+
+      btn.innerHTML = `<span>${session.qLabels[q]}</span><span class="sub">${subLabel}</span>`;
     }
 
     const feedbackBox = document.getElementById(`fb-${sIdx}`);
@@ -1843,30 +1804,10 @@
       return;
     }
 
-    let pct = Math.round((totalEarned / totalPossibleMarks) * 100) || 0;
+    let pct = totalPossibleMarks > 0 ? Math.round((totalEarned / totalPossibleMarks) * 100) : 0;
     let note = "";
 
-    if (schemeKey === 'points') {
-      let part15List = [], part1List = [], part05List = [], zeroList = [];
-      student.answers.forEach((state, idx) => {
-        const lbl = session.qLabels[idx];
-        if (state === 'm15') part15List.push(lbl);
-        else if (state === 'm1') part1List.push(lbl);
-        else if (state === 'm05') part05List.push(lbl);
-        else if (state === 'unmarked') zeroList.push(lbl);
-      });
-
-      if (totalEarned === totalPossibleMarks) {
-        note = `[100%] Outstanding performance! Full credit across all questions.`;
-      } else {
-        note = `[${pct}%] Solid effort! `;
-        if (part15List.length > 0) note += `Earned 1.5m on ${part15List.join(', ')}. `;
-        if (part1List.length > 0) note += `Earned 1m on ${part1List.join(', ')}. `;
-        if (part05List.length > 0) note += `Earned 0.5m on ${part05List.join(', ')}. `;
-        if (zeroList.length > 0) note += `No marks on ${zeroList.join(', ')}. `;
-        note += `Review partial/unmarked questions for full credit.`;
-      }
-    } else {
+    if (schemeKey === 'diagnostic') {
       let conceptGap = [], carelessGap = [], incompleteGap = [];
       student.answers.forEach((state, idx) => {
         const lbl = session.qLabels[idx];
@@ -1879,7 +1820,27 @@
       if (conceptGap.length > 0) note += `Review core concepts on ${conceptGap.join(', ')}. `;
       if (carelessGap.length > 0) note += `Double-check work on ${carelessGap.join(', ')} (careless errors). `;
       if (incompleteGap.length > 0) note += `Complete unfinished questions on ${incompleteGap.join(', ')}. `;
-      if (totalEarned === totalPossibleMarks) note = `[100%] Outstanding performance! Perfect score.`;
+      if (totalEarned >= totalPossibleMarks && totalPossibleMarks > 0) note = `[100%] Outstanding performance! Perfect score.`;
+    } else {
+      let partialList = [], zeroList = [];
+      student.answers.forEach((state, idx) => {
+        const lbl = session.qLabels[idx];
+        if (state === 'partial') {
+          const pVal = student.partialMarks[idx] || 0;
+          partialList.push(`${lbl} (${formatScore(pVal)}m)`);
+        } else if (state === 'wrong' || state === 'unmarked') {
+          zeroList.push(lbl);
+        }
+      });
+
+      if (totalEarned >= totalPossibleMarks && totalPossibleMarks > 0) {
+        note = `[100%] Outstanding performance! Full credit across all questions.`;
+      } else {
+        note = `[${pct}%] Solid effort! `;
+        if (partialList.length > 0) note += `Partial credit on ${partialList.join(', ')}. `;
+        if (zeroList.length > 0) note += `No marks on ${zeroList.join(', ')}. `;
+        note += `Review questions for full credit.`;
+      }
     }
 
     feedbackBox.innerText = `Auto-Feedback: ${note}`;
@@ -1891,41 +1852,31 @@
     if (!session) return;
 
     const schemeKey = session.gradingScheme || 'diagnostic';
-    const cfg = SCHEME_CONFIG[schemeKey];
-    const totalPossiblePerStudent = session.qLabels.length * cfg.maxPerQ;
+    const totalMaxPossible = getAssignmentMaxScore(session);
 
-    let totalPossibleAll = 0;
-    let totalEarnedAll = 0;
-    let passCount = 0;
-    let failCount = 0;
-
-    let highAchievers = [];
-    let needsSupport = [];
-
-    let counts = { m2: 0, m15: 0, m1: 0, m05: 0, concept: 0, careless: 0, incomplete: 0, unmarked: 0 };
+    let totalPossibleAll = 0, totalEarnedAll = 0, passCount = 0, failCount = 0;
+    let highAchievers = [], needsSupport = [];
+    let counts = { full: 0, wrong: 0, partial: 0, concept: 0, careless: 0, incomplete: 0, unmarked: 0 };
     let qLostMarks = new Array(session.qLabels.length).fill(0);
 
     const activeStudents = session.studentData.filter(s => s.present);
 
     activeStudents.forEach(student => {
-      let studentEarned = 0;
+      let studentEarned = getStudentEarnedScore(student, session);
+      totalPossibleAll += totalMaxPossible;
+      totalEarnedAll += studentEarned;
 
       student.answers.forEach((state, qIdx) => {
-        totalPossibleAll += cfg.maxPerQ;
-        const pts = cfg.points[state] || 0;
-        studentEarned += pts;
-        totalEarnedAll += pts;
         if (counts[state] !== undefined) counts[state]++;
-        qLostMarks[qIdx] += (cfg.maxPerQ - pts);
+        const qMax = parseFloat(session.qMaxMarks[qIdx]) || 1;
+        const qEarned = getQuestionEarnedMarks(student, qIdx, session);
+        qLostMarks[qIdx] += (qMax - qEarned);
       });
 
-      let pct = totalPossiblePerStudent > 0 ? (studentEarned / totalPossiblePerStudent) * 100 : 0;
+      let pct = totalMaxPossible > 0 ? (studentEarned / totalMaxPossible) * 100 : 0;
 
-      if (pct >= 50) {
-        passCount++;
-      } else {
-        failCount++;
-      }
+      if (pct >= 50) passCount++;
+      else failCount++;
 
       if (pct >= 80) {
         highAchievers.push({ regNo: student.regNo, name: student.name, scorePct: Math.round(pct) });
@@ -1938,13 +1889,11 @@
     needsSupport.sort((a, b) => b.scorePct - a.scorePct || a.regNo.localeCompare(b.regNo));
 
     let overallYield = totalPossibleAll > 0 ? Math.round((totalEarnedAll / totalPossibleAll) * 100) : 0;
-    let maxLost = Math.max(...qLostMarks);
+    let maxLost = Math.max(...qLostMarks, 0);
     let topBottleneckIdx = qLostMarks.indexOf(maxLost);
     let topBottleneckLabel = session.qLabels[topBottleneckIdx] || 'None';
 
-    const statsGrid = document.getElementById('stats-grid');
-
-    statsGrid.innerHTML = `
+    document.getElementById('stats-grid').innerHTML = `
       <div class="stat-card">
         <small>Overall Class Yield</small>
         <div style="font-size: 1.4rem; font-weight: bold; color: var(--primary);">${overallYield}%</div>
@@ -1957,36 +1906,30 @@
         </div>
       </div>
       <div class="stat-card">
-        <small>${schemeKey === 'points' ? 'Mark Distribution' : 'Primary Gap Breakdown'}</small>
+        <small>${schemeKey === 'diagnostic' ? 'Primary Gap Breakdown' : 'Item Mark Breakdown'}</small>
         <div style="font-size: 0.82rem; font-weight: bold; margin-top:4px; line-height: 1.3;">
-          ${schemeKey === 'points' 
-            ? `🟢 2m: ${counts.m2} | 🟠 1.5m: ${counts.m15}<br>🟢 1m: ${counts.m1} | 🟠 0.5m: ${counts.m05}` 
-            : `🔴 Concept: ${counts.concept} | 🟠 Careless: ${counts.careless}`}
+          ${schemeKey === 'diagnostic' 
+            ? `🔴 Concept: ${counts.concept} | 🟠 Careless: ${counts.careless}`
+            : `🟢 Full: ${counts.full} | 🔴 Wrong: ${counts.wrong}<br>🟡 Partial: ${counts.partial}`}
         </div>
       </div>
       <div class="stat-card">
         <small>Highest Mark-Loss Item</small>
         <div style="font-size: 0.92rem; font-weight: bold; color: var(--concept); margin-top:4px;">
-          ${maxLost > 0 ? `${topBottleneckLabel} (${maxLost} marks lost)` : 'None flagged'}
+          ${maxLost > 0 ? `${topBottleneckLabel} (${formatScore(maxLost)} marks lost)` : 'None flagged'}
         </div>
       </div>
     `;
 
-    const highContainer = document.getElementById('high-achievers-list');
     document.getElementById('high-count-badge').innerText = `(${highAchievers.length})`;
-    if (highAchievers.length === 0) {
-      highContainer.innerHTML = `<em style="font-size: 0.8rem; color: #94a3b8;">No students with ≥80% yet</em>`;
-    } else {
-      highContainer.innerHTML = highAchievers.map(s => `<span class="student-badge-high" title="${s.name}">${s.regNo}. ${s.name} (${s.scorePct}%)</span>`).join('');
-    }
+    document.getElementById('high-achievers-list').innerHTML = highAchievers.length === 0 
+      ? `<em style="font-size: 0.8rem; color: #94a3b8;">No students with ≥80% yet</em>`
+      : highAchievers.map(s => `<span class="student-badge-high" title="${s.name}">${s.regNo}. ${s.name} (${s.scorePct}%)</span>`).join('');
 
-    const supportContainer = document.getElementById('support-needed-list');
     document.getElementById('support-count-badge').innerText = `(${needsSupport.length})`;
-    if (needsSupport.length === 0) {
-      supportContainer.innerHTML = `<em style="font-size: 0.8rem; color: #94a3b8;">No students failing (&lt;50%)</em>`;
-    } else {
-      supportContainer.innerHTML = needsSupport.map(s => `<span class="student-badge-support" title="${s.name}">${s.regNo}. ${s.name} (${s.scorePct}%)</span>`).join('');
-    }
+    document.getElementById('support-needed-list').innerHTML = needsSupport.length === 0 
+      ? `<em style="font-size: 0.8rem; color: #94a3b8;">No students failing (&lt;50%)</em>`
+      : needsSupport.map(s => `<span class="student-badge-support" title="${s.name}">${s.regNo}. ${s.name} (${s.scorePct}%)</span>`).join('');
 
     const paretoWrapper = document.getElementById('pareto-chart-wrapper');
     const paretoEmptyMsg = document.getElementById('pareto-empty-msg');
@@ -2001,10 +1944,9 @@
 
       let paretoData = session.qLabels.map((lbl, idx) => ({
         label: lbl,
-        loss: qLostMarks[idx]
-      }));
+        loss: Math.round(qLostMarks[idx] * 100) / 100
+      })).sort((a, b) => b.loss - a.loss);
 
-      paretoData.sort((a, b) => b.loss - a.loss);
       renderParetoChart(paretoData, 'paretoCanvas');
     }
   }
@@ -2025,18 +1967,12 @@
     const height = rect.height || 240;
 
     ctx.clearRect(0, 0, width, height);
-
     const totalLoss = qData.reduce((sum, item) => sum + item.loss, 0);
     if (totalLoss === 0) return;
 
-    const paddingLeft = 40;
-    const paddingRight = 45;
-    const paddingTop = 30;
-    const paddingBottom = 35;
-
+    const paddingLeft = 40, paddingRight = 45, paddingTop = 30, paddingBottom = 35;
     const chartW = width - paddingLeft - paddingRight;
     const chartH = height - paddingTop - paddingBottom;
-
     const maxLoss = Math.max(...qData.map(d => d.loss), 1);
 
     const gridSteps = 4;
@@ -2047,7 +1983,6 @@
 
     for (let i = 0; i <= gridSteps; i++) {
       const y = paddingTop + chartH - (i / gridSteps) * chartH;
-
       ctx.beginPath();
       ctx.moveTo(paddingLeft, y);
       ctx.lineTo(paddingLeft + chartW, y);
@@ -2062,8 +1997,7 @@
       ctx.fillText(pctVal, paddingLeft + chartW + 6, y + 3);
     }
 
-    const numBars = qData.length;
-    const colWidth = chartW / numBars;
+    const colWidth = chartW / qData.length;
     const barWidth = Math.max(Math.min(colWidth * 0.55, 36), 8);
 
     let cumLoss = 0;
@@ -2082,7 +2016,7 @@
         ctx.fillStyle = "#0f172a";
         ctx.textAlign = "center";
         ctx.font = "bold 10px -apple-system, sans-serif";
-        ctx.fillText(d.loss % 1 === 0 ? d.loss : d.loss.toFixed(1), xCenter, barY - 4);
+        ctx.fillText(formatScore(d.loss), xCenter, barY - 4);
       }
 
       ctx.fillStyle = "#334155";
@@ -2133,33 +2067,26 @@
     if (!session) return;
 
     const schemeKey = session.gradingScheme || 'diagnostic';
-    const cfg = SCHEME_CONFIG[schemeKey];
-    const totalPossibleMarks = session.qLabels.length * cfg.maxPerQ;
+    const totalPossibleMarks = getAssignmentMaxScore(session);
 
     let presentStudents = session.studentData.filter(s => s.present);
-    let totalMarksEarned = 0;
-    let passCount = 0;
-    let failCount = 0;
-
-    let highAchievers = [];
-    let needsSupport = [];
+    let totalMarksEarned = 0, passCount = 0, failCount = 0;
+    let highAchievers = [], needsSupport = [];
     let qLostMarks = new Array(session.qLabels.length).fill(0);
 
     session.studentData.forEach(s => {
       if (!s.present) return;
-      let sMarks = 0;
-      s.answers.forEach((st, qIdx) => {
-        const pts = (cfg.points[st] || 0);
-        sMarks += pts;
-        qLostMarks[qIdx] += (cfg.maxPerQ - pts);
-      });
+      let sMarks = getStudentEarnedScore(s, session);
       totalMarksEarned += sMarks;
 
+      s.answers.forEach((st, qIdx) => {
+        const qMax = parseFloat(session.qMaxMarks[qIdx]) || 1;
+        const qEarned = getQuestionEarnedMarks(s, qIdx, session);
+        qLostMarks[qIdx] += (qMax - qEarned);
+      });
+
       let pct = totalPossibleMarks > 0 ? (sMarks / totalPossibleMarks) * 100 : 0;
-
-      if (pct >= 50) passCount++;
-      else failCount++;
-
+      if (pct >= 50) passCount++; else failCount++;
       if (pct >= 80) highAchievers.push({ regNo: s.regNo, name: s.name, pct: Math.round(pct) });
       else if (pct < 50) needsSupport.push({ regNo: s.regNo, name: s.name, pct: Math.round(pct) });
     });
@@ -2167,15 +2094,12 @@
     highAchievers.sort((a, b) => b.pct - a.pct || a.regNo.localeCompare(b.regNo));
     needsSupport.sort((a, b) => b.pct - a.pct || a.regNo.localeCompare(b.regNo));
 
-    const highAchieversFormatted = highAchievers.map(s => `${s.regNo}. ${s.name} (${s.pct}%)`).join(', ');
-    const needsSupportFormatted = needsSupport.map(s => `${s.regNo}. ${s.name} (${s.pct}%)`).join(', ');
-
     let overallYield = (presentStudents.length * totalPossibleMarks) > 0 ? 
       Math.round((totalMarksEarned / (presentStudents.length * totalPossibleMarks)) * 100) : 0;
 
     let paretoData = session.qLabels.map((lbl, idx) => ({
       label: lbl,
-      loss: qLostMarks[idx]
+      loss: Math.round(qLostMarks[idx] * 100) / 100
     })).sort((a, b) => b.loss - a.loss);
 
     let totalLoss = qLostMarks.reduce((sum, val) => sum + val, 0);
@@ -2187,7 +2111,7 @@
           Class: <strong>${cls.name}</strong> | Assignment: <strong>${session.assignment}</strong>
         </div>
         <div style="font-size: 0.8rem; color: #64748b; margin-top: 4px;">
-          Generated on: ${formatDate()} | System: ${schemeKey === 'points' ? 'Partial Credit Points' : 'Diagnostic Feedback'}
+          Generated on: ${formatDate()} | System: ${schemeKey === 'diagnostic' ? 'Diagnostic Feedback' : 'Partial Credit Points'}
         </div>
       </div>
 
@@ -2202,11 +2126,11 @@
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; font-size: 0.82rem;">
         <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 10px; border-radius: 6px;">
           <strong style="color: #16a34a;">🌟 High Achievers (≥80%):</strong><br>
-          ${highAchievers.length > 0 ? highAchieversFormatted : '<em>None</em>'}
+          ${highAchievers.length > 0 ? highAchievers.map(s => `${s.regNo}. ${s.name} (${s.pct}%)`).join(', ') : '<em>None</em>'}
         </div>
         <div style="background: #fef2f2; border: 1px solid #fecaca; padding: 10px; border-radius: 6px;">
           <strong style="color: #dc2626;">⚠️ Needs Support (&lt;50%):</strong><br>
-          ${needsSupport.length > 0 ? needsSupportFormatted : '<em>None</em>'}
+          ${needsSupport.length > 0 ? needsSupport.map(s => `${s.regNo}. ${s.name} (${s.pct}%)`).join(', ') : '<em>None</em>'}
         </div>
       </div>
 
@@ -2216,11 +2140,6 @@
             <div>
               <h4 style="margin: 0; color: #1e293b; font-size: 0.95rem;">📉 Mistake Frequency Pareto Analysis (80/20 Rule)</h4>
               <p style="font-size: 0.78rem; color: #64748b; margin: 2px 0 0 0;">Identifies high-impact bottleneck questions for class remediation.</p>
-            </div>
-            <div style="display: flex; gap: 10px; font-size: 0.72rem; font-weight: bold;">
-              <span style="display: flex; align-items: center; gap: 3px;"><span style="width: 8px; height: 8px; background: #dc2626; border-radius: 2px; display: inline-block;"></span> Mark Loss</span>
-              <span style="display: flex; align-items: center; gap: 3px;"><span style="width: 8px; height: 8px; background: #2563eb; border-radius: 50%; display: inline-block;"></span> Cum %</span>
-              <span style="display: flex; align-items: center; gap: 3px;"><span style="width: 10px; height: 0; border-top: 2px dashed #ca8a04; display: inline-block;"></span> 80% Threshold</span>
             </div>
           </div>
           <div style="position: relative; width: 100%; height: 210px;">
@@ -2245,16 +2164,12 @@
     `;
 
     session.studentData.forEach((student, sIdx) => {
-      let totalEarned = 0;
-      let itemDetails = [];
-      student.answers.forEach((st, qIdx) => {
-        totalEarned += (cfg.points[st] || 0);
-        const qTag = session.qLabels[qIdx];
-        const label = cfg.labels[st] || st;
-        itemDetails.push(`${qTag}:${label || '-'}`);
+      let totalEarned = getStudentEarnedScore(student, session);
+      let itemDetails = student.answers.map((st, qIdx) => {
+        const score = getQuestionEarnedMarks(student, qIdx, session);
+        return `${session.qLabels[qIdx]}:${formatScore(score)}m`;
       });
-
-      const displayEarned = Number.isInteger(totalEarned) ? totalEarned : totalEarned.toFixed(1);
+      const displayEarned = formatScore(totalEarned);
       const pct = student.present ? Math.round((totalEarned / totalPossibleMarks) * 100) : 0;
       const fbText = document.getElementById(`fb-${sIdx}`) ? 
         document.getElementById(`fb-${sIdx}`).innerText.replace('Auto-Feedback: ', '') : '';
@@ -2264,26 +2179,19 @@
           <td>${student.regNo}</td>
           <td><strong>${student.name}</strong></td>
           <td>${student.present ? 'Present' : 'Absent'}</td>
-          <td>${displayEarned} / ${totalPossibleMarks}</td>
+          <td>${displayEarned} / ${formatScore(totalPossibleMarks)}</td>
           <td>${student.present ? pct + '%' : '-'}</td>
           <td style="font-size:0.75rem; font-family: monospace;">${itemDetails.join(' | ')}</td>
           <td style="font-size:0.75rem;">${fbText}</td>
-        </tr>
-      `;
+        </tr>`;
     });
 
-    html += `
-        </tbody>
-      </table>
-    `;
-
+    html += `</tbody></table>`;
     document.getElementById('class-report-preview').innerHTML = html;
     document.getElementById('class-report-modal').classList.remove('hidden');
 
     if (totalLoss > 0) {
-      setTimeout(() => {
-        renderParetoChart(paretoData, 'reportParetoCanvas');
-      }, 50);
+      setTimeout(() => { renderParetoChart(paretoData, 'reportParetoCanvas'); }, 50);
     }
   }
 
@@ -2301,7 +2209,6 @@
         printCtx.drawImage(origCanvas, 0, 0);
       }
     }
-
     window.print();
   }
 
@@ -2333,19 +2240,14 @@
     const previewContainer = document.getElementById('student-report-preview');
     
     let html = '';
-
     if (selectVal === 'all') {
       session.studentData.forEach((student, sIdx) => {
         html += generateStudentSlipHTML(sIdx);
-        if (sIdx < session.studentData.length - 1) {
-          html += '<div class="page-break"></div>';
-        }
+        if (sIdx < session.studentData.length - 1) html += '<div class="page-break"></div>';
       });
     } else {
-      const sIdx = parseInt(selectVal, 10);
-      html = generateStudentSlipHTML(sIdx);
+      html = generateStudentSlipHTML(parseInt(selectVal, 10));
     }
-
     previewContainer.innerHTML = html;
   }
 
@@ -2353,30 +2255,25 @@
     const cls = classData[activeClassIdx];
     const session = cls.assignments[cls.activeAssignmentIdx];
     const student = session.studentData[sIdx];
-    const schemeKey = session.gradingScheme || 'diagnostic';
-    const cfg = SCHEME_CONFIG[schemeKey];
-    const totalPossibleMarks = session.qLabels.length * cfg.maxPerQ;
 
-    let totalEarned = 0;
-    student.answers.forEach(st => { totalEarned += (cfg.points[st] || 0); });
-    const displayEarned = Number.isInteger(totalEarned) ? totalEarned : totalEarned.toFixed(1);
+    const totalPossibleMarks = getAssignmentMaxScore(session);
+    const totalEarned = getStudentEarnedScore(student, session);
+    const displayEarned = formatScore(totalEarned);
     const pct = student.present ? Math.round((totalEarned / totalPossibleMarks) * 100) : 0;
     const fbText = document.getElementById(`fb-${sIdx}`) ? 
       document.getElementById(`fb-${sIdx}`).innerText.replace('Auto-Feedback: ', '') : '';
 
     let tableRows = '';
     session.qLabels.forEach((qLabel, qIdx) => {
-      const st = student.answers[qIdx] || 'unmarked';
-      const pts = cfg.points[st] || 0;
-      const tagLabel = cfg.labels[st] || st;
+      const qMax = parseFloat(session.qMaxMarks[qIdx]) || 1;
+      const score = getQuestionEarnedMarks(student, qIdx, session);
 
       tableRows += `
         <tr>
           <td><strong>${qLabel}</strong></td>
-          <td>${tagLabel || '-'}</td>
-          <td>${pts} / ${cfg.maxPerQ}</td>
-        </tr>
-      `;
+          <td>${student.answers[qIdx] || 'unmarked'}</td>
+          <td>${formatScore(score)} / ${formatScore(qMax)}</td>
+        </tr>`;
     });
 
     return `
@@ -2395,20 +2292,18 @@
           <div><strong>Student Name:</strong> ${student.name}</div>
           <div><strong>Reg No:</strong> ${student.regNo}</div>
           <div><strong>Status:</strong> ${student.present ? 'Submitted / Present' : 'Absent / Not Submitted'}</div>
-          <div><strong>Overall Result:</strong> ${displayEarned} / ${totalPossibleMarks} (${pct}%)</div>
+          <div><strong>Overall Result:</strong> ${displayEarned} / ${formatScore(totalPossibleMarks)} (${pct}%)</div>
         </div>
 
         <table class="slip-table">
           <thead>
             <tr>
               <th>Question Item</th>
-              <th>Diagnostic Tag</th>
+              <th>Status Tag</th>
               <th>Marks</th>
             </tr>
           </thead>
-          <tbody>
-            ${tableRows}
-          </tbody>
+          <tbody>${tableRows}</tbody>
         </table>
 
         <div style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 10px; border-radius: 6px; margin-top: 10px;">
@@ -2425,14 +2320,12 @@
   }
 
   function printStudentSlips() {
-    const reportContent = document.getElementById('student-report-preview').innerHTML;
-    document.getElementById('print-area').innerHTML = reportContent;
+    document.getElementById('print-area').innerHTML = document.getElementById('student-report-preview').innerHTML;
     window.print();
   }
 
   function printIndividualSlip(sIdx) {
-    const html = generateStudentSlipHTML(sIdx);
-    document.getElementById('print-area').innerHTML = html;
+    document.getElementById('print-area').innerHTML = generateStudentSlipHTML(sIdx);
     window.print();
   }
 
@@ -2440,35 +2333,29 @@
     const cls = classData[activeClassIdx];
     const session = cls.assignments[cls.activeAssignmentIdx];
     const schemeKey = session.gradingScheme || 'diagnostic';
-    const cfg = SCHEME_CONFIG[schemeKey];
-    const totalPossibleMarks = session.qLabels.length * cfg.maxPerQ;
+    const totalPossibleMarks = getAssignmentMaxScore(session);
 
     let csvRows = ["Class,Assignment,Grading System,Reg No,Student,Present,Score,Percentage,Pass/Fail,Auto Feedback"];
 
     session.studentData.forEach((student, sIdx) => {
-      let totalEarned = 0;
-      student.answers.forEach(st => { totalEarned += (cfg.points[st] || 0); });
-      const displayEarned = Number.isInteger(totalEarned) ? totalEarned : totalEarned.toFixed(1);
+      let totalEarned = getStudentEarnedScore(student, session);
+      const displayEarned = formatScore(totalEarned);
       const pct = Math.round((totalEarned / totalPossibleMarks) * 100) || 0;
       const passFailStr = pct >= 50 ? 'PASS' : 'FAIL';
       const fbText = document.getElementById(`fb-${sIdx}`).innerText.replace('Auto-Feedback: ', '').replace(/"/g, '""');
       
-      const scoreFormatted = `=""${displayEarned}/${totalPossibleMarks}""`;
-
-      csvRows.push(`"${cls.name}","${session.assignment}","${schemeKey === 'points' ? 'Partial Credit Points (5-Tap)' : 'Diagnostic Feedback (5-Tap)'}","${student.regNo}","${student.name}","${student.present ? 'Yes' : 'No'}","${scoreFormatted}","${pct}%","${passFailStr}","${fbText}"`);
+      const scoreFormatted = `=""${displayEarned}/${formatScore(totalPossibleMarks)}""`;
+      csvRows.push(`"${cls.name}","${session.assignment}","${schemeKey === 'diagnostic' ? 'Diagnostic Feedback (5-Tap)' : 'Partial Credit Points (3-Tap)'}","${student.regNo}","${student.name}","${student.present ? 'Yes' : 'No'}","${scoreFormatted}","${pct}%","${passFailStr}","${fbText}"`);
     });
 
-    const csvString = "\uFEFF" + csvRows.join("\n");
-    const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob(["\uFEFF" + csvRows.join("\n")], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
-
     const link = document.createElement("a");
     link.href = url;
     link.setAttribute("download", `Grading_${cls.name}_${session.assignment}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
@@ -2476,22 +2363,19 @@
     const cls = classData[activeClassIdx];
     const session = cls.assignments[cls.activeAssignmentIdx];
     const schemeKey = session.gradingScheme || 'diagnostic';
-    const cfg = SCHEME_CONFIG[schemeKey];
-    const totalPossibleMarks = session.qLabels.length * cfg.maxPerQ;
+    const totalPossibleMarks = getAssignmentMaxScore(session);
 
     let tsvRows = ["Class\tAssignment\tGrading System\tReg No\tStudent\tPresent\tScore\tPercentage\tPass/Fail\tAuto Feedback"];
 
     session.studentData.forEach((student, sIdx) => {
-      let totalEarned = 0;
-      student.answers.forEach(st => { totalEarned += (cfg.points[st] || 0); });
-      const displayEarned = Number.isInteger(totalEarned) ? totalEarned : totalEarned.toFixed(1);
+      let totalEarned = getStudentEarnedScore(student, session);
+      const displayEarned = formatScore(totalEarned);
       const pct = Math.round((totalEarned / totalPossibleMarks) * 100) || 0;
       const passFailStr = pct >= 50 ? 'PASS' : 'FAIL';
       const fbText = document.getElementById(`fb-${sIdx}`).innerText.replace('Auto-Feedback: ', '');
       
-      const scoreFormatted = `="${displayEarned}/${totalPossibleMarks}"`;
-
-      tsvRows.push(`${cls.name}\t${session.assignment}\t${schemeKey === 'points' ? 'Partial Credit Points (5-Tap)' : 'Diagnostic Feedback (5-Tap)'}\t${student.regNo}\t${student.name}\t${student.present ? 'Yes' : 'No'}\t${scoreFormatted}\t${pct}%\t${passFailStr}\t${fbText}`);
+      const scoreFormatted = `="${displayEarned}/${formatScore(totalPossibleMarks)}"`;
+      tsvRows.push(`${cls.name}\t${session.assignment}\t${schemeKey === 'diagnostic' ? 'Diagnostic Feedback (5-Tap)' : 'Partial Credit Points (3-Tap)'}\t${student.regNo}\t${student.name}\t${student.present ? 'Yes' : 'No'}\t${scoreFormatted}\t${pct}%\t${passFailStr}\t${fbText}`);
     });
 
     navigator.clipboard.writeText(tsvRows.join("\n")).then(() => {
