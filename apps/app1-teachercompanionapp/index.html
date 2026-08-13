@@ -547,14 +547,26 @@
 
     #print-area { display: none; }
 
+    .analytics-page-wrapper {
+      page-break-inside: avoid;
+      break-inside: avoid;
+      page-break-after: always;
+      break-after: page;
+    }
+
+    /* Print Specific Style Adjustments */
     @media print {
-      body { background: white !important; color: black !important; padding: 0 !important; margin: 0 !important; }
+      *, *::before, *::after {
+        overflow: visible !important;
+        box-shadow: none !important;
+      }
+      body { background: white !important; color: black !important; padding: 0 !important; margin: 0 !important; overflow: visible !important; }
       .container, .modal-overlay, .toast { display: none !important; }
-      #print-area { display: block !important; width: 100%; }
+      #print-area { display: block !important; width: 100% !important; overflow: visible !important; }
       .page-break { page-break-after: always; break-after: page; }
       
-      .report-header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #000; padding-bottom: 10px; }
-      .report-table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 11px; }
+      .report-header { text-align: center; margin-bottom: 12px; border-bottom: 2px solid #000; padding-bottom: 6px; }
+      .report-table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 11px; }
       .report-table th, .report-table td { border: 1px solid #333; padding: 6px 8px; text-align: left; }
       .report-table th { background-color: #f1f5f9 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 
@@ -748,14 +760,14 @@
   </div>
 
   <!-- Analytics Card -->
-  <div id="analytics-card" class="card hidden" style="border-radius: 12px;">
+  <div id="analytics-card" class="card hidden analytics-page-wrapper" style="border-radius: 12px;">
     <h3>📊 Class Yield & Gap Analysis</h3>
     <div class="stats-grid" id="stats-grid"></div>
 
     <div class="spotlight-grid">
       <div class="spotlight-card">
         <div style="font-size: 0.85rem; font-weight: bold; color: #16a34a; margin-bottom: 6px;">
-          🌟 High Achievers (≥ 80% Mastery) <span id="high-count-badge" style="font-size:0.75rem; color:#475569;">(0)</span>
+          🌟 High Achievers (≥ 80% Mastery - Top 10) <span id="high-count-badge" style="font-size:0.75rem; color:#475569;">(0)</span>
         </div>
         <div id="high-achievers-list" style="min-height: 28px;">
           <em style="font-size: 0.8rem; color: #94a3b8;">None recorded yet</em>
@@ -772,28 +784,36 @@
       </div>
     </div>
 
-    <hr style="margin: 20px 0; border: 0; border-top: 1px solid var(--border);">
+    <hr style="margin: 16px 0; border: 0; border-top: 1px solid var(--border);">
 
     <div id="pareto-chart-wrapper">
-      <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 8px; margin-bottom: 10px;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
         <div>
-          <h4 style="margin: 0; color: #1e293b; font-size: 1rem;">📉 Mistake Frequency Pareto Analysis (80/20 Rule)</h4>
-          <p style="font-size: 0.8rem; color: #64748b; margin: 2px 0 0 0;">Identifies high-impact bottleneck questions based on student mistake count.</p>
+          <h4 style="margin: 0; color: #1e293b; font-size: 0.95rem;">📉 Mistake Frequency Pareto Analysis (80/20 Rule)</h4>
+          <p style="font-size: 0.78rem; color: #64748b; margin: 2px 0 0 0;">Identifies high-impact bottleneck questions based on student mistake count.</p>
         </div>
-        <div style="display: flex; gap: 14px; font-size: 0.78rem; font-weight: bold;">
+        <div style="display: flex; gap: 12px; font-size: 0.75rem; font-weight: bold;">
           <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 10px; height: 10px; background: #dc2626; border-radius: 2px; display: inline-block;"></span> Students Wrong</span>
           <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 10px; height: 10px; background: #2563eb; border-radius: 50%; display: inline-block;"></span> Cumulative %</span>
           <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 12px; height: 0; border-top: 2px dashed #ca8a04; display: inline-block;"></span> 80% Threshold</span>
         </div>
       </div>
 
-      <div style="position: relative; width: 100%; height: 260px; background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 10px; box-sizing: border-box;">
+      <div style="position: relative; width: 100%; height: 180px; background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 8px; box-sizing: border-box;">
         <canvas id="paretoCanvas" style="width: 100%; height: 100%; display: block;"></canvas>
       </div>
     </div>
 
-    <div id="pareto-empty-msg" class="hidden" style="text-align: center; padding: 24px 20px; background: #f8fafc; border: 1px dashed var(--border); border-radius: 8px; color: #64748b; font-weight: 600; margin-top: 10px; font-size: 0.92rem;">
+    <div id="pareto-empty-msg" class="hidden" style="text-align: center; padding: 18px 20px; background: #f8fafc; border: 1px dashed var(--border); border-radius: 8px; color: #64748b; font-weight: 600; margin-top: 10px; font-size: 0.88rem;">
       🎉 No mistakes recorded for this assignment yet.
+    </div>
+
+    <!-- Actionable Summary & Recommendations Section -->
+    <div id="insights-action-card" class="spotlight-card" style="margin-top: 14px; background: #ffffff; border: 1.5px solid #3b82f6; border-radius: 10px; padding: 12px;">
+      <h4 style="margin: 0 0 10px 0; color: #1e3a8a; font-size: 0.98rem; display: flex; align-items: center; gap: 8px;">
+        💡 Insights & Actionable Next Steps
+      </h4>
+      <div id="insights-list"></div>
     </div>
   </div>
 </div>
@@ -931,6 +951,51 @@
   }
 
   const formatScore = (num) => Number.isInteger(num) ? num.toString() : (Math.round(num * 100) / 100).toString();
+
+  /* AUTO FEEDBACK TEXT GENERATOR */
+  function getAutoFeedbackText(student, session, totalEarned, totalPossibleMarks, pct) {
+    if (!student.present) return "Status: Absent / Not Submitted.";
+
+    const schemeKey = session.gradingScheme || 'diagnostic';
+    let note = "";
+
+    if (schemeKey === 'diagnostic') {
+      let conceptGap = [], carelessGap = [], incompleteGap = [];
+      student.answers.forEach((state, idx) => {
+        const lbl = session.qLabels[idx];
+        if (state === 'concept') conceptGap.push(lbl);
+        if (state === 'careless') carelessGap.push(lbl);
+        if (state === 'incomplete') incompleteGap.push(lbl);
+      });
+
+      note = `[${pct}%] Great effort! `;
+      if (conceptGap.length > 0) note += `Review core concepts on ${conceptGap.join(', ')}. `;
+      if (carelessGap.length > 0) note += `Double-check work on ${carelessGap.join(', ')} (careless errors). `;
+      if (incompleteGap.length > 0) note += `Complete unfinished questions on ${incompleteGap.join(', ')}. `;
+      if (totalEarned >= totalPossibleMarks && totalPossibleMarks > 0) note = `[100%] Outstanding performance! Perfect score.`;
+    } else {
+      let partialList = [], zeroList = [];
+      student.answers.forEach((state, idx) => {
+        const lbl = session.qLabels[idx];
+        if (state === 'partial') {
+          const pVal = (student.partialMarks && student.partialMarks[idx] !== undefined) ? student.partialMarks[idx] : 0;
+          partialList.push(`${lbl} (${formatScore(pVal)}m)`);
+        } else if (state === 'wrong' || state === 'unmarked') {
+          zeroList.push(lbl);
+        }
+      });
+
+      if (totalEarned >= totalPossibleMarks && totalPossibleMarks > 0) {
+        note = `[100%] Outstanding performance! Full credit across all questions.`;
+      } else {
+        note = `[${pct}%] Solid effort! `;
+        if (partialList.length > 0) note += `Partial credit on ${partialList.join(', ')}. `;
+        if (zeroList.length > 0) note += `No marks on ${zeroList.join(', ')}. `;
+        note += `Review questions for full credit.`;
+      }
+    }
+    return note;
+  }
 
   /* QUESTION GROUPING HELPER */
   function getGroupedQLabels(qLabels) {
@@ -1891,45 +1956,131 @@
     }
 
     let pct = totalPossibleMarks > 0 ? Math.round((totalEarned / totalPossibleMarks) * 100) : 0;
-    let note = "";
-
-    if (schemeKey === 'diagnostic') {
-      let conceptGap = [], carelessGap = [], incompleteGap = [];
-      student.answers.forEach((state, idx) => {
-        const lbl = session.qLabels[idx];
-        if (state === 'concept') conceptGap.push(lbl);
-        if (state === 'careless') carelessGap.push(lbl);
-        if (state === 'incomplete') incompleteGap.push(lbl);
-      });
-
-      note = `[${pct}%] Great effort! `;
-      if (conceptGap.length > 0) note += `Review core concepts on ${conceptGap.join(', ')}. `;
-      if (carelessGap.length > 0) note += `Double-check work on ${carelessGap.join(', ')} (careless errors). `;
-      if (incompleteGap.length > 0) note += `Complete unfinished questions on ${incompleteGap.join(', ')}. `;
-      if (totalEarned >= totalPossibleMarks && totalPossibleMarks > 0) note = `[100%] Outstanding performance! Perfect score.`;
-    } else {
-      let partialList = [], zeroList = [];
-      student.answers.forEach((state, idx) => {
-        const lbl = session.qLabels[idx];
-        if (state === 'partial') {
-          const pVal = student.partialMarks[idx] || 0;
-          partialList.push(`${lbl} (${formatScore(pVal)}m)`);
-        } else if (state === 'wrong' || state === 'unmarked') {
-          zeroList.push(lbl);
-        }
-      });
-
-      if (totalEarned >= totalPossibleMarks && totalPossibleMarks > 0) {
-        note = `[100%] Outstanding performance! Full credit across all questions.`;
-      } else {
-        note = `[${pct}%] Solid effort! `;
-        if (partialList.length > 0) note += `Partial credit on ${partialList.join(', ')}. `;
-        if (zeroList.length > 0) note += `No marks on ${zeroList.join(', ')}. `;
-        note += `Review questions for full credit.`;
-      }
-    }
+    let note = getAutoFeedbackText(student, session, totalEarned, totalPossibleMarks, pct);
 
     feedbackBox.innerText = `Auto-Feedback: ${note}`;
+  }
+
+  /* DYNAMIC ACTIONABLE INSIGHTS GENERATOR */
+  function generateInsights(session) {
+    if (!session) return '';
+    const totalMax = getAssignmentMaxScore(session);
+    const activeStudents = session.studentData.filter(s => s.present);
+    const unsubmittedStudents = session.studentData.filter(s => !s.present);
+
+    if (activeStudents.length === 0) {
+      return `<div style="color: #64748b; font-size: 0.88rem; font-style: italic; text-align: center; padding: 10px;">No student submissions recorded yet to generate actionable insights.</div>`;
+    }
+
+    let needsSupport = [];
+    let qWrongCounts = new Array(session.qLabels.length).fill(0);
+    let totalMarksEarned = 0;
+
+    activeStudents.forEach(student => {
+      let earned = getStudentEarnedScore(student, session);
+      totalMarksEarned += earned;
+      let pct = totalMax > 0 ? (earned / totalMax) * 100 : 0;
+
+      student.answers.forEach((st, qIdx) => {
+        const qMax = parseFloat(session.qMaxMarks[qIdx]) || 1;
+        const qEarned = getQuestionEarnedMarks(student, qIdx, session);
+        if (qEarned < qMax) qWrongCounts[qIdx]++;
+      });
+
+      if (pct < 50) needsSupport.push(`${student.name} (${Math.round(pct)}%)`);
+    });
+
+    let paretoData = session.qLabels.map((lbl, idx) => ({
+      label: lbl,
+      count: qWrongCounts[idx]
+    })).sort((a, b) => b.count - a.count);
+
+    const topMistakes = paretoData.filter(p => p.count > 0).slice(0, 2);
+    const overallYield = (activeStudents.length * totalMax) > 0 
+      ? Math.round((totalMarksEarned / (activeStudents.length * totalMax)) * 100) 
+      : 0;
+
+    let items = [];
+
+    // 1. Targeted Intervention Item
+    if (needsSupport.length > 0) {
+      items.push({
+        icon: '🚨',
+        title: 'Targeted Student Support Needed',
+        bg: '#fef2f2',
+        border: '#fca5a5',
+        text: `The following <strong>${needsSupport.length} student(s)</strong> need immediate attention and review (&lt;50% score): <span style="color: #b91c1c; font-weight: bold;">${needsSupport.join(', ')}</span>. Consider scheduling a targeted group remedy session.`
+      });
+    } else {
+      items.push({
+        icon: '🎉',
+        title: 'Strong Minimum Performance',
+        bg: '#f0fdf4',
+        border: '#86efac',
+        text: `All submitted students scored at or above 50%! No urgent individual intervention is needed for low mastery.`
+      });
+    }
+
+    // 2. Pareto Bottleneck Questions Item
+    if (topMistakes.length > 0) {
+      let qListStr = topMistakes.map(m => `<strong>${m.label}</strong> (${m.count} student${m.count > 1 ? 's' : ''} wrong)`).join(' and ');
+      items.push({
+        icon: '📉',
+        title: 'Pareto Bottleneck Review',
+        bg: '#fff7ed',
+        border: '#fdba74',
+        text: `Please prioritize reviewing question(s) ${qListStr} in class. Addressing these specific questions will resolve the majority of student errors.`
+      });
+    } else {
+      items.push({
+        icon: '✨',
+        title: 'Flawless Accuracy',
+        bg: '#f0fdf4',
+        border: '#86efac',
+        text: `No mistakes recorded across submitted work. Class demonstrated full clarity on all question items!`
+      });
+    }
+
+    // 3. Outstanding Submissions Follow-up Item
+    if (unsubmittedStudents.length > 0) {
+      const unsubmittedNames = unsubmittedStudents.map(s => s.name).join(', ');
+      items.push({
+        icon: '📋',
+        title: 'Outstanding Submissions Follow-Up',
+        bg: '#faf5ff',
+        border: '#d8b4fe',
+        text: `Please follow up with <strong>${unsubmittedStudents.length} student(s)</strong> regarding missing assignments: <span style="color: #7e22ce; font-weight: bold;">${unsubmittedNames}</span>.`
+      });
+    }
+
+    // 4. Overall Class Yield & Pacing Advice Item
+    let pacingRec = overallYield >= 80 
+      ? 'Class overall yield is high! You are ready to proceed to the next topic or extension material.' 
+      : (overallYield >= 65 
+        ? 'Solid performance overall. A brief 10-minute recap of top Pareto questions before moving forward is recommended.' 
+        : 'Overall class yield is under target. Consider a re-teach session on foundational concepts.');
+
+    items.push({
+      icon: '📊',
+      title: 'Curriculum Pacing Recommendation',
+      bg: '#eff6ff',
+      border: '#93c5fd',
+      text: `Overall class yield is <strong>${overallYield}%</strong>. ${pacingRec}`
+    });
+
+    let html = `<ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px;">`;
+    items.forEach(item => {
+      html += `
+        <li style="background: ${item.bg}; border: 1px solid ${item.border}; border-radius: 8px; padding: 8px 12px; font-size: 0.85rem; line-height: 1.35; color: #1e293b; display: flex; align-items: flex-start; gap: 8px;">
+          <span style="font-size: 1rem; flex-shrink: 0; margin-top: 1px;">${item.icon}</span>
+          <div>
+            <strong style="color: #0f172a;">${item.title}:</strong> ${item.text}
+          </div>
+        </li>`;
+    });
+    html += `</ul>`;
+
+    return html;
   }
 
   function updateAnalytics() {
@@ -1944,7 +2095,6 @@
     let highAchievers = [], needsSupport = [];
     let counts = { full: 0, wrong: 0, partial: 0, concept: 0, careless: 0, incomplete: 0, unmarked: 0 };
     
-    // Updated to track student mistake count instead of mark loss
     let qWrongCounts = new Array(session.qLabels.length).fill(0);
 
     const activeStudents = session.studentData.filter(s => s.present);
@@ -1959,7 +2109,6 @@
         if (counts[state] !== undefined) counts[state]++;
         const qMax = parseFloat(session.qMaxMarks[qIdx]) || 1;
         const qEarned = getQuestionEarnedMarks(student, qIdx, session);
-        // Student got the question wrong if earned marks are less than max marks
         if (qEarned < qMax) qWrongCounts[qIdx]++;
       });
 
@@ -1977,6 +2126,8 @@
 
     highAchievers.sort((a, b) => b.scorePct - a.scorePct || a.regNo.localeCompare(b.regNo));
     needsSupport.sort((a, b) => a.scorePct - b.scorePct || a.regNo.localeCompare(b.regNo));
+
+    const top10HighAchievers = highAchievers.slice(0, 10);
 
     let overallYield = totalPossibleAll > 0 ? Math.round((totalEarnedAll / totalPossibleAll) * 100) : 0;
     let maxWrong = Math.max(...qWrongCounts, 0);
@@ -2021,10 +2172,10 @@
       </div>
     `;
 
-    document.getElementById('high-count-badge').innerText = `(${highAchievers.length})`;
-    document.getElementById('high-achievers-list').innerHTML = highAchievers.length === 0 
+    document.getElementById('high-count-badge').innerText = highAchievers.length > 10 ? `(Top 10 of ${highAchievers.length})` : `(${highAchievers.length})`;
+    document.getElementById('high-achievers-list').innerHTML = top10HighAchievers.length === 0 
       ? `<em style="font-size: 0.8rem; color: #94a3b8;">No students with ≥80% yet</em>`
-      : highAchievers.map(s => `<span class="student-badge-high" title="${s.name}">${s.regNo}. ${s.name} (${s.scorePct}%)</span>`).join('');
+      : top10HighAchievers.map(s => `<span class="student-badge-high" title="${s.name}">${s.regNo}. ${s.name} (${s.scorePct}%)</span>`).join('');
 
     document.getElementById('support-count-badge').innerText = `(${needsSupport.length})`;
     document.getElementById('support-needed-list').innerHTML = needsSupport.length === 0 
@@ -2049,6 +2200,12 @@
 
       renderParetoChart(paretoData, 'paretoCanvas');
     }
+
+    // Update Actionable Insights
+    const insightsList = document.getElementById('insights-list');
+    if (insightsList) {
+      insightsList.innerHTML = generateInsights(session);
+    }
   }
 
   function renderParetoChart(qData, canvasId = 'paretoCanvas') {
@@ -2060,17 +2217,17 @@
     const dpr = window.devicePixelRatio || 1;
 
     canvas.width = (rect.width || 700) * dpr;
-    canvas.height = (rect.height || 240) * dpr;
+    canvas.height = (rect.height || 180) * dpr;
     ctx.scale(dpr, dpr);
 
     const width = rect.width || 700;
-    const height = rect.height || 240;
+    const height = rect.height || 180;
 
     ctx.clearRect(0, 0, width, height);
     const totalWrong = qData.reduce((sum, item) => sum + item.count, 0);
     if (totalWrong === 0) return;
 
-    const paddingLeft = 40, paddingRight = 45, paddingTop = 30, paddingBottom = 35;
+    const paddingLeft = 40, paddingRight = 45, paddingTop = 25, paddingBottom = 30;
     const chartW = width - paddingLeft - paddingRight;
     const chartH = height - paddingTop - paddingBottom;
     const maxCount = Math.max(...qData.map(d => d.count), 1);
@@ -2122,7 +2279,7 @@
       ctx.fillStyle = "#334155";
       ctx.textAlign = "center";
       ctx.font = "bold 11px -apple-system, sans-serif";
-      ctx.fillText(d.label, xCenter, paddingTop + chartH + 18);
+      ctx.fillText(d.label, xCenter, paddingTop + chartH + 16);
 
       cumCount += d.count;
       const cumPct = cumCount / totalWrong;
@@ -2196,6 +2353,8 @@
     highAchievers.sort((a, b) => b.pct - a.pct || a.regNo.localeCompare(b.regNo));
     needsSupport.sort((a, b) => a.pct - b.pct || a.regNo.localeCompare(b.regNo));
 
+    const top10HighAchievers = highAchievers.slice(0, 10);
+
     let overallYield = (presentStudents.length * totalPossibleMarks) > 0 ? 
       Math.round((totalMarksEarned / (presentStudents.length * totalPossibleMarks)) * 100) : 0;
 
@@ -2207,58 +2366,68 @@
     let totalWrong = qWrongCounts.reduce((sum, val) => sum + val, 0);
 
     let html = `
-      <div class="report-header">
-        <h2 style="margin:0 0 4px 0;">Class Performance Summary Report</h2>
-        <div style="font-size: 0.9rem; color: #475569;">
-          Class: <strong>${cls.name}</strong> | Assignment: <strong>${session.assignment}</strong>
-        </div>
-        <div style="font-size: 0.8rem; color: #64748b; margin-top: 4px;">
-          Generated on: ${formatDate()} | System: ${schemeKey === 'diagnostic' ? 'Diagnostic Feedback' : 'Partial Credit Points'}
-        </div>
-      </div>
-
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 15px; background: #f8fafc; padding: 12px; border-radius: 6px; font-size: 0.85rem; border: 1px solid var(--border);">
-        <div><strong>Total Enrolled:</strong> ${session.studentData.length}</div>
-        <div><strong>Submitted/Present:</strong> ${presentStudents.length}</div>
-        <div><strong>Did Not Submit:</strong> <span style="color:var(--incomplete); font-weight:bold;">${unsubmittedStudents.length}</span></div>
-        <div><strong>Average Yield:</strong> ${overallYield}%</div>
-        <div><strong>Pass Count (≥50%):</strong> <span style="color:var(--success); font-weight:bold;">${passCount}</span></div>
-        <div><strong>Fail Count (&lt;50%):</strong> <span style="color:var(--danger); font-weight:bold;">${failCount}</span></div>
-      </div>
-
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-bottom: 15px; font-size: 0.82rem;">
-        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 10px; border-radius: 6px;">
-          <strong style="color: #16a34a;">🌟 High Achievers (≥80%):</strong><br>
-          ${highAchievers.length > 0 ? highAchievers.map(s => `${s.regNo}. ${s.name} (${s.pct}%)`).join(', ') : '<em>None</em>'}
-        </div>
-        <div style="background: #fef2f2; border: 1px solid #fecaca; padding: 10px; border-radius: 6px;">
-          <strong style="color: #dc2626;">⚠️ Needs Support (&lt;50%, Lowest First):</strong><br>
-          ${needsSupport.length > 0 ? needsSupport.map(s => `${s.regNo}. ${s.name} (${s.pct}%)`).join(', ') : '<em>None</em>'}
-        </div>
-        <div style="background: #faf5ff; border: 1px solid #e9d5ff; padding: 10px; border-radius: 6px;">
-          <strong style="color: #9333ea;">🚫 Not Submitted (${unsubmittedStudents.length}):</strong><br>
-          ${unsubmittedStudents.length > 0 ? unsubmittedStudents.map(s => `${s.regNo}. ${s.name}`).join(', ') : '<em>None (All Submitted)</em>'}
-        </div>
-      </div>
-
-      ${totalWrong > 0 ? `
-        <div style="margin-bottom: 20px; background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 12px;">
-          <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
-            <div>
-              <h4 style="margin: 0; color: #1e293b; font-size: 0.95rem;">📉 Mistake Frequency Pareto Analysis (80/20 Rule)</h4>
-              <p style="font-size: 0.78rem; color: #64748b; margin: 2px 0 0 0;">Identifies high-impact bottleneck questions for class remediation.</p>
-            </div>
-            <div style="display: flex; gap: 14px; font-size: 0.78rem; font-weight: bold;">
-              <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 10px; height: 10px; background: #dc2626; border-radius: 2px; display: inline-block;"></span> Students Wrong</span>
-              <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 10px; height: 10px; background: #2563eb; border-radius: 50%; display: inline-block;"></span> Cumulative %</span>
-              <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 12px; height: 0; border-top: 2px dashed #ca8a04; display: inline-block;"></span> 80% Threshold</span>
-            </div>
+      <div class="analytics-page-wrapper">
+        <div class="report-header">
+          <h2 style="margin:0 0 4px 0;">Class Performance Summary Report</h2>
+          <div style="font-size: 0.88rem; color: #475569;">
+            Class: <strong>${cls.name}</strong> | Assignment: <strong>${session.assignment}</strong>
           </div>
-          <div style="position: relative; width: 100%; height: 210px;">
-            <canvas id="reportParetoCanvas" style="width: 100%; height: 100%; display: block;"></canvas>
+          <div style="font-size: 0.78rem; color: #64748b; margin-top: 2px;">
+            Generated on: ${formatDate()} | System: ${schemeKey === 'diagnostic' ? 'Diagnostic Feedback' : 'Partial Credit Points'}
           </div>
         </div>
-      ` : ''}
+
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px; background: #f8fafc; padding: 8px 12px; border-radius: 6px; font-size: 0.82rem; border: 1px solid var(--border);">
+          <div><strong>Total Enrolled:</strong> ${session.studentData.length}</div>
+          <div><strong>Submitted/Present:</strong> ${presentStudents.length}</div>
+          <div><strong>Did Not Submit:</strong> <span style="color:var(--incomplete); font-weight:bold;">${unsubmittedStudents.length}</span></div>
+          <div><strong>Average Yield:</strong> ${overallYield}%</div>
+          <div><strong>Pass Count (≥50%):</strong> <span style="color:var(--success); font-weight:bold;">${passCount}</span></div>
+          <div><strong>Fail Count (&lt;50%):</strong> <span style="color:var(--danger); font-weight:bold;">${failCount}</span></div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; margin-bottom: 10px; font-size: 0.8rem;">
+          <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 8px 10px; border-radius: 6px;">
+            <strong style="color: #16a34a;">🌟 High Achievers (≥80%${highAchievers.length > 10 ? ' - Top 10' : ''}):</strong><br>
+            ${top10HighAchievers.length > 0 ? top10HighAchievers.map(s => `${s.regNo}. ${s.name} (${s.pct}%)`).join(', ') : '<em>None</em>'}
+          </div>
+          <div style="background: #fef2f2; border: 1px solid #fecaca; padding: 8px 10px; border-radius: 6px;">
+            <strong style="color: #dc2626;">⚠️ Needs Support (&lt;50%, Lowest First):</strong><br>
+            ${needsSupport.length > 0 ? needsSupport.map(s => `${s.regNo}. ${s.name} (${s.pct}%)`).join(', ') : '<em>None</em>'}
+          </div>
+          <div style="background: #faf5ff; border: 1px solid #e9d5ff; padding: 8px 10px; border-radius: 6px;">
+            <strong style="color: #9333ea;">🚫 Not Submitted (${unsubmittedStudents.length}):</strong><br>
+            ${unsubmittedStudents.length > 0 ? unsubmittedStudents.map(s => `${s.regNo}. ${s.name}`).join(', ') : '<em>None (All Submitted)</em>'}
+          </div>
+        </div>
+
+        ${totalWrong > 0 ? `
+          <div style="margin-bottom: 10px; background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 8px; margin-bottom: 6px;">
+              <div>
+                <h4 style="margin: 0; color: #1e293b; font-size: 0.9rem;">📉 Mistake Frequency Pareto Analysis (80/20 Rule)</h4>
+                <p style="font-size: 0.75rem; color: #64748b; margin: 1px 0 0 0;">Identifies high-impact bottleneck questions for class remediation.</p>
+              </div>
+              <div style="display: flex; gap: 12px; font-size: 0.75rem; font-weight: bold;">
+                <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 8px; height: 8px; background: #dc2626; border-radius: 2px; display: inline-block;"></span> Students Wrong</span>
+                <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 8px; height: 8px; background: #2563eb; border-radius: 50%; display: inline-block;"></span> Cumulative %</span>
+                <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 10px; height: 0; border-top: 2px dashed #ca8a04; display: inline-block;"></span> 80% Threshold</span>
+              </div>
+            </div>
+            <div style="position: relative; width: 100%; height: 170px;">
+              <canvas id="reportParetoCanvas" style="width: 100%; height: 100%; display: block;"></canvas>
+            </div>
+          </div>
+        ` : ''}
+
+        <!-- Actionable Insights in Class Performance Report -->
+        <div style="margin-bottom: 12px; background: #ffffff; border: 1.5px solid #3b82f6; border-radius: 8px; padding: 10px;">
+          <h4 style="margin: 0 0 8px 0; color: #1e3a8a; font-size: 0.92rem;">💡 Insights & Recommended Action Plan</h4>
+          ${generateInsights(session)}
+        </div>
+      </div>
+
+      <h3 style="margin: 16px 0 8px 0; color: #1e293b; font-size: 1.05rem; border-bottom: 2px solid #cbd5e1; padding-bottom: 4px;">Students' Individual Names</h3>
 
       <table class="report-table">
         <thead>
@@ -2283,9 +2452,7 @@
       });
       const displayEarned = formatScore(totalEarned);
       const pct = student.present ? Math.round((totalEarned / totalPossibleMarks) * 100) : 0;
-      const fbText = student.present 
-        ? (document.getElementById(`fb-${sIdx}`) ? document.getElementById(`fb-${sIdx}`).innerText.replace('Auto-Feedback: ', '') : '')
-        : '⚠️ Not Submitted / Absent';
+      const fbText = getAutoFeedbackText(student, session, totalEarned, totalPossibleMarks, pct);
 
       html += `
         <tr style="${!student.present ? 'background-color: #faf5ff;' : ''}">
@@ -2373,130 +2540,182 @@
     const totalEarned = getStudentEarnedScore(student, session);
     const displayEarned = formatScore(totalEarned);
     const pct = student.present ? Math.round((totalEarned / totalPossibleMarks) * 100) : 0;
-    const fbText = student.present 
-      ? (document.getElementById(`fb-${sIdx}`) ? document.getElementById(`fb-${sIdx}`).innerText.replace('Auto-Feedback: ', '') : '')
-      : 'Assignment has not been submitted or completed yet.';
+    const feedback = getAutoFeedbackText(student, session, totalEarned, totalPossibleMarks, pct);
 
-    let tableRows = '';
-    session.qLabels.forEach((qLabel, qIdx) => {
+    let qRows = session.qLabels.map((lbl, qIdx) => {
       const qMax = parseFloat(session.qMaxMarks[qIdx]) || 1;
-      const score = getQuestionEarnedMarks(student, qIdx, session);
-
-      tableRows += `
-        <tr>
-          <td><strong>${qLabel}</strong></td>
-          <td>${student.answers[qIdx] || 'unmarked'}</td>
-          <td>${student.present ? `${formatScore(score)} / ${formatScore(qMax)}` : '-'}</td>
-        </tr>`;
-    });
+      const qEarned = getQuestionEarnedMarks(student, qIdx, session);
+      const st = student.answers[qIdx] || 'unmarked';
+      let statusLabel = st;
+      if (session.gradingScheme === 'diagnostic') {
+        const map = { unmarked: 'Unmarked', correct: 'Correct (✓)', concept: 'Concept Gap (C)', careless: 'Careless Error (⚡)', incomplete: 'Incomplete (...)' };
+        statusLabel = map[st] || st;
+      } else {
+        const map = { unmarked: 'Unmarked', full: 'Full Credit', wrong: 'Wrong (0m)', partial: 'Partial Credit' };
+        statusLabel = map[st] || st;
+      }
+      return `<tr>
+        <td>${lbl}</td>
+        <td>${formatScore(qMax)}m</td>
+        <td>${student.present ? formatScore(qEarned) + 'm' : '-'}</td>
+        <td>${student.present ? statusLabel : 'Absent'}</td>
+      </tr>`;
+    }).join('');
 
     return `
       <div class="student-slip">
         <div class="slip-header">
           <div>
-            <h3 style="margin:0;">Student Performance Progress Slip</h3>
-            <small>${cls.name} — ${session.assignment}</small>
+            <h3 style="margin:0;">${cls.name} — Student Performance Slip</h3>
+            <small>${session.assignment} | Date: ${formatDate()}</small>
           </div>
-          <div style="text-align: right;">
-            <strong>Date:</strong> ${formatDate()}
+          <div style="text-align:right;">
+            <h2 style="margin:0; color: var(--primary);">${student.present ? `${displayEarned} / ${formatScore(totalPossibleMarks)} (${pct}%)` : 'ABSENT'}</h2>
           </div>
         </div>
-
         <div class="slip-grid">
-          <div><strong>Student Name:</strong> ${student.name}</div>
           <div><strong>Reg No:</strong> ${student.regNo}</div>
+          <div><strong>Student Name:</strong> ${student.name}</div>
           <div><strong>Status:</strong> ${student.present ? 'Submitted / Present' : 'Absent / Not Submitted'}</div>
-          <div><strong>Overall Result:</strong> ${student.present ? `${displayEarned} / ${formatScore(totalPossibleMarks)} (${pct}%)` : 'Pending Submission'}</div>
+          <div><strong>Grading System:</strong> ${(session.gradingScheme === 'points') ? 'Partial Credit' : 'Diagnostic Feedback'}</div>
         </div>
-
-        <table class="slip-table">
-          <thead>
-            <tr>
-              <th>Question Item</th>
-              <th>Status Tag</th>
-              <th>Marks</th>
-            </tr>
-          </thead>
-          <tbody>${tableRows}</tbody>
-        </table>
-
-        <div style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 10px; border-radius: 6px; margin-top: 10px;">
-          <strong>Teacher Feedback & Guidance:</strong><br>
-          <span>${fbText}</span>
+        ${student.present ? `
+          <table class="slip-table">
+            <thead>
+              <tr>
+                <th>Question</th>
+                <th>Max Score</th>
+                <th>Score Earned</th>
+                <th>Feedback State</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${qRows}
+            </tbody>
+          </table>
+        ` : ''}
+        <div style="margin-top: 10px; padding: 8px; background: #f8fafc; border-left: 3px solid var(--primary); font-size: 11px;">
+          <strong>Teacher Auto Feedback:</strong> ${feedback}
         </div>
-
         <div class="signature-block">
-          <div class="sig-line">Teacher's Signature & Date</div>
           <div class="sig-line">Parent / Guardian Signature</div>
+          <div class="sig-line">Teacher Signature</div>
         </div>
       </div>
     `;
   }
 
-  function printStudentSlips() {
-    document.getElementById('print-area').innerHTML = document.getElementById('student-report-preview').innerHTML;
-    window.print();
-  }
-
   function printIndividualSlip(sIdx) {
-    document.getElementById('print-area').innerHTML = generateStudentSlipHTML(sIdx);
+    const html = generateStudentSlipHTML(sIdx);
+    document.getElementById('print-area').innerHTML = html;
     window.print();
   }
 
-  function exportCSV() {
-    const cls = classData[activeClassIdx];
-    const session = cls.assignments[cls.activeAssignmentIdx];
-    const schemeKey = session.gradingScheme || 'diagnostic';
-    const totalPossibleMarks = getAssignmentMaxScore(session);
-
-    let csvRows = ["Class,Assignment,Grading System,Reg No,Student,Submitted/Present,Score,Percentage,Pass/Fail,Auto Feedback"];
-
-    session.studentData.forEach((student, sIdx) => {
-      let totalEarned = getStudentEarnedScore(student, session);
-      const displayEarned = formatScore(totalEarned);
-      const pct = student.present ? (Math.round((totalEarned / totalPossibleMarks) * 100) || 0) : 0;
-      const passFailStr = !student.present ? 'NOT SUBMITTED' : (pct >= 50 ? 'PASS' : 'FAIL');
-      const fbText = document.getElementById(`fb-${sIdx}`).innerText.replace('Auto-Feedback: ', '').replace(/"/g, '""');
-      
-      const scoreFormatted = student.present ? `=""${displayEarned}/${formatScore(totalPossibleMarks)}""` : '="N/A"';
-      csvRows.push(`"${cls.name}","${session.assignment}","${schemeKey === 'diagnostic' ? 'Diagnostic Feedback (5-Tap)' : 'Partial Credit Points (3-Tap)'}","${student.regNo}","${student.name}","${student.present ? 'Yes' : 'No'}","${scoreFormatted}","${student.present ? pct + '%' : 'N/A'}","${passFailStr}","${fbText}"`);
-    });
-
-    const blob = new Blob(["\uFEFF" + csvRows.join("\n")], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", `Grading_${cls.name}_${session.assignment}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  function printStudentSlips() {
+    const previewContent = document.getElementById('student-report-preview').innerHTML;
+    document.getElementById('print-area').innerHTML = previewContent;
+    window.print();
   }
 
   function copyToClipboard() {
     const cls = classData[activeClassIdx];
+    if (!cls) return;
     const session = cls.assignments[cls.activeAssignmentIdx];
-    const schemeKey = session.gradingScheme || 'diagnostic';
-    const totalPossibleMarks = getAssignmentMaxScore(session);
+    if (!session) return;
 
-    let tsvRows = ["Class\tAssignment\tGrading System\tReg No\tStudent\tSubmitted/Present\tScore\tPercentage\tPass/Fail\tAuto Feedback"];
+    const totalMax = getAssignmentMaxScore(session);
+    let text = `Class: ${cls.name}\nAssignment: ${session.assignment}\nDate: ${formatDate()}\n\n`;
+    text += `Reg No\tName\tStatus\tScore\t%\tAuto Feedback\n`;
 
-    session.studentData.forEach((student, sIdx) => {
-      let totalEarned = getStudentEarnedScore(student, session);
-      const displayEarned = formatScore(totalEarned);
-      const pct = student.present ? (Math.round((totalEarned / totalPossibleMarks) * 100) || 0) : 0;
-      const passFailStr = !student.present ? 'NOT SUBMITTED' : (pct >= 50 ? 'PASS' : 'FAIL');
-      const fbText = document.getElementById(`fb-${sIdx}`).innerText.replace('Auto-Feedback: ', '');
-      
-      const scoreFormatted = student.present ? `="${displayEarned}/${formatScore(totalPossibleMarks)}"` : 'N/A';
-      tsvRows.push(`${cls.name}\t${session.assignment}\t${schemeKey === 'diagnostic' ? 'Diagnostic Feedback (5-Tap)' : 'Partial Credit Points (3-Tap)'}\t${student.regNo}\t${student.name}\t${student.present ? 'Yes' : 'No'}\t${scoreFormatted}\t${student.present ? pct + '%' : 'N/A'}\t${passFailStr}\t${fbText}`);
+    session.studentData.forEach((student) => {
+      const earned = getStudentEarnedScore(student, session);
+      const pct = student.present ? Math.round((earned / totalMax) * 100) : 0;
+      const fb = getAutoFeedbackText(student, session, earned, totalMax, pct);
+      const status = student.present ? "Present" : "Absent";
+      text += `${student.regNo}\t${student.name}\t${status}\t${student.present ? formatScore(earned) : '-'}/${formatScore(totalMax)}\t${student.present ? pct + '%' : '-'}\t${fb}\n`;
     });
 
-    navigator.clipboard.writeText(tsvRows.join("\n")).then(() => {
-      showToast("📋 TSV copied to clipboard!");
+    navigator.clipboard.writeText(text).then(() => {
+      showToast("📋 Summary copied to clipboard!");
     }).catch(err => {
-      console.error("Could not copy text: ", err);
+      console.error("Copy failed", err);
+      showToast("⚠️ Failed to copy data.");
     });
+  }
+
+  /* OPTIMIZED EXPORT CSV IMPLEMENTATION WITH MANDATED HEADERS */
+  function exportCSV() {
+    const cls = classData[activeClassIdx];
+    if (!cls) return;
+    const session = cls.assignments[cls.activeAssignmentIdx];
+    if (!session) return;
+
+    // Specified Header Structure
+    const headers = [
+      "Class",
+      "Assignment",
+      "Grading System",
+      "Reg No",
+      "Student",
+      "Submitted/Present",
+      "Marks Attained",
+      "Max Score",
+      "Final Score",
+      "Percentage",
+      "Pass/Fail",
+      "Auto Feedback"
+    ];
+
+    const maxScore = getAssignmentMaxScore(session);
+    const schemeLabel = (session.gradingScheme === 'points') ? 'Partial Credit Points' : 'Diagnostic Feedback';
+
+    const rows = [headers];
+
+    session.studentData.forEach((student) => {
+      const isPresent = student.present;
+      const marksAttained = isPresent ? getStudentEarnedScore(student, session) : 0;
+      const pct = (isPresent && maxScore > 0) ? Math.round((marksAttained / maxScore) * 100) : 0;
+      const passFail = !isPresent ? "N/A" : (pct >= 50 ? "Pass" : "Fail");
+      const feedbackText = getAutoFeedbackText(student, session, marksAttained, maxScore, pct);
+
+      const row = [
+        cls.name,
+        session.assignment,
+        schemeLabel,
+        student.regNo,
+        student.name,
+        isPresent ? "Submitted" : "Not Submitted",
+        isPresent ? formatScore(marksAttained) : "0",
+        formatScore(maxScore),
+        `="${formatScore(marksAttained)} / ${formatScore(maxScore)}"`,
+        `${pct}%`,
+        passFail,
+        feedbackText
+      ];
+
+      rows.push(row);
+    });
+
+    // Clean & Escape CSV Rows
+    const csvContent = rows.map(row => 
+      row.map(cell => {
+        const str = String(cell ?? '');
+        return `"${str.replace(/"/g, '""')}"`;
+      }).join(",")
+    ).join("\n");
+
+    // Download Blob with UTF-8 BOM for Excel alignment
+    const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.href = url;
+    downloadAnchor.download = `${cls.name}_${session.assignment}_Grades.csv`.replace(/[^a-z0-9_\-]/gi, '_');
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    document.body.removeChild(downloadAnchor);
+    URL.revokeObjectURL(url);
+
+    showToast("📥 Export CSV generated successfully!");
   }
 </script>
 </body>
