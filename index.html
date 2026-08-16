@@ -48,8 +48,8 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 1.25rem;
-      gap: 1.5rem;
+      padding: 0 1rem;
+      gap: 0.75rem;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
       z-index: 10;
     }
@@ -58,16 +58,17 @@
     .brand {
       display: flex;
       align-items: center;
-      gap: 0.6rem;
+      gap: 0.5rem;
       font-weight: 700;
-      font-size: 1.1rem;
+      font-size: 1rem;
       color: var(--text-main);
       white-space: nowrap;
       cursor: pointer;
       user-select: none;
-      padding: 0.3rem 0.6rem;
+      padding: 0.3rem 0.5rem;
       border-radius: 8px;
       transition: background 0.2s ease;
+      flex-shrink: 0;
     }
 
     .brand:hover {
@@ -76,13 +77,13 @@
 
     .brand-icon {
       background: linear-gradient(135deg, var(--primary), var(--accent));
-      width: 32px;
-      height: 32px;
+      width: 30px;
+      height: 30px;
       border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1rem;
+      font-size: 0.95rem;
       box-shadow: 0 2px 8px rgba(99, 102, 241, 0.4);
     }
 
@@ -94,6 +95,7 @@
       scrollbar-width: none;
       -ms-overflow-style: none;
       flex: 1;
+      scroll-behavior: smooth;
     }
 
     .nav-tabs-wrapper::-webkit-scrollbar {
@@ -103,7 +105,7 @@
     .nav-tabs {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.35rem;
       list-style: none;
     }
 
@@ -111,17 +113,18 @@
     .tab-btn {
       display: flex;
       align-items: center;
-      gap: 0.4rem;
-      padding: 0.45rem 0.85rem;
+      gap: 0.35rem;
+      padding: 0.4rem 0.65rem;
       background: transparent;
       border: 1px solid transparent;
       color: var(--text-muted);
       border-radius: 20px;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       font-weight: 500;
       cursor: pointer;
       white-space: nowrap;
       transition: all 0.2s ease;
+      flex-shrink: 0;
     }
 
     .tab-btn:hover {
@@ -141,21 +144,23 @@
       display: flex;
       align-items: center;
       gap: 0.5rem;
+      flex-shrink: 0;
     }
 
     .btn-action {
       display: flex;
       align-items: center;
-      gap: 0.4rem;
-      padding: 0.45rem 0.85rem;
+      gap: 0.35rem;
+      padding: 0.4rem 0.75rem;
       background-color: var(--primary);
       color: #ffffff;
       border: none;
       border-radius: 8px;
-      font-size: 0.825rem;
+      font-size: 0.8rem;
       font-weight: 600;
       cursor: pointer;
       transition: background 0.2s ease, transform 0.1s ease;
+      white-space: nowrap;
     }
 
     .btn-action:hover {
@@ -198,6 +203,7 @@
     #home-view {
       padding: 2.5rem 2rem;
       overflow-y: auto;
+      height: 100%;
       background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.08), transparent 40%),
                   radial-gradient(circle at bottom left, rgba(168, 85, 247, 0.05), transparent 40%);
     }
@@ -361,14 +367,14 @@
   <!-- Top Navigation -->
   <header>
     <!-- Brand Logo: Click to Go Home -->
-    <div class="brand" onclick="showHome()" title="Return to Dashboard Home">
+    <div class="brand" onclick="showHome()" title="Return to Dashboard Home" role="button" tabindex="0">
       <div class="brand-icon">🎓</div>
       <span>EduHub</span>
     </div>
 
     <!-- App Tabs Navigation (Dynamically Rendered) -->
-    <div class="nav-tabs-wrapper">
-      <ul class="nav-tabs" id="nav-tabs"></ul>
+    <div class="nav-tabs-wrapper" id="nav-wrapper">
+      <ul class="nav-tabs" id="nav-tabs" role="tablist"></ul>
     </div>
 
     <!-- Quick Actions -->
@@ -432,14 +438,14 @@
     const APPS = [
       {
         id: 'app-grading',
-        title: 'Smart Grading System',
+        title: 'Smart Grading',
         icon: '⚡',
         path: 'apps/app1-teachercompanionapp/index.html',
         desc: "A Smart Grading System that will help you track students' progress timely and effectively."
       },
       {
         id: 'app-placevalue',
-        title: 'Interactive Place Values',
+        title: 'Place Values',
         icon: '🚀',
         path: 'apps/app2-interactiveplacevalues/index.html',
         desc: 'A comprehensive interactive place values app which includes decimals and re-grouping capability.'
@@ -453,7 +459,7 @@
       },
       {
         id: 'app-lesson',
-        title: 'My Lesson Plan',
+        title: 'Lesson Plan',
         icon: '💡',
         path: 'apps/app4-lessonplan/index.html',
         desc: 'Planning your lesson now is made easier with this Smart Lesson Plan app.'
@@ -464,6 +470,13 @@
         icon: '📋',
         path: 'apps/app5-lessonob/index.html',
         desc: 'Conduct, record, and evaluate classroom lesson observations seamlessly.'
+      },
+      {
+        id: 'app-lessonflow',
+        title: 'Lesson Flow',
+        icon: '📅',
+        path: 'apps/app6-lessonflow/index.html',
+        desc: 'Guide, sequence, and structure your live classroom lesson flows smoothly.'
       }
     ];
 
@@ -475,14 +488,18 @@
       const appGrid = document.getElementById('app-grid');
       const iframeContainer = document.getElementById('iframe-container');
 
+      const tabsFragment = document.createDocumentFragment();
+      const gridFragment = document.createDocumentFragment();
+      const iframeFragment = document.createDocumentFragment();
+
       APPS.forEach((app) => {
         // 1. Build Navigation Tab Button
         const li = document.createElement('li');
         li.innerHTML = `
-          <button class="tab-btn" id="tab-${app.id}" onclick="switchApp('${app.id}')">
+          <button class="tab-btn" id="tab-${app.id}" onclick="switchApp('${app.id}')" role="tab" aria-selected="false">
             ${app.icon} ${app.title}
           </button>`;
-        navTabs.appendChild(li);
+        tabsFragment.appendChild(li);
 
         // 2. Build Home Dashboard Grid Card
         const card = document.createElement('div');
@@ -492,7 +509,7 @@
           <div class="app-card-icon">${app.icon}</div>
           <div class="app-card-title">${app.title}</div>
           <div class="app-card-desc">${app.desc}</div>`;
-        appGrid.appendChild(card);
+        gridFragment.appendChild(card);
 
         // 3. Build Persistent IFrame Container
         const iframe = document.createElement('iframe');
@@ -500,12 +517,25 @@
         iframe.className = 'view-content app-frame';
         iframe.title = app.title;
         iframe.dataset.src = app.path;
-        iframeContainer.appendChild(iframe);
+        iframeFragment.appendChild(iframe);
       });
+
+      navTabs.appendChild(tabsFragment);
+      appGrid.appendChild(gridFragment);
+      iframeContainer.appendChild(iframeFragment);
 
       // Display formatted date
       const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
       document.getElementById('current-date').textContent = new Date().toLocaleDateString(undefined, options);
+
+      // Enable horizontal mouse wheel scrolling for nav tabs
+      const navWrapper = document.getElementById('nav-wrapper');
+      navWrapper.addEventListener('wheel', (e) => {
+        if (e.deltaY !== 0) {
+          e.preventDefault();
+          navWrapper.scrollLeft += e.deltaY;
+        }
+      });
     }
 
     /**
@@ -513,7 +543,10 @@
      */
     function showHome() {
       document.querySelectorAll('.app-frame').forEach(frame => frame.classList.remove('active'));
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+        btn.setAttribute('aria-selected', 'false');
+      });
       document.getElementById('home-view').classList.add('active');
     }
 
@@ -535,7 +568,14 @@
       });
 
       document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.id === `tab-${appId}`);
+        const isActive = btn.id === `tab-${appId}`;
+        btn.classList.toggle('active', isActive);
+        btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+        
+        // Auto-scroll selected tab into view in header
+        if (isActive) {
+          btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        }
       });
     }
 
