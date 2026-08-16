@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LessonFlow - Weekly Lesson Flow Planner</title>
+  <style>
+    :root {
+      --bg-body: #f8fafc;
+      --card-bg: #ffffff;
+      --navy-dark: #0f172a;
+      --navy-primary: #1e3a8a;
+      --navy-accent: #2563eb;
+      --navy-light: #eff6ff;
+      --border-color: #cbd5e1;
+      --text-dark: #0f172a;
+      --text-muted: #64748b;
+      --table-header-bg: #e2e8f0;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    body { display: flex; height: 100vh; background-color: var(--bg-body); color: var(--text-dark); overflow: hidden; }
+
+    body.sidebar-hidden .sidebar { display: none !important; }
+
+    textarea {
+      resize: none !important;
+      overflow: hidden !important;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+      line-height: 1.35;
+    }
+    textarea::-webkit-scrollbar { display: none; }
+
+    /* Artistic Rainbow Sidebar */
+    .sidebar { 
+      width: 280px; 
+      background: linear-gradient(165deg, #4f46e5 0%, #7c3aed 22%, #d946ef 45%, #f43f5e 70%, #fb923c 100%); 
+      color: white; 
+      display: flex; 
+      flex-direction: column; 
+      padding: 18px; 
+      flex-shrink: 0; 
+      box-shadow: 4px 0 20px rgba(79, 70, 229, 0.25);
+    }
+
+    .brand { 
+      font-size: 1.3rem; 
+      font-weight: 800; 
+      margin-bottom: 20px; 
+      color: #ffffff; 
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); 
+      display: flex; 
+      align-items: center; 
+      gap: 8px; 
+    }
+    
+    .nav-tabs { display: flex; flex-direction: column; gap: 6px; margin-bottom: 15px; }
+    
+    .nav-btn { 
+      background: rgba(255, 255, 255, 0.15); 
+      color: #ffffff; 
+      border: 1px solid rgba(255, 255, 255, 0.25); 
+      padding: 10px 12px; 
+      border-radius: 8px; 
+      font-weight: 600; 
+      text-align: left; 
+      cursor: pointer; 
+      transition: all 0.2s ease; 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between; 
+      font-size: 0.9rem; 
+      backdrop-filter: blur(6px);
+    }
+
+    .nav-btn:hover, .nav-btn.active { 
+      background: rgba(255, 255, 255, 0.35); 
+      color: #ffffff; 
+      border-color: rgba(255, 255, 255, 0.6); 
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transform: translateY(-1px);
+    }
+    
+    .nav-btn.reset-btn { 
+      color: #ffffff; 
+      margin-top: 4px; 
+      background: rgba(239, 68, 68, 0.3); 
+      border: 1px dashed rgba(255, 255, 255, 0.5); 
+    }
+    
+    .nav-btn.reset-btn:hover { 
+      background: rgba(239, 68, 68, 0.55); 
+      color: #ffffff; 
+      border-color: #ffffff; 
+    }
+
+    .draft-badge { 
+      background: #ffffff; 
+      color: #d946ef; 
+      font-size: 0.68rem; 
+      padding: 2px 6px; 
+      border-radius: 10px; 
+      font-weight: 800; 
+      text-transform: uppercase; 
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .history-title { 
+      font-size: 0.72rem; 
+      text-transform: uppercase; 
+      letter-spacing: 1px; 
+      color: rgba(255, 255, 255, 0.9); 
+      margin: 15px 0 8px 0; 
+      font-weight: 800; 
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+    }
+
+    .history-list { list-style: none; overflow-y: auto; flex: 1; padding-right: 4px; }
+    
+    .subject-group { margin-bottom: 6px; border-radius: 6px; overflow: hidden; }
+    
+    .subject-header { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      padding: 8px 10px; 
+      background: rgba(255, 255, 255, 0.18); 
+      color: #ffffff; 
+      font-size: 0.85rem; 
+      font-weight: 600; 
+      border-radius: 6px; 
+      cursor: pointer; 
+      user-select: none; 
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(4px);
+      transition: background 0.2s;
+    }
+
+    .subject-header:hover { 
+      background: rgba(255, 255, 255, 0.3); 
+      color: white; 
+    }
+
+    .subject-header .folder-icon { font-size: 0.9rem; transition: transform 0.2s; }
+    .subject-header.open .folder-icon { transform: rotate(90deg); }
+    
+    .subject-badge { 
+      background: rgba(0, 0, 0, 0.25); 
+      color: white; 
+      border-radius: 12px; 
+      padding: 1px 7px; 
+      font-size: 0.72rem; 
+      font-weight: 700;
+    }
+    
+    .subject-content { display: none; padding-left: 10px; margin-top: 4px; flex-direction: column; gap: 3px; }
+    .subject-content.open { display: flex; }
+
+    .history-item { 
+      padding: 7px 10px; 
+      border-radius: 5px; 
+      cursor: pointer; 
+      background: rgba(255, 255, 255, 0.12); 
+      transition: all 0.2s; 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      font-size: 0.82rem; 
+      color: #ffffff; 
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .history-item:hover, .history-item.active { 
+      background: rgba(255, 255, 255, 0.35); 
+      color: white; 
+      font-weight: 600;
+      border-color: rgba(255, 255, 255, 0.5);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .history-item .del-btn { 
+      color: #ffe4e6; 
+      border: none; 
+      background: none; 
+      cursor: pointer; 
+      font-size: 0.85rem; 
+      opacity: 0.8; 
+    }
+
+    .history-item:hover .del-btn { opacity: 1; color: #ffffff; }
+
+    /* Main Container */
+    .main-content { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; padding: 16px; box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04); width: 100%; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+
+    @keyframes cardPulse {
+      0% { transform: scale(0.995); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.5); }
+      50% { transform: scale(1.003); box-shadow: 0 0 18px 2px rgba(37, 99, 235, 0.3); }
+      100% { transform: scale(1); box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04); }
+    }
+    .card-pulse { animation: cardPulse 0.45s cubic-bezier(0.16, 1, 0.3, 1); }
+
+    /* Dashboard Layout */
+    .stats-grid { display: grid; grid-template-columns: 240px 1fr; gap: 15px; margin-bottom: 15px; }
+    .stat-card { background: var(--navy-light); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; display: flex; flex-direction: column; justify-content: center; }
+    .stat-number { font-size: 2.8rem; font-weight: 800; color: var(--navy-primary); margin-top: 2px; line-height: 1; }
+
+    .calendar-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; }
+    .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-weight: 700; color: var(--navy-primary); font-size: 0.95rem; }
+    .cal-nav-btn { background: var(--navy-light); border: 1px solid var(--border-color); color: var(--navy-primary); border-radius: 4px; width: 28px; height: 28px; font-weight: bold; cursor: pointer; }
+    .cal-nav-btn:hover { background: var(--navy-primary); color: white; }
+    
+    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; }
+    .cal-day-label { font-size: 0.7rem; color: var(--text-muted); font-weight: 700; padding-bottom: 3px; }
+    .cal-day { padding: 6px 2px; font-size: 0.8rem; border-radius: 4px; background: #f1f5f9; cursor: pointer; transition: all 0.2s; }
+    .cal-day:hover { border-color: var(--navy-accent); background: #e2e8f0; }
+
+    .dashboard-dual-section { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    @media (max-width: 900px) { .dashboard-dual-section { grid-template-columns: 1fr; } }
+
+    .featured-card { border-left: 4px solid var(--navy-accent); background: #ffffff; }
+    .meta-tag { display: inline-block; background: var(--navy-light); color: var(--navy-primary); font-size: 0.75rem; font-weight: 700; padding: 3px 8px; border-radius: 4px; margin-right: 6px; margin-bottom: 4px; }
+
+    /* Metadata Layout */
+    .meta-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .meta-grid-row { 
+      display: grid; 
+      gap: 10px; 
+      align-items: flex-start;
+    }
+    .meta-row-top {
+      grid-template-columns: 1.2fr 1fr 0.8fr 0.8fr; 
+    }
+    .meta-row-bottom {
+      grid-template-columns: 1fr 2.5fr; 
+    }
+    @media (max-width: 768px) { 
+      .meta-row-top { grid-template-columns: 1fr 1fr; } 
+      .meta-row-bottom { grid-template-columns: 1fr; }
+    }
+
+    .form-group { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .form-group label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; color: var(--text-muted); }
+    
+    .form-group input, .form-group textarea, .form-group select {
+      background: #ffffff;
+      color: var(--text-dark);
+      border: 1px solid var(--border-color);
+      padding: 6px 9px;
+      border-radius: 6px;
+      font-size: 0.84rem;
+      outline: none;
+      transition: border-color 0.2s;
+      width: 100%;
+    }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+      border-color: var(--navy-primary);
+      box-shadow: 0 0 0 2px rgba(30, 58, 138, 0.1);
+    }
+
+    .print-value { display: none; }
+
+    .lesson-title-heading {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--navy-primary);
+      margin-bottom: 12px;
+      padding-bottom: 6px;
+      border-bottom: 2px solid var(--navy-light);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Lesson Flow Table */
+    table.flow-table {
+      width: 100%;
+      table-layout: fixed;
+      border-collapse: collapse;
+      margin-top: 8px;
+      border: 1.5px solid #a0aec0;
+    }
+    table.flow-table th {
+      background: var(--table-header-bg);
+      color: var(--navy-dark);
+      text-align: center;
+      padding: 6px 4px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      border: 1px solid #cbd5e1;
+    }
+    table.flow-table td {
+      padding: 4px;
+      border: 1px solid #cbd5e1;
+      vertical-align: top;
+      background: white;
+    }
+    
+    table.flow-table td.cell-gray {
+      background-color: #f8fafc;
+    }
+
+    table.flow-table textarea, table.flow-table input, table.flow-table select {
+      width: 100%;
+      border: 1px solid transparent;
+      outline: none !important;
+      background: transparent;
+      padding: 4px;
+      font-size: 0.83rem;
+      line-height: 1.35;
+      color: var(--text-dark);
+      box-sizing: border-box;
+      word-break: break-word;
+      white-space: pre-wrap;
+      border-radius: 4px;
+    }
+    table.flow-table select {
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--navy-dark);
+    }
+    table.flow-table textarea:focus, table.flow-table input:focus, table.flow-table select:focus {
+      background: rgba(37, 99, 235, 0.05);
+      border-color: var(--navy-accent);
+    }
+
+    /* Split Time Group Styling */
+    .time-split-container {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .time-field {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .time-field span {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      width: 36px;
+      flex-shrink: 0;
+    }
+    .time-field select {
+      flex: 1;
+      background: #ffffff;
+      border: 1px solid var(--border-color) !important;
+      font-size: 0.8rem;
+      padding: 3px 4px;
+    }
+
+    /* Action Buttons */
+    .actions-bar { display: flex; gap: 10px; justify-content: space-between; align-items: center; margin-top: 14px; flex-wrap: wrap; }
+    .btn { padding: 8px 14px; border-radius: 6px; font-weight: 600; border: none; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 6px; font-size: 0.82rem; }
+    .btn-primary { background: var(--navy-primary); color: white; }
+    .btn-primary:hover { background: var(--navy-dark); }
+    .btn-secondary { background: #e2e8f0; color: var(--text-dark); }
+    .btn-secondary:hover { background: #cbd5e1; }
+    .btn-outline { background: transparent; border: 1px solid var(--navy-primary); color: var(--navy-primary); }
+    .btn-outline:hover { background: var(--navy-light); }
+    .row-del-btn { color: #ef4444; background: none; border: none; cursor: pointer; font-size: 0.9rem; padding: 4px; }
+
+    .view-panel { display: none; }
+    .view-panel.active { display: block; }
+
+    /* Toast Notification */
+    .toast-notification {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--navy-dark);
+      color: white;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.25);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 9999;
+      border-left: 4px solid var(--navy-accent);
+      animation: slideInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes slideInUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* Print & PDF Optimization */
+    @media print {
+      @page { size: auto; margin: 10mm; }
+      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-shadow: none !important; }
+      html, body { background-color: white !important; color: black !important; height: auto !important; width: 100% !important; overflow: visible !important; margin: 0 !important; }
+      .sidebar, .actions-bar, .no-print, .row-del-btn, #dashboardView, .toast-notification { display: none !important; }
+      .main-content { padding: 0 !important; margin: 0 !important; width: 100% !important; }
+      .card { box-shadow: none !important; border: none !important; padding: 0 !important; background: white !important; width: 100% !important; }
+      
+      .form-group input, .form-group textarea, .form-group select, table.flow-table textarea, table.flow-table input, table.flow-table select, .time-split-container { display: none !important; }
+      .print-value {
+        display: block !important;
+        white-space: pre-wrap !important;
+        word-break: break-word !important;
+        font-size: 0.83rem !important;
+        line-height: 1.4 !important;
+        color: #0f172a !important;
+        padding: 4px 6px !important;
+      }
+
+      .meta-container { gap: 6px !important; margin-bottom: 10px !important; }
+      .meta-row-top { display: grid !important; grid-template-columns: 1.2fr 1fr 0.8fr 0.8fr !important; gap: 6px !important; }
+      .meta-row-bottom { display: grid !important; grid-template-columns: 1fr 2.5fr !important; gap: 6px !important; }
+      .form-group { border: 1px solid #cbd5e1 !important; border-radius: 4px !important; padding: 4px 6px !important; }
+
+      table.flow-table { width: 100% !important; border-collapse: collapse !important; border: 1.5px solid #475569 !important; page-break-inside: auto !important; }
+      table.flow-table tr { page-break-inside: avoid !important; }
+      table.flow-table th { background: #e2e8f0 !important; color: black !important; padding: 6px !important; border: 1px solid #475569 !important; font-size: 0.8rem !important; }
+      table.flow-table td { border: 1px solid #475569 !important; padding: 4px !important; }
+      table.flow-table td.cell-gray { background-color: #f8fafc !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="brand">📅 LessonFlow</div>
+    <div class="nav-tabs">
+      <button class="nav-btn active" id="navDashboard" onclick="switchView('dashboard')">
+        <span>📊 Dashboard</span>
+      </button>
+      <button class="nav-btn" id="navEditor" onclick="createNewFlow()">
+        <span>➕ New Weekly Flow</span>
+        <span id="draftBadge" class="draft-badge" style="display: none;">Draft</span>
+      </button>
+      <button class="nav-btn reset-btn" id="navReset" onclick="resetCurrentFlow()">
+        <span>↺ Reset Form</span>
+      </button>
+    </div>
+
+    <div class="history-title">Saved Flows & Subjects</div>
+    <div class="history-list" id="historyList"></div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    
+    <!-- DASHBOARD VIEW -->
+    <div id="dashboardView" class="view-panel active">
+      <h2 style="margin-bottom: 12px; color: var(--navy-dark); font-size: 1.3rem;">Weekly Lesson Flow Dashboard</h2>
+      
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span style="color: var(--text-muted); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">Total Weekly Flows</span>
+          <div class="stat-number" id="totalCount">0</div>
+        </div>
+        
+        <div class="calendar-card">
+          <div class="calendar-header">
+            <button class="cal-nav-btn" onclick="changeMonth(-1)">‹</button>
+            <span id="calendarMonthLabel">Month Year</span>
+            <button class="cal-nav-btn" onclick="changeMonth(1)">›</button>
+          </div>
+          <div class="calendar-grid" id="calendarGrid"></div>
+        </div>
+      </div>
+
+      <div class="dashboard-dual-section">
+        <div class="card featured-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <h3 style="color: var(--navy-primary); font-size: 1.05rem;" id="currentFlowHeader">Selected Lesson Flow</h3>
+          </div>
+          <div id="currentFlowContainer"></div>
+        </div>
+
+        <div class="card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <h3 style="color: var(--navy-primary); font-size: 1.05rem;">All Saved Weekly Flows</h3>
+            <span id="allCountBadge" style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;"></span>
+          </div>
+          <div id="allFlowsList" style="display: flex; flex-direction: column; gap: 8px; max-height: 380px; overflow-y: auto;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EDITOR VIEW -->
+    <div id="editorView" class="view-panel">
+      <div class="card" id="editorCard">
+        
+        <div class="lesson-title-heading">
+          <span>Weekly Lesson Flow</span>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <button class="btn btn-outline no-print fullscreen-toggle-btn" onclick="toggleSidebar()" style="padding: 3px 8px; font-size: 0.75rem;">⛶ Fullscreen</button>
+            <span id="editorStatusTag" style="font-size: 0.75rem; color: var(--navy-accent); font-weight: 600;"></span>
+          </div>
+        </div>
+
+        <!-- Metadata Section -->
+        <div class="meta-container">
+          <!-- Row 1: Teacher, Class, Term, WW -->
+          <div class="meta-grid-row meta-row-top">
+            <div class="form-group">
+              <label>Teacher</label>
+              <input type="text" id="teacherNameInput" placeholder="e.g., Ms. Jane" oninput="syncPrintValues();">
+              <div class="print-value"></div>
+            </div>
+            <div class="form-group">
+              <label>Class</label>
+              <input type="text" id="classInput" placeholder="e.g., Primary 5A" oninput="syncPrintValues();">
+              <div class="print-value"></div>
+            </div>
+            <div class="form-group">
+              <label>Term</label>
+              <select id="termSelect" onchange="autoSaveDraft(); syncPrintValues();">
+                <option value="Term 1">Term 1</option>
+                <option value="Term 2">Term 2</option>
+                <option value="Term 3" selected>Term 3</option>
+                <option value="Term 4">Term 4</option>
+              </select>
+              <div class="print-value"></div>
+            </div>
+            <div class="form-group">
+              <label>WW</label>
+              <select id="wwSelect" onchange="autoSaveDraft(); syncPrintValues();">
+                <option value="W01">W01</option>
+                <option value="W02">W02</option>
+                <option value="W03">W03</option>
+                <option value="W04" selected>W04</option>
+                <option value="W05">W05</option>
+                <option value="W06">W06</option>
+                <option value="W07">W07</option>
+                <option value="W08">W08</option>
+                <option value="W09">W09</option>
+                <option value="W10">W10</option>
+              </select>
+              <div class="print-value"></div>
+            </div>
+          </div>
+
+          <!-- Row 2: Subject and Topic / Unit -->
+          <div class="meta-grid-row meta-row-bottom">
+            <div class="form-group">
+              <label>Subject</label>
+              <input type="text" id="subjectInput" placeholder="e.g., Mathematics & Additional Science" oninput="syncPrintValues();">
+              <div class="print-value"></div>
+            </div>
+            <div class="form-group">
+              <label>Topic / Unit</label>
+              <textarea id="topicInput" rows="1" placeholder="e.g., Unit 4: Decimals, Multiplication & Real-World Problem Solving Applications" oninput="autoExpand(this); syncPrintValues();"></textarea>
+              <div class="print-value"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Table Layout -->
+        <table class="flow-table">
+          <thead>
+            <tr>
+              <th style="width: 10%;">Day</th>
+              <th style="width: 20%;">Time</th>
+              <th style="width: 8%;">Period</th>
+              <th style="width: 44%;">Activities</th>
+              <th style="width: 18%;">Remarks</th>
+              <th class="no-print" style="width: 32px;"></th>
+            </tr>
+          </thead>
+          <tbody id="flowTableBody"></tbody>
+        </table>
+
+        <!-- Controls -->
+        <div class="no-print" style="margin-top: 10px; display: flex; gap: 8px;">
+          <button class="btn btn-secondary btn-outline" onclick="addFlowRow()">+ Add Row Entry</button>
+        </div>
+
+        <!-- Actions -->
+        <div class="actions-bar">
+          <button class="btn btn-primary" onclick="saveCurrentFlow()">💾 Save Weekly Flow</button>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button class="btn btn-secondary" onclick="exportToExcel()">📊 Export to Excel</button>
+            <button class="btn btn-secondary" onclick="exportPDF()">🖨️ Export to PDF / Print</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    let flows = [];
+    let currentId = null; 
+    let calendarViewDate = new Date();
+    let openSubjects = new Set(); 
+    let isPopulating = false;
+
+    // Time schedule from snapshot
+    const TIMING_OPTIONS = [
+      "07:45", "08:00", "08:30", "09:00", "09:30", "10:00", 
+      "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", 
+      "13:30", "14:00", "14:30", "14:45", "15:00", "15:30", 
+      "16:00", "16:30"
+    ];
+
+    // Format helper to fulfill Requirement 1: T<Term><WW> - <Class> - <Topic/Unit>
+    function getFormattedTitle(flow) {
+      const termNum = (flow.term || '').replace(/[^0-9]/g, '');
+      const termCode = termNum ? `T${termNum}` : (flow.term || '');
+      const wwCode = flow.ww || '';
+      const termWw = `${termCode}${wwCode}`.trim();
+      
+      const cls = flow.className ? flow.className.trim() : 'Class';
+      const topic = flow.topic ? flow.topic.trim() : 'Flow';
+      
+      return termWw ? `${termWw} - ${cls} - ${topic}` : `${cls} - ${topic}`;
+    }
+
+    // Default flow demo data
+    const defaultFlowRows = [
+      { day: "Mon", timeFrom: "07:45", timeTo: "08:30", period: "1", activities: "Teach decimals concept & addition. Assign HW Pg 42.", remarks: "Check prior knowledge" },
+      { day: "Tue", timeFrom: "09:00", timeTo: "10:00", period: "3", activities: "Collect homework. Continue with decimals topic (subtraction). Mark homework in class.", remarks: "Remedial for Group B" },
+      { day: "Wed", timeFrom: "11:00", timeTo: "12:00", period: "5", activities: "Return homework to students to go through corrections. Mini-quiz on decimals.", remarks: "Lab room 2" }
+    ];
+
+    window.onload = function() {
+      const stored = localStorage.getItem('lessonFlow_weekly_data');
+      if (stored) {
+        flows = JSON.parse(stored);
+      } else {
+        flows = [createDefaultFlow()];
+        saveToLocalStorage();
+      }
+
+      document.getElementById('editorView').addEventListener('input', autoSaveDraft);
+      document.getElementById('editorView').addEventListener('change', autoSaveDraft);
+
+      updateDraftBadge(hasDraftSaved());
+
+      if (flows.length > 0) {
+        currentId = flows[0].id;
+        openSubjects.add(flows[0].subject || 'Uncategorized');
+      }
+      updateDashboard();
+      renderSidebar();
+    };
+
+    function toggleSidebar() {
+      document.body.classList.toggle('sidebar-hidden');
+      const isHidden = document.body.classList.contains('sidebar-hidden');
+      document.querySelectorAll('.fullscreen-toggle-btn').forEach(btn => {
+        btn.innerHTML = isHidden ? '🗗 Exit Fullscreen' : '⛶ Fullscreen';
+      });
+      setTimeout(() => triggerAllExpands(), 50);
+    }
+
+    function createDefaultFlow() {
+      return {
+        id: Date.now(),
+        teacherName: "Mr. Alex Tan",
+        className: "Primary 5A",
+        subject: "Mathematics",
+        topic: "Decimals & Multi-step Problem Solving",
+        term: "Term 3",
+        ww: "W04",
+        table: JSON.parse(JSON.stringify(defaultFlowRows))
+      };
+    }
+
+    function createBlankFlow() {
+      return {
+        id: 'draft',
+        teacherName: "",
+        className: "",
+        subject: "",
+        topic: "",
+        term: "Term 1",
+        ww: "W01",
+        table: []
+      };
+    }
+
+    function showToast(message, icon = '✨') {
+      const existing = document.querySelector('.toast-notification');
+      if (existing) existing.remove();
+
+      const toast = document.createElement('div');
+      toast.className = 'toast-notification';
+      toast.innerHTML = `<span style="font-size: 1.1rem;">${icon}</span> <span>${message}</span>`;
+      document.body.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(15px)';
+        toast.style.transition = 'all 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 2400);
+    }
+
+    function triggerCardPulse() {
+      const card = document.getElementById('editorCard');
+      card.classList.remove('card-pulse');
+      void card.offsetWidth; 
+      card.classList.add('card-pulse');
+    }
+
+    function switchView(view) {
+      document.querySelectorAll('.view-panel').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+      
+      if(view === 'dashboard') {
+        document.body.classList.remove('sidebar-hidden');
+        document.getElementById('dashboardView').classList.add('active');
+        document.getElementById('navDashboard').classList.add('active');
+        updateDashboard();
+      } else {
+        document.getElementById('editorView').classList.add('active');
+        document.getElementById('navEditor').classList.add('active');
+      }
+    }
+
+    function autoExpand(textarea, extraPadding = 4) {
+      textarea.style.height = 'auto';
+      textarea.style.height = (textarea.scrollHeight + extraPadding) + 'px';
+    }
+
+    function triggerAllExpands() {
+      document.querySelectorAll('#editorView textarea').forEach(ta => autoExpand(ta));
+      syncPrintValues();
+    }
+
+    function generateTimingOptionsHTML(selectedValue) {
+      return TIMING_OPTIONS.map(time => 
+        `<option value="${time}" ${time === selectedValue ? 'selected' : ''}>${time}</option>`
+      ).join('');
+    }
+
+    function syncPrintValues() {
+      document.querySelectorAll('#editorView .form-group').forEach(group => {
+        const input = group.querySelector('input, textarea, select');
+        let printVal = group.querySelector('.print-value');
+        if (!printVal) {
+          printVal = document.createElement('div');
+          printVal.className = 'print-value';
+          group.appendChild(printVal);
+        }
+        if (input) printVal.textContent = input.value;
+      });
+
+      document.querySelectorAll('#flowTableBody tr').forEach(tr => {
+        // Day
+        const daySelect = tr.querySelector('td:nth-child(1) select');
+        if (daySelect) {
+          let printVal = tr.querySelector('td:nth-child(1) .print-value');
+          if (printVal) printVal.textContent = daySelect.value;
+        }
+
+        // Split Time (From & To)
+        const timeFrom = tr.querySelector('.time-from-select')?.value || '';
+        const timeTo = tr.querySelector('.time-to-select')?.value || '';
+        let timePrintVal = tr.querySelector('td:nth-child(2) .print-value');
+        if (timePrintVal) {
+          timePrintVal.textContent = `From: ${timeFrom} - To: ${timeTo}`;
+        }
+
+        // Period
+        const periodSelect = tr.querySelector('td:nth-child(3) select');
+        if (periodSelect) {
+          let printVal = tr.querySelector('td:nth-child(3) .print-value');
+          if (printVal) printVal.textContent = periodSelect.value;
+        }
+
+        // Activities & Remarks
+        const textareas = tr.querySelectorAll('textarea');
+        if (textareas[0]) {
+          let printVal = tr.querySelector('td:nth-child(4) .print-value');
+          if (printVal) printVal.textContent = textareas[0].value;
+        }
+        if (textareas[1]) {
+          let printVal = tr.querySelector('td:nth-child(5) .print-value');
+          if (printVal) printVal.textContent = textareas[1].value;
+        }
+      });
+    }
+
+    /* Add Row Entry with Split Time (From: and To:) */
+    function addFlowRow(rowData = null) {
+      const tbody = document.getElementById('flowTableBody');
+
+      let day = rowData ? (rowData.day || "Mon") : "Mon";
+      
+      // Parse timing data supporting legacy format
+      let timeFrom = rowData ? (rowData.timeFrom || "") : "";
+      let timeTo = rowData ? (rowData.timeTo || "") : "";
+      if (!timeFrom && !timeTo && rowData && rowData.time) {
+        const parts = rowData.time.split(/\s*-\s*/);
+        timeFrom = parts[0] || "07:45";
+        timeTo = parts[1] || "08:30";
+      }
+      if (!timeFrom) timeFrom = "07:45";
+      if (!timeTo) timeTo = "08:30";
+
+      let period = rowData ? (rowData.period || "1") : "1";
+      let activities = rowData ? (rowData.activities || "") : "";
+      let remarks = rowData ? (rowData.remarks || "") : "";
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="cell-gray">
+          <select onchange="autoSaveDraft(); syncPrintValues();">
+            <option value="Mon" ${day === 'Mon' ? 'selected' : ''}>Mon</option>
+            <option value="Tue" ${day === 'Tue' ? 'selected' : ''}>Tue</option>
+            <option value="Wed" ${day === 'Wed' ? 'selected' : ''}>Wed</option>
+            <option value="Thu" ${day === 'Thu' ? 'selected' : ''}>Thu</option>
+            <option value="Fri" ${day === 'Fri' ? 'selected' : ''}>Fri</option>
+            <option value="Sat" ${day === 'Sat' ? 'selected' : ''}>Sat</option>
+            <option value="Sun" ${day === 'Sun' ? 'selected' : ''}>Sun</option>
+          </select>
+          <div class="print-value"></div>
+        </td>
+        <td class="cell-gray">
+          <div class="time-split-container">
+            <div class="time-field">
+              <span>From:</span>
+              <select class="time-from-select" onchange="autoSaveDraft(); syncPrintValues();">
+                ${generateTimingOptionsHTML(timeFrom)}
+              </select>
+            </div>
+            <div class="time-field">
+              <span>To:</span>
+              <select class="time-to-select" onchange="autoSaveDraft(); syncPrintValues();">
+                ${generateTimingOptionsHTML(timeTo)}
+              </select>
+            </div>
+          </div>
+          <div class="print-value"></div>
+        </td>
+        <td class="cell-gray">
+          <select onchange="autoSaveDraft(); syncPrintValues();">
+            <option value="1" ${period === '1' ? 'selected' : ''}>1</option>
+            <option value="2" ${period === '2' ? 'selected' : ''}>2</option>
+            <option value="3" ${period === '3' ? 'selected' : ''}>3</option>
+            <option value="4" ${period === '4' ? 'selected' : ''}>4</option>
+            <option value="5" ${period === '5' ? 'selected' : ''}>5</option>
+            <option value="2+1" ${period === '2+1' ? 'selected' : ''}>2+1</option>
+            <option value="2+RT" ${period === '2+RT' ? 'selected' : ''}>2+RT</option>
+          </select>
+          <div class="print-value"></div>
+        </td>
+        <td>
+          <textarea placeholder="e.g. Teach topic, assign HW..." oninput="autoExpand(this); syncPrintValues();">${activities}</textarea>
+          <div class="print-value"></div>
+        </td>
+        <td>
+          <textarea placeholder="e.g. Check HW" oninput="autoExpand(this); syncPrintValues();">${remarks}</textarea>
+          <div class="print-value"></div>
+        </td>
+        <td class="no-print" style="text-align: center;">
+          <button class="row-del-btn" onclick="deleteRow(this)">✕</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+
+      setTimeout(() => {
+        triggerAllExpands();
+        syncPrintValues();
+      }, 0);
+      
+      if (!isPopulating) autoSaveDraft();
+    }
+
+    function deleteRow(btn) {
+      btn.closest('tr').remove();
+      if (!isPopulating) autoSaveDraft();
+      syncPrintValues();
+    }
+
+    function getCurrentFormData() {
+      const rows = [];
+      document.querySelectorAll('#flowTableBody tr').forEach(tr => {
+        const daySelect = tr.querySelector('td:nth-child(1) select');
+        const timeFromSelect = tr.querySelector('.time-from-select');
+        const timeToSelect = tr.querySelector('.time-to-select');
+        const periodSelect = tr.querySelector('td:nth-child(3) select');
+        const textareas = tr.querySelectorAll('textarea');
+
+        if (daySelect && timeFromSelect && timeToSelect && periodSelect && textareas.length >= 2) {
+          rows.push({
+            day: daySelect.value,
+            timeFrom: timeFromSelect.value,
+            timeTo: timeToSelect.value,
+            time: `${timeFromSelect.value} - ${timeToSelect.value}`,
+            period: periodSelect.value,
+            activities: textareas[0].value,
+            remarks: textareas[1].value
+          });
+        }
+      });
+
+      return {
+        id: currentId === 'draft' ? 'draft' : (currentId || Date.now()),
+        teacherName: document.getElementById('teacherNameInput').value,
+        className: document.getElementById('classInput').value,
+        subject: document.getElementById('subjectInput').value,
+        topic: document.getElementById('topicInput').value,
+        term: document.getElementById('termSelect').value,
+        ww: document.getElementById('wwSelect').value,
+        table: rows
+      };
+    }
+
+    function autoSaveDraft() {
+      if (isPopulating) return; 
+      if (currentId === 'draft') {
+        const formData = getCurrentFormData();
+        localStorage.setItem('lessonFlow_active_weekly_draft', JSON.stringify(formData));
+        updateDraftBadge(true);
+        document.getElementById('editorStatusTag').innerText = '• Unsaved Draft';
+      }
+      syncPrintValues();
+    }
+
+    function hasDraftSaved() {
+      return !!localStorage.getItem('lessonFlow_active_weekly_draft');
+    }
+
+    function updateDraftBadge(show) {
+      const badge = document.getElementById('draftBadge');
+      if (badge) badge.style.display = show ? 'inline-block' : 'none';
+    }
+
+    function populateFormFields(flow) {
+      isPopulating = true; 
+
+      document.getElementById('teacherNameInput').value = flow.teacherName || '';
+      document.getElementById('classInput').value = flow.className || '';
+      document.getElementById('subjectInput').value = flow.subject || '';
+      document.getElementById('topicInput').value = flow.topic || '';
+      document.getElementById('termSelect').value = flow.term || 'Term 1';
+      document.getElementById('wwSelect').value = flow.ww || 'W01';
+
+      const tbody = document.getElementById('flowTableBody');
+      tbody.innerHTML = '';
+      
+      if (flow.table && flow.table.length > 0) {
+        flow.table.forEach(row => addFlowRow(row));
+      } else {
+        addFlowRow(); 
+      }
+
+      isPopulating = false; 
+
+      const isDraftWithData = (flow.id === 'draft' && hasDraftSaved());
+      document.getElementById('editorStatusTag').innerText = isDraftWithData ? '• Unsaved Draft' : '';
+      syncPrintValues();
+      triggerAllExpands();
+    }
+
+    function loadFlow(id) {
+      if (currentId === 'draft' && hasDraftSaved()) autoSaveDraft();
+
+      const flow = flows.find(f => f.id === id);
+      if (!flow) return;
+
+      currentId = flow.id;
+      openSubjects.add(flow.subject || 'Uncategorized');
+
+      populateFormFields(flow);
+      switchView('editor');
+      renderSidebar();
+      setTimeout(() => triggerAllExpands(), 0);
+    }
+
+    function createNewFlow() {
+      if (currentId === 'draft' && hasDraftSaved()) autoSaveDraft();
+
+      let flowToLoad;
+      let toastMsg = "";
+
+      const availableClasses = [...new Set(flows.map(f => f.className).filter(Boolean))];
+
+      if (availableClasses.length > 0) {
+        const promptText = `Duplicate information from which class?\n\nAvailable classes:\n- ${availableClasses.join('\n- ')}\n\n(Enter exact class name to duplicate, or leave blank to create a fresh flow):`;
+        const selectedClass = prompt(promptText);
+
+        if (selectedClass && selectedClass.trim() !== "") {
+          const match = flows.find(f => f.className && f.className.toLowerCase() === selectedClass.trim().toLowerCase());
+          if (match) {
+            flowToLoad = JSON.parse(JSON.stringify(match));
+            flowToLoad.id = 'draft';
+            flowToLoad.topic = flowToLoad.topic ? `${flowToLoad.topic} (Copy)` : '';
+            toastMsg = `Duplicated information from ${match.className}!`;
+          } else {
+            alert(`Class "${selectedClass}" was not found. Creating a blank flow instead.`);
+            flowToLoad = createBlankFlow();
+            toastMsg = "New Weekly Flow created!";
+          }
+        } else {
+          flowToLoad = createBlankFlow();
+          toastMsg = "New Weekly Flow created!";
+        }
+      } else {
+        flowToLoad = createBlankFlow();
+        toastMsg = "New Weekly Flow created!";
+      }
+
+      currentId = 'draft';
+      updateDraftBadge(false);
+      populateFormFields(flowToLoad);
+      switchView('editor');
+      renderSidebar();
+      triggerCardPulse();
+      showToast(toastMsg, "✨");
+      setTimeout(() => triggerAllExpands(), 0);
+    }
+
+    function resetCurrentFlow() {
+      if (confirm('Clear editor fields and start a new flow?')) {
+        localStorage.removeItem('lessonFlow_active_weekly_draft');
+        currentId = 'draft';
+        
+        const freshFlow = createBlankFlow();
+        populateFormFields(freshFlow);
+        
+        updateDraftBadge(false);
+        document.getElementById('editorStatusTag').innerText = '';
+        
+        switchView('editor');
+        renderSidebar();
+        triggerCardPulse();
+        showToast("Form reset! Draft cleared.", "↺");
+      }
+    }
+
+    function saveCurrentFlow() {
+      const data = getCurrentFormData();
+      if (data.id === 'draft') data.id = Date.now();
+
+      const index = flows.findIndex(f => f.id === data.id);
+      if (index > -1) {
+        flows[index] = data;
+      } else {
+        flows.unshift(data);
+      }
+
+      currentId = data.id;
+      openSubjects.add(data.subject || 'Uncategorized');
+
+      localStorage.removeItem('lessonFlow_active_weekly_draft');
+      updateDraftBadge(false);
+
+      saveToLocalStorage();
+      renderSidebar();
+      populateFormFields(data);
+      showToast('Weekly Lesson Flow saved successfully!', '💾');
+    }
+
+    function deleteFlow(id, event) {
+      if (event) event.stopPropagation();
+      if (confirm('Delete this weekly flow?')) {
+        flows = flows.filter(f => f.id !== id);
+        if (currentId === id) currentId = flows.length > 0 ? flows[0].id : null;
+        saveToLocalStorage();
+        renderSidebar();
+        updateDashboard();
+        showToast('Weekly flow deleted.', '🗑️');
+      }
+    }
+
+    function saveToLocalStorage() {
+      localStorage.setItem('lessonFlow_weekly_data', JSON.stringify(flows));
+    }
+
+    function toggleSubjectFolder(subj) {
+      if (openSubjects.has(subj)) {
+        openSubjects.delete(subj);
+      } else {
+        openSubjects.add(subj);
+      }
+      renderSidebar();
+    }
+
+    function renderSidebar() {
+      const container = document.getElementById('historyList');
+      container.innerHTML = '';
+
+      if (flows.length === 0) {
+        container.innerHTML = '<div style="color: rgba(255,255,255,0.8); font-size: 0.8rem; font-style: italic;">No saved flows.</div>';
+        return;
+      }
+
+      const groups = {};
+      flows.forEach(f => {
+        const subj = (f.subject && f.subject.trim()) ? f.subject.trim() : 'Uncategorized';
+        if (!groups[subj]) groups[subj] = [];
+        groups[subj].push(f);
+      });
+
+      Object.keys(groups).sort().forEach(subj => {
+        const groupFlows = groups[subj];
+        const isOpen = openSubjects.has(subj);
+
+        const groupEl = document.createElement('div');
+        groupEl.className = 'subject-group';
+
+        const headerEl = document.createElement('div');
+        headerEl.className = `subject-header ${isOpen ? 'open' : ''}`;
+        headerEl.onclick = () => toggleSubjectFolder(subj);
+        headerEl.innerHTML = `
+          <span><span class="folder-icon" style="display:inline-block; margin-right: 4px;">▶</span> 📁 ${subj}</span>
+          <span class="subject-badge">${groupFlows.length}</span>
+        `;
+        groupEl.appendChild(headerEl);
+
+        const contentEl = document.createElement('div');
+        contentEl.className = `subject-content ${isOpen ? 'open' : ''}`;
+
+        groupFlows.forEach(flow => {
+          const itemEl = document.createElement('div');
+          itemEl.className = `history-item ${flow.id === currentId ? 'active' : ''}`;
+          itemEl.onclick = () => loadFlow(flow.id);
+          
+          // Updated Title Format
+          const title = getFormattedTitle(flow);
+          itemEl.innerHTML = `
+            <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 170px;" title="${title}">📄 ${title}</span>
+            <button class="del-btn no-print" onclick="deleteFlow(${flow.id}, event)">✕</button>
+          `;
+          contentEl.appendChild(itemEl);
+        });
+
+        groupEl.appendChild(contentEl);
+        container.appendChild(groupEl);
+      });
+    }
+
+    function updateDashboard() {
+      document.getElementById('totalCount').innerText = flows.length;
+      document.getElementById('allCountBadge').innerText = `${flows.length} flows`;
+      renderCalendar();
+      renderDashboardDualView();
+    }
+
+    function renderDashboardDualView() {
+      const focusContainer = document.getElementById('currentFlowContainer');
+      const allContainer = document.getElementById('allFlowsList');
+
+      focusContainer.innerHTML = '';
+      allContainer.innerHTML = '';
+
+      let focusFlow = flows.find(f => f.id === currentId) || (flows.length > 0 ? flows[0] : null);
+
+      if (focusFlow) {
+        focusContainer.innerHTML = `
+          <div style="margin-bottom: 8px;">
+            <h4 style="font-size: 1.1rem; color: var(--navy-dark); font-weight: 700;">${getFormattedTitle(focusFlow)}</h4>
+            <div style="margin-top: 6px;">
+              <span class="meta-tag">👤 ${focusFlow.teacherName || 'No Teacher'}</span>
+              <span class="meta-tag">🏫 ${focusFlow.className || 'No Class'}</span>
+              <span class="meta-tag">🗓️ ${focusFlow.term || 'Term'} ${focusFlow.ww || 'WW'}</span>
+            </div>
+          </div>
+          <div style="display: flex; gap: 8px; margin-top: 14px;">
+            <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="loadFlow(${focusFlow.id})">✏️ Open & Edit</button>
+          </div>
+        `;
+      } else {
+        focusContainer.innerHTML = `<div style="color: var(--text-muted); font-style: italic; font-size: 0.88rem;">No flow selected.</div>`;
+      }
+
+      flows.forEach(flow => {
+        const itemCard = document.createElement('div');
+        itemCard.style.cssText = `
+          padding: 10px 12px; border-radius: 6px; border: 1px solid ${flow.id === (focusFlow ? focusFlow.id : null) ? 'var(--navy-accent)' : 'var(--border-color)'};
+          background: #ffffff; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+        `;
+        itemCard.onclick = () => { currentId = flow.id; renderDashboardDualView(); renderSidebar(); };
+        itemCard.innerHTML = `
+          <div>
+            <div style="font-weight: 700; color: var(--navy-primary); font-size: 0.88rem;">${getFormattedTitle(flow)}</div>
+            <div style="font-size: 0.78rem; color: var(--text-muted);">${flow.teacherName || 'Teacher'} • ${flow.subject || 'Subject'}</div>
+          </div>
+          <button class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.75rem;" onclick="event.stopPropagation(); loadFlow(${flow.id});">Edit</button>
+        `;
+        allContainer.appendChild(itemCard);
+      });
+    }
+
+    function renderCalendar() {
+      const calendarGrid = document.getElementById('calendarGrid');
+      calendarGrid.innerHTML = '';
+      const year = calendarViewDate.getFullYear();
+      const month = calendarViewDate.getMonth();
+
+      document.getElementById('calendarMonthLabel').innerText = calendarViewDate.toLocaleDateString('default', { month: 'long', year: 'numeric' });
+
+      ['S', 'M', 'T', 'W', 'T', 'F', 'S'].forEach(d => {
+        const lbl = document.createElement('div');
+        lbl.className = 'cal-day-label';
+        lbl.innerText = d;
+        calendarGrid.appendChild(lbl);
+      });
+
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      for (let i = 0; i < firstDay; i++) calendarGrid.appendChild(document.createElement('div'));
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dayEl = document.createElement('div');
+        dayEl.className = 'cal-day';
+        dayEl.innerText = day;
+        calendarGrid.appendChild(dayEl);
+      }
+    }
+
+    function changeMonth(delta) {
+      calendarViewDate.setMonth(calendarViewDate.getMonth() + delta);
+      renderCalendar();
+    }
+
+    function exportPDF() {
+      syncPrintValues();
+      triggerAllExpands();
+      window.print();
+    }
+
+    function exportToExcel() {
+      const data = getCurrentFormData();
+      const formattedTitle = getFormattedTitle(data);
+      let excelHtml = `
+        <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+        <head><meta charset="utf-8"></head>
+        <body>
+          <h2>${formattedTitle}</h2>
+          <p><b>Teacher:</b> ${data.teacherName} | <b>Class:</b> ${data.className} | <b>Subject:</b> ${data.subject} | <b>Topic:</b> ${data.topic} | <b>Term:</b> ${data.term} | <b>WW:</b> ${data.ww}</p>
+          <table border="1">
+            <thead>
+              <tr style="background-color: #e2e8f0;">
+                <th>Day</th>
+                <th>Time (From - To)</th>
+                <th>Period</th>
+                <th>Activities</th>
+                <th>Remarks</th>
+              </tr>
+            </thead>
+            <tbody>
+      `;
+
+      data.table.forEach(row => {
+        excelHtml += `
+          <tr>
+            <td>${row.day}</td>
+            <td>${row.timeFrom || ''} - ${row.timeTo || ''}</td>
+            <td>${row.period}</td>
+            <td>${row.activities}</td>
+            <td>${row.remarks}</td>
+          </tr>
+        `;
+      });
+
+      excelHtml += `</tbody></table></body></html>`;
+
+      const blob = new Blob([excelHtml], { type: 'application/vnd.ms-excel' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `LessonFlow_${formattedTitle.replace(/[^a-zA-Z0-9_-]/g, '_')}.xls`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      showToast('Exported to Excel!', '📊');
+    }
+  </script>
+</body>
+</html>
