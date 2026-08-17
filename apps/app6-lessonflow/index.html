@@ -213,8 +213,11 @@
     
     .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; }
     .cal-day-label { font-size: 0.7rem; color: var(--text-muted); font-weight: 700; padding-bottom: 3px; }
-    .cal-day { padding: 6px 2px; font-size: 0.8rem; border-radius: 4px; background: #f1f5f9; cursor: pointer; transition: all 0.2s; }
+    .cal-day { padding: 6px 2px; font-size: 0.8rem; border-radius: 4px; background: #f1f5f9; cursor: pointer; transition: all 0.2s; border: 1px solid transparent; }
     .cal-day:hover { border-color: var(--navy-accent); background: #e2e8f0; }
+    .cal-day.today { border: 2px solid var(--navy-accent); }
+    .cal-day.has-flow { background: var(--navy-primary); color: white; font-weight: bold; box-shadow: 0 2px 4px rgba(30, 58, 138, 0.2); }
+    .cal-day.has-flow:hover { background: var(--navy-accent); }
 
     .dashboard-dual-section { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
     @media (max-width: 900px) { .dashboard-dual-section { grid-template-columns: 1fr; } }
@@ -234,13 +237,14 @@
       gap: 10px; 
       align-items: flex-start;
     }
+    /* Updated grid layout to accommodate 5 top elements: Teacher, Class, Date, Term, WW */
     .meta-row-top {
-      grid-template-columns: 1.2fr 1fr 0.8fr 0.8fr; 
+      grid-template-columns: 1.2fr 1fr 1fr 0.8fr 0.8fr; 
     }
     .meta-row-bottom {
       grid-template-columns: 1fr 2.5fr; 
     }
-    @media (max-width: 768px) { 
+    @media (max-width: 900px) { 
       .meta-row-top { grid-template-columns: 1fr 1fr; } 
       .meta-row-bottom { grid-template-columns: 1fr; }
     }
@@ -417,7 +421,7 @@
       }
 
       .meta-container { gap: 6px !important; margin-bottom: 10px !important; }
-      .meta-row-top { display: grid !important; grid-template-columns: 1.2fr 1fr 0.8fr 0.8fr !important; gap: 6px !important; }
+      .meta-row-top { display: grid !important; grid-template-columns: 1.2fr 1fr 1fr 0.8fr 0.8fr !important; gap: 6px !important; }
       .meta-row-bottom { display: grid !important; grid-template-columns: 1fr 2.5fr !important; gap: 6px !important; }
       .form-group { border: 1px solid #cbd5e1 !important; border-radius: 4px !important; padding: 4px 6px !important; }
 
@@ -506,7 +510,7 @@
 
         <!-- Metadata Section -->
         <div class="meta-container">
-          <!-- Row 1: Teacher, Class, Term, WW -->
+          <!-- Row 1: Teacher, Class, Date, Term, WW -->
           <div class="meta-grid-row meta-row-top">
             <div class="form-group">
               <label>Teacher</label>
@@ -516,6 +520,12 @@
             <div class="form-group">
               <label>Class</label>
               <input type="text" id="classInput" placeholder="e.g., Primary 5A" oninput="syncPrintValues();">
+              <div class="print-value"></div>
+            </div>
+            <!-- Added Date Field before Term -->
+            <div class="form-group">
+              <label>Date</label>
+              <input type="date" id="dateInput" onchange="autoSaveDraft(); syncPrintValues();">
               <div class="print-value"></div>
             </div>
             <div class="form-group">
@@ -602,7 +612,7 @@
     let openSubjects = new Set(); 
     let isPopulating = false;
 
-    // Time schedule from snapshot
+    // Time schedule options
     const TIMING_OPTIONS = [
       "07:45", "08:00", "08:30", "09:00", "09:30", "10:00", 
       "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", 
@@ -610,7 +620,11 @@
       "16:00", "16:30"
     ];
 
-    // Format helper to fulfill Requirement 1: T<Term><WW> - <Class> - <Topic/Unit>
+    function getTodayISO() {
+      return new Date().toISOString().split('T')[0];
+    }
+
+    // Format helper: T<Term><WW> - <Class> - <Topic/Unit>
     function getFormattedTitle(flow) {
       const termNum = (flow.term || '').replace(/[^0-9]/g, '');
       const termCode = termNum ? `T${termNum}` : (flow.term || '');
@@ -662,10 +676,13 @@
     }
 
     function createDefaultFlow() {
+      const now = Date.now();
       return {
-        id: Date.now(),
+        id: now,
+        createdDate: now,
         teacherName: "Mr. Alex Tan",
         className: "Primary 5A",
+        date: getTodayISO(),
         subject: "Mathematics",
         topic: "Decimals & Multi-step Problem Solving",
         term: "Term 3",
@@ -677,8 +694,10 @@
     function createBlankFlow() {
       return {
         id: 'draft',
+        createdDate: Date.now(),
         teacherName: "",
         className: "",
+        date: getTodayISO(),
         subject: "",
         topic: "",
         term: "Term 1",
@@ -742,6 +761,7 @@
       ).join('');
     }
 
+    /* Synchronizes inputs with .print-value elements for clean PDF/Print output */
     function syncPrintValues() {
       document.querySelectorAll('#editorView .form-group').forEach(group => {
         const input = group.querySelector('input, textarea, select');
@@ -762,12 +782,12 @@
           if (printVal) printVal.textContent = daySelect.value;
         }
 
-        // Split Time (From & To)
+        // Split Time
         const timeFrom = tr.querySelector('.time-from-select')?.value || '';
         const timeTo = tr.querySelector('.time-to-select')?.value || '';
         let timePrintVal = tr.querySelector('td:nth-child(2) .print-value');
         if (timePrintVal) {
-          timePrintVal.textContent = `From: ${timeFrom} - To: ${timeTo}`;
+          timePrintVal.textContent = (timeFrom || timeTo) ? `${timeFrom} - ${timeTo}` : '';
         }
 
         // Period
@@ -790,13 +810,12 @@
       });
     }
 
-    /* Add Row Entry with Split Time (From: and To:) */
+    /* Add Row Entry with Split Time Controls */
     function addFlowRow(rowData = null) {
       const tbody = document.getElementById('flowTableBody');
 
       let day = rowData ? (rowData.day || "Mon") : "Mon";
       
-      // Parse timing data supporting legacy format
       let timeFrom = rowData ? (rowData.timeFrom || "") : "";
       let timeTo = rowData ? (rowData.timeTo || "") : "";
       if (!timeFrom && !timeTo && rowData && rowData.time) {
@@ -904,10 +923,14 @@
         }
       });
 
+      const currentFlow = flows.find(f => f.id === currentId);
+
       return {
         id: currentId === 'draft' ? 'draft' : (currentId || Date.now()),
+        createdDate: (currentFlow && currentFlow.createdDate) ? currentFlow.createdDate : Date.now(),
         teacherName: document.getElementById('teacherNameInput').value,
         className: document.getElementById('classInput').value,
+        date: document.getElementById('dateInput').value,
         subject: document.getElementById('subjectInput').value,
         topic: document.getElementById('topicInput').value,
         term: document.getElementById('termSelect').value,
@@ -941,6 +964,7 @@
 
       document.getElementById('teacherNameInput').value = flow.teacherName || '';
       document.getElementById('classInput').value = flow.className || '';
+      document.getElementById('dateInput').value = flow.date || getTodayISO();
       document.getElementById('subjectInput').value = flow.subject || '';
       document.getElementById('topicInput').value = flow.topic || '';
       document.getElementById('termSelect').value = flow.term || 'Term 1';
@@ -995,6 +1019,8 @@
           if (match) {
             flowToLoad = JSON.parse(JSON.stringify(match));
             flowToLoad.id = 'draft';
+            flowToLoad.createdDate = Date.now();
+            flowToLoad.date = getTodayISO();
             flowToLoad.topic = flowToLoad.topic ? `${flowToLoad.topic} (Copy)` : '';
             toastMsg = `Duplicated information from ${match.className}!`;
           } else {
@@ -1041,7 +1067,12 @@
 
     function saveCurrentFlow() {
       const data = getCurrentFormData();
-      if (data.id === 'draft') data.id = Date.now();
+      if (data.id === 'draft') {
+        data.id = Date.now();
+      }
+      if (!data.createdDate) {
+        data.createdDate = Date.now();
+      }
 
       const index = flows.findIndex(f => f.id === data.id);
       if (index > -1) {
@@ -1127,7 +1158,6 @@
           itemEl.className = `history-item ${flow.id === currentId ? 'active' : ''}`;
           itemEl.onclick = () => loadFlow(flow.id);
           
-          // Updated Title Format
           const title = getFormattedTitle(flow);
           itemEl.innerHTML = `
             <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 170px;" title="${title}">📄 ${title}</span>
@@ -1164,6 +1194,7 @@
             <div style="margin-top: 6px;">
               <span class="meta-tag">👤 ${focusFlow.teacherName || 'No Teacher'}</span>
               <span class="meta-tag">🏫 ${focusFlow.className || 'No Class'}</span>
+              <span class="meta-tag">📅 ${focusFlow.date || 'No Date'}</span>
               <span class="meta-tag">🗓️ ${focusFlow.term || 'Term'} ${focusFlow.ww || 'WW'}</span>
             </div>
           </div>
@@ -1185,7 +1216,7 @@
         itemCard.innerHTML = `
           <div>
             <div style="font-weight: 700; color: var(--navy-primary); font-size: 0.88rem;">${getFormattedTitle(flow)}</div>
-            <div style="font-size: 0.78rem; color: var(--text-muted);">${flow.teacherName || 'Teacher'} • ${flow.subject || 'Subject'}</div>
+            <div style="font-size: 0.78rem; color: var(--text-muted);">${flow.teacherName || 'Teacher'} • ${flow.date || ''} • ${flow.subject || 'Subject'}</div>
           </div>
           <button class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.75rem;" onclick="event.stopPropagation(); loadFlow(${flow.id});">Edit</button>
         `;
@@ -1198,6 +1229,7 @@
       calendarGrid.innerHTML = '';
       const year = calendarViewDate.getFullYear();
       const month = calendarViewDate.getMonth();
+      const today = new Date();
 
       document.getElementById('calendarMonthLabel').innerText = calendarViewDate.toLocaleDateString('default', { month: 'long', year: 'numeric' });
 
@@ -1217,6 +1249,47 @@
         const dayEl = document.createElement('div');
         dayEl.className = 'cal-day';
         dayEl.innerText = day;
+
+        if (today.getFullYear() === year && today.getMonth() === month && today.getDate() === day) {
+          dayEl.classList.add('today');
+        }
+
+        const matchingFlows = flows.filter(f => {
+          let flowDate = null;
+          if (f.date) {
+            const parts = f.date.split('-');
+            if (parts.length === 3) {
+              flowDate = new Date(parts[0], parts[1] - 1, parts[2]);
+            }
+          }
+          if (!flowDate && f.createdDate) {
+            flowDate = new Date(f.createdDate);
+          } else if (!flowDate && typeof f.id === 'number') {
+            flowDate = new Date(f.id);
+          }
+          if (flowDate && !isNaN(flowDate.getTime())) {
+            return flowDate.getFullYear() === year &&
+                   flowDate.getMonth() === month &&
+                   flowDate.getDate() === day;
+          }
+          return false;
+        });
+
+        if (matchingFlows.length > 0) {
+          dayEl.classList.add('has-flow');
+          dayEl.title = `${matchingFlows.length} flow(s) scheduled on this date`;
+          dayEl.onclick = () => {
+            currentId = matchingFlows[0].id;
+            renderDashboardDualView();
+            renderSidebar();
+            showToast(`Selected flow: ${getFormattedTitle(matchingFlows[0])}`, '📅');
+          };
+        } else {
+          dayEl.onclick = () => {
+            showToast(`No flows scheduled on ${calendarViewDate.toLocaleString('default', { month: 'short' })} ${day}, ${year}.`, 'ℹ️');
+          };
+        }
+
         calendarGrid.appendChild(dayEl);
       }
     }
@@ -1240,12 +1313,12 @@
         <head><meta charset="utf-8"></head>
         <body>
           <h2>${formattedTitle}</h2>
-          <p><b>Teacher:</b> ${data.teacherName} | <b>Class:</b> ${data.className} | <b>Subject:</b> ${data.subject} | <b>Topic:</b> ${data.topic} | <b>Term:</b> ${data.term} | <b>WW:</b> ${data.ww}</p>
+          <p><b>Teacher:</b> ${data.teacherName} | <b>Class:</b> ${data.className} | <b>Date:</b> ${data.date} | <b>Subject:</b> ${data.subject} | <b>Topic:</b> ${data.topic} | <b>Term:</b> ${data.term} | <b>WW:</b> ${data.ww}</p>
           <table border="1">
             <thead>
               <tr style="background-color: #e2e8f0;">
                 <th>Day</th>
-                <th>Time (From - To)</th>
+                <th>Time</th>
                 <th>Period</th>
                 <th>Activities</th>
                 <th>Remarks</th>
