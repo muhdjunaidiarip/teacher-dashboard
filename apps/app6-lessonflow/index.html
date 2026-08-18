@@ -16,6 +16,7 @@
       --text-dark: #0f172a;
       --text-muted: #64748b;
       --table-header-bg: #e2e8f0;
+      --green-accent: #16a34a;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
@@ -237,7 +238,6 @@
       gap: 10px; 
       align-items: flex-start;
     }
-    /* Updated grid layout to accommodate 5 top elements: Teacher, Class, Date, Term, WW */
     .meta-row-top {
       grid-template-columns: 1.2fr 1fr 1fr 0.8fr 0.8fr; 
     }
@@ -294,11 +294,12 @@
       background: var(--table-header-bg);
       color: var(--navy-dark);
       text-align: center;
-      padding: 6px 4px;
+      padding: 6px 3px;
       font-size: 0.8rem;
       font-weight: 800;
       text-transform: uppercase;
       border: 1px solid #cbd5e1;
+      white-space: nowrap;
     }
     table.flow-table td {
       padding: 4px;
@@ -311,7 +312,7 @@
       background-color: #f8fafc;
     }
 
-    table.flow-table textarea, table.flow-table input, table.flow-table select {
+    table.flow-table textarea, table.flow-table input[type="text"], table.flow-table select {
       width: 100%;
       border: 1px solid transparent;
       outline: none !important;
@@ -330,9 +331,20 @@
       font-weight: 600;
       color: var(--navy-dark);
     }
-    table.flow-table textarea:focus, table.flow-table input:focus, table.flow-table select:focus {
+    table.flow-table textarea:focus, table.flow-table input[type="text"]:focus, table.flow-table select:focus {
       background: rgba(37, 99, 235, 0.05);
       border-color: var(--navy-accent);
+    }
+
+    /* Green Checkbox Styling */
+    .green-checkbox {
+      width: 19px;
+      height: 19px;
+      accent-color: var(--green-accent);
+      cursor: pointer;
+      vertical-align: middle;
+      margin: 0 auto;
+      display: block;
     }
 
     /* Split Time Group Styling */
@@ -419,6 +431,12 @@
         color: #0f172a !important;
         padding: 4px 6px !important;
       }
+      td:nth-child(5) .print-value {
+        text-align: center;
+        font-weight: bold;
+        font-size: 1rem !important;
+        color: var(--green-accent) !important;
+      }
 
       .meta-container { gap: 6px !important; margin-bottom: 10px !important; }
       .meta-row-top { display: grid !important; grid-template-columns: 1.2fr 1fr 1fr 0.8fr 0.8fr !important; gap: 6px !important; }
@@ -427,7 +445,7 @@
 
       table.flow-table { width: 100% !important; border-collapse: collapse !important; border: 1.5px solid #475569 !important; page-break-inside: auto !important; }
       table.flow-table tr { page-break-inside: avoid !important; }
-      table.flow-table th { background: #e2e8f0 !important; color: black !important; padding: 6px !important; border: 1px solid #475569 !important; font-size: 0.8rem !important; }
+      table.flow-table th { background: #e2e8f0 !important; color: black !important; padding: 6px 2px !important; border: 1px solid #475569 !important; font-size: 0.8rem !important; white-space: nowrap !important; }
       table.flow-table td { border: 1px solid #475569 !important; padding: 4px !important; }
       table.flow-table td.cell-gray { background-color: #f8fafc !important; }
     }
@@ -435,7 +453,6 @@
 </head>
 <body>
 
-  <!-- Sidebar -->
   <div class="sidebar">
     <div class="brand">📅 LessonFlow</div>
     <div class="nav-tabs">
@@ -455,10 +472,8 @@
     <div class="history-list" id="historyList"></div>
   </div>
 
-  <!-- Main Content -->
   <div class="main-content">
     
-    <!-- DASHBOARD VIEW -->
     <div id="dashboardView" class="view-panel active">
       <h2 style="margin-bottom: 12px; color: var(--navy-dark); font-size: 1.3rem;">Weekly Lesson Flow Dashboard</h2>
       
@@ -496,7 +511,6 @@
       </div>
     </div>
 
-    <!-- EDITOR VIEW -->
     <div id="editorView" class="view-panel">
       <div class="card" id="editorCard">
         
@@ -508,9 +522,7 @@
           </div>
         </div>
 
-        <!-- Metadata Section -->
         <div class="meta-container">
-          <!-- Row 1: Teacher, Class, Date, Term, WW -->
           <div class="meta-grid-row meta-row-top">
             <div class="form-group">
               <label>Teacher</label>
@@ -522,7 +534,6 @@
               <input type="text" id="classInput" placeholder="e.g., Primary 5A" oninput="syncPrintValues();">
               <div class="print-value"></div>
             </div>
-            <!-- Added Date Field before Term -->
             <div class="form-group">
               <label>Date</label>
               <input type="date" id="dateInput" onchange="autoSaveDraft(); syncPrintValues();">
@@ -556,7 +567,6 @@
             </div>
           </div>
 
-          <!-- Row 2: Subject and Topic / Unit -->
           <div class="meta-grid-row meta-row-bottom">
             <div class="form-group">
               <label>Subject</label>
@@ -571,27 +581,25 @@
           </div>
         </div>
 
-        <!-- Table Layout -->
         <table class="flow-table">
           <thead>
             <tr>
-              <th style="width: 10%;">Day</th>
-              <th style="width: 20%;">Time</th>
-              <th style="width: 8%;">Period</th>
-              <th style="width: 44%;">Activities</th>
-              <th style="width: 18%;">Remarks</th>
+              <th style="width: 8%;">Day</th>
+              <th style="width: 14%;">Time</th>
+              <th style="width: 10%;">Period</th>
+              <th style="width: 41%;">Activities</th>
+              <th style="width: 7%;">Done</th>
+              <th style="width: 20%;">Remarks</th>
               <th class="no-print" style="width: 32px;"></th>
             </tr>
           </thead>
           <tbody id="flowTableBody"></tbody>
         </table>
 
-        <!-- Controls -->
         <div class="no-print" style="margin-top: 10px; display: flex; gap: 8px;">
           <button class="btn btn-secondary btn-outline" onclick="addFlowRow()">+ Add Row Entry</button>
         </div>
 
-        <!-- Actions -->
         <div class="actions-bar">
           <button class="btn btn-primary" onclick="saveCurrentFlow()">💾 Save Weekly Flow</button>
           <div style="display: flex; gap: 8px; flex-wrap: wrap;">
@@ -639,9 +647,9 @@
 
     // Default flow demo data
     const defaultFlowRows = [
-      { day: "Mon", timeFrom: "07:45", timeTo: "08:30", period: "1", activities: "Teach decimals concept & addition. Assign HW Pg 42.", remarks: "Check prior knowledge" },
-      { day: "Tue", timeFrom: "09:00", timeTo: "10:00", period: "3", activities: "Collect homework. Continue with decimals topic (subtraction). Mark homework in class.", remarks: "Remedial for Group B" },
-      { day: "Wed", timeFrom: "11:00", timeTo: "12:00", period: "5", activities: "Return homework to students to go through corrections. Mini-quiz on decimals.", remarks: "Lab room 2" }
+      { day: "Mon", timeFrom: "07:45", timeTo: "08:30", period: "1", activities: "Teach decimals concept & addition. Assign HW Pg 42.", completed: false, remarks: "Check prior knowledge" },
+      { day: "Tue", timeFrom: "09:00", timeTo: "10:00", period: "3", activities: "Collect homework. Continue with decimals topic (subtraction). Mark homework in class.", completed: true, remarks: "Remedial for Group B" },
+      { day: "Wed", timeFrom: "11:00", timeTo: "12:00", period: "5", activities: "Return homework to students to go through corrections. Mini-quiz on decimals.", completed: false, remarks: "Lab room 2" }
     ];
 
     window.onload = function() {
@@ -797,20 +805,30 @@
           if (printVal) printVal.textContent = periodSelect.value;
         }
 
-        // Activities & Remarks
-        const textareas = tr.querySelectorAll('textarea');
-        if (textareas[0]) {
+        // Activities
+        const activitiesTextarea = tr.querySelector('td:nth-child(4) textarea');
+        if (activitiesTextarea) {
           let printVal = tr.querySelector('td:nth-child(4) .print-value');
-          if (printVal) printVal.textContent = textareas[0].value;
+          if (printVal) printVal.textContent = activitiesTextarea.value;
         }
-        if (textareas[1]) {
+
+        // Completed Checkbox
+        const completedCheckbox = tr.querySelector('td:nth-child(5) input[type="checkbox"]');
+        if (completedCheckbox) {
           let printVal = tr.querySelector('td:nth-child(5) .print-value');
-          if (printVal) printVal.textContent = textareas[1].value;
+          if (printVal) printVal.textContent = completedCheckbox.checked ? '✓' : '—';
+        }
+
+        // Remarks
+        const remarksTextarea = tr.querySelector('td:nth-child(6) textarea');
+        if (remarksTextarea) {
+          let printVal = tr.querySelector('td:nth-child(6) .print-value');
+          if (printVal) printVal.textContent = remarksTextarea.value;
         }
       });
     }
 
-    /* Add Row Entry with Split Time Controls */
+    /* Add Row Entry with Split Time Controls & Green Checkbox */
     function addFlowRow(rowData = null) {
       const tbody = document.getElementById('flowTableBody');
 
@@ -828,6 +846,7 @@
 
       let period = rowData ? (rowData.period || "1") : "1";
       let activities = rowData ? (rowData.activities || "") : "";
+      let completed = rowData ? !!rowData.completed : false;
       let remarks = rowData ? (rowData.remarks || "") : "";
 
       const tr = document.createElement('tr');
@@ -877,6 +896,10 @@
           <textarea placeholder="e.g. Teach topic, assign HW..." oninput="autoExpand(this); syncPrintValues();">${activities}</textarea>
           <div class="print-value"></div>
         </td>
+        <td style="text-align: center; vertical-align: middle;">
+          <input type="checkbox" class="green-checkbox" ${completed ? 'checked' : ''} onchange="autoSaveDraft(); syncPrintValues();">
+          <div class="print-value"></div>
+        </td>
         <td>
           <textarea placeholder="e.g. Check HW" oninput="autoExpand(this); syncPrintValues();">${remarks}</textarea>
           <div class="print-value"></div>
@@ -908,17 +931,20 @@
         const timeFromSelect = tr.querySelector('.time-from-select');
         const timeToSelect = tr.querySelector('.time-to-select');
         const periodSelect = tr.querySelector('td:nth-child(3) select');
-        const textareas = tr.querySelectorAll('textarea');
+        const activitiesTextarea = tr.querySelector('td:nth-child(4) textarea');
+        const completedCheckbox = tr.querySelector('td:nth-child(5) input[type="checkbox"]');
+        const remarksTextarea = tr.querySelector('td:nth-child(6) textarea');
 
-        if (daySelect && timeFromSelect && timeToSelect && periodSelect && textareas.length >= 2) {
+        if (daySelect && timeFromSelect && timeToSelect && periodSelect && activitiesTextarea && remarksTextarea) {
           rows.push({
             day: daySelect.value,
             timeFrom: timeFromSelect.value,
             timeTo: timeToSelect.value,
             time: `${timeFromSelect.value} - ${timeToSelect.value}`,
             period: periodSelect.value,
-            activities: textareas[0].value,
-            remarks: textareas[1].value
+            activities: activitiesTextarea.value,
+            completed: completedCheckbox ? completedCheckbox.checked : false,
+            remarks: remarksTextarea.value
           });
         }
       });
@@ -1321,6 +1347,7 @@
                 <th>Time</th>
                 <th>Period</th>
                 <th>Activities</th>
+                <th>Done</th>
                 <th>Remarks</th>
               </tr>
             </thead>
@@ -1334,6 +1361,7 @@
             <td>${row.timeFrom || ''} - ${row.timeTo || ''}</td>
             <td>${row.period}</td>
             <td>${row.activities}</td>
+            <td style="text-align: center;">${row.completed ? 'Completed' : 'Pending'}</td>
             <td>${row.remarks}</td>
           </tr>
         `;
