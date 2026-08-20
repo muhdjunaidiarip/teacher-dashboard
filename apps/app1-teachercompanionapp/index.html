@@ -1987,8 +1987,10 @@
         if (qEarned < qMax) qWrongCounts[qIdx]++;
       });
 
-      if (pct < 50) needsSupport.push(`${student.name} (${Math.round(pct)}%)`);
+      if (pct < 50) needsSupport.push({ name: student.name, scorePct: Math.round(pct) });
     });
+
+    needsSupport.sort((a, b) => a.scorePct - b.scorePct || a.name.localeCompare(b.name));
 
     let paretoData = session.qLabels.map((lbl, idx) => ({
       label: lbl,
@@ -2009,7 +2011,7 @@
         title: 'Targeted Student Support Needed',
         bg: '#fef2f2',
         border: '#fca5a5',
-        text: `The following <strong>${needsSupport.length} student(s)</strong> need immediate attention and review (&lt;50% score): <span style="color: #b91c1c; font-weight: bold;">${needsSupport.join(', ')}</span>. Consider scheduling a targeted group remedy session.`
+        text: `The following <strong>${needsSupport.length} student(s)</strong> need immediate attention and review (&lt;50% score): <span style="color: #b91c1c; font-weight: bold;">${needsSupport.map(s => `${s.name} (${s.scorePct}%)`).join(', ')}</span>. Consider scheduling a targeted group remedy session.`
       });
     } else {
       items.push({
