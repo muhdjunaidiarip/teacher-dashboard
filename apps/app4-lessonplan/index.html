@@ -239,7 +239,7 @@
       background: rgba(37, 99, 235, 0.04);
     }
 
-    /* P.L.A.Y Framework guidance - added only */
+    /* P.L.A.Y Framework guidance - Collapsible Implementation */
     .play-framework-panel {
       margin: 8px 0 10px 0;
       border: 1px solid var(--border-color);
@@ -249,12 +249,39 @@
     }
 
     .play-framework-header {
-      padding: 8px 10px;
+      padding: 8px 12px;
       background: var(--navy-light);
       border-bottom: 1px solid var(--border-color);
       color: var(--navy-primary);
       font-size: 0.86rem;
       font-weight: 800;
+      cursor: pointer;
+      user-select: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.2s;
+    }
+
+    .play-framework-header:hover {
+      background: #e2e8f0;
+    }
+
+    .play-framework-icon {
+      font-size: 0.75rem;
+      transition: transform 0.2s ease;
+    }
+
+    .play-framework-panel.collapsed .play-framework-header {
+      border-bottom: none;
+    }
+
+    .play-framework-panel.collapsed .play-framework-body {
+      display: none;
+    }
+
+    .play-framework-panel.collapsed .play-framework-icon {
+      transform: rotate(-90deg);
     }
 
     .play-framework-intro {
@@ -320,12 +347,20 @@
         color: #1e3a8a !important;
       }
 
+      .play-framework-body {
+        display: block !important;
+      }
+
       .play-framework-grid {
         grid-template-columns: repeat(4, 1fr) !important;
       }
 
       .play-framework-item {
         page-break-inside: avoid !important;
+      }
+
+      .play-framework-icon {
+        display: none !important;
       }
     }
 
@@ -599,52 +634,57 @@
         <!-- Table Details -->
         <div style="font-weight: 700; margin: 10px 0 6px 0; color: var(--navy-primary); font-size: 0.9rem;">Lesson Plan Details</div>
 
-        <!-- P.L.A.Y. Framework Details - added only -->
-        <div class="play-framework-panel">
-          <div class="play-framework-header">P.L.A.Y. Framework — Pedagogical Support</div>
-          <div class="play-framework-intro">
-            Use the framework to review whether the lesson is engaging, student-centred,
-            relevant, inquiry-driven, and purposeful in its use of ICT.
+        <!-- P.L.A.Y. Framework Details - Collapsible Container -->
+        <div class="play-framework-panel" id="playFrameworkPanel">
+          <div class="play-framework-header" onclick="togglePlayFramework()">
+            <span>P.L.A.Y. Framework — Pedagogical Support</span>
+            <span class="play-framework-icon">▼</span>
           </div>
-          <div class="play-framework-grid">
-            <div class="play-framework-item">
-              <div class="play-framework-code">P</div>
-              <div class="play-framework-title">Passion-driven, Purposeful</div>
-              <div class="play-framework-description">
-                Lesson inspires students’ motivation by engaging their natural curiosity and excitement.
-                It has a clear purpose, connecting learning objectives to meaningful activities.
-                Strong teacher-student relationships are strengthened when lesson encourages collaboration
-                and mutual understanding.
-              </div>
+          <div class="play-framework-body">
+            <div class="play-framework-intro">
+              Use the framework to review whether the lesson is engaging, student-centred,
+              relevant, inquiry-driven, and purposeful in its use of ICT.
             </div>
-
-            <div class="play-framework-item">
-              <div class="play-framework-code">L</div>
-              <div class="play-framework-title">Learner-centred, Learning-centred</div>
-              <div class="play-framework-description">
-                Lesson focuses on students’ needs, offering differentiated instruction to support diverse
-                learners. It provides rich and engaging learning experiences where students feel empowered
-                to explore, create and grow at their own pace.
+            <div class="play-framework-grid">
+              <div class="play-framework-item">
+                <div class="play-framework-code">P</div>
+                <div class="play-framework-title">Passion-driven, Purposeful</div>
+                <div class="play-framework-description">
+                  Lesson inspires students’ motivation by engaging their natural curiosity and excitement.
+                  It has a clear purpose, connecting learning objectives to meaningful activities.
+                  Strong teacher-student relationships are strengthened when lesson encourages collaboration
+                  and mutual understanding.
+                </div>
               </div>
-            </div>
 
-            <div class="play-framework-item">
-              <div class="play-framework-code">A</div>
-              <div class="play-framework-title">Adaptive, Applicable</div>
-              <div class="play-framework-description">
-                Lesson supports students in connecting their learning to real-life applications, to see how
-                their knowledge is relevant in the world. It encourages adaptability, allowing students to
-                transfer and apply knowledge across different situations.
+              <div class="play-framework-item">
+                <div class="play-framework-code">L</div>
+                <div class="play-framework-title">Learner-centred, Learning-centred</div>
+                <div class="play-framework-description">
+                  Lesson focuses on students’ needs, offering differentiated instruction to support diverse
+                  learners. It provides rich and engaging learning experiences where students feel empowered
+                  to explore, create and grow at their own pace.
+                </div>
               </div>
-            </div>
 
-            <div class="play-framework-item">
-              <div class="play-framework-code">Y</div>
-              <div class="play-framework-title">alwaYs asking whY</div>
-              <div class="play-framework-description">
-                Lesson encourages inquiry and reflection through assessment and feedback. It helps students
-                think critically, ask deeper questions and seek meaningful answers. By fostering curiosity,
-                P.L.A.Y. nurtures a mindset of self-directed, lifelong learning and deep exploration.
+              <div class="play-framework-item">
+                <div class="play-framework-code">A</div>
+                <div class="play-framework-title">Adaptive, Applicable</div>
+                <div class="play-framework-description">
+                  Lesson supports students in connecting their learning to real-life applications, to see how
+                  their knowledge is relevant in the world. It encourages adaptability, allowing students to
+                  transfer and apply knowledge across different situations.
+                </div>
+              </div>
+
+              <div class="play-framework-item">
+                <div class="play-framework-code">Y</div>
+                <div class="play-framework-title">alwaYs asking whY</div>
+                <div class="play-framework-description">
+                  Lesson encourages inquiry and reflection through assessment and feedback. It helps students
+                  think critically, ask deeper questions and seek meaningful answers. By fostering curiosity,
+                  P.L.A.Y. nurtures a mindset of self-directed, lifelong learning and deep exploration.
+                </div>
               </div>
             </div>
           </div>
@@ -734,6 +774,13 @@
       updateDashboard();
       renderSidebar();
     };
+
+    function togglePlayFramework() {
+      const panel = document.getElementById('playFrameworkPanel');
+      if (panel) {
+        panel.classList.toggle('collapsed');
+      }
+    }
 
     function toggleSidebar() {
       document.body.classList.toggle('sidebar-hidden');
