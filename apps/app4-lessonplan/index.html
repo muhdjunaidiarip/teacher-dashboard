@@ -239,6 +239,96 @@
       background: rgba(37, 99, 235, 0.04);
     }
 
+    /* P.L.A.Y Framework guidance - added only */
+    .play-framework-panel {
+      margin: 8px 0 10px 0;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: #ffffff;
+      overflow: hidden;
+    }
+
+    .play-framework-header {
+      padding: 8px 10px;
+      background: var(--navy-light);
+      border-bottom: 1px solid var(--border-color);
+      color: var(--navy-primary);
+      font-size: 0.86rem;
+      font-weight: 800;
+    }
+
+    .play-framework-intro {
+      padding: 8px 10px 6px 10px;
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      line-height: 1.4;
+    }
+
+    .play-framework-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      padding: 6px 10px 10px 10px;
+    }
+
+    .play-framework-item {
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 8px;
+      background: #ffffff;
+      min-width: 0;
+    }
+
+    .play-framework-code {
+      font-size: 1.05rem;
+      font-weight: 900;
+      color: var(--navy-primary);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .play-framework-title {
+      font-size: 0.74rem;
+      font-weight: 800;
+      color: var(--text-dark);
+      margin-bottom: 5px;
+      line-height: 1.2;
+    }
+
+    .play-framework-description {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      line-height: 1.35;
+    }
+
+    @media (max-width: 900px) {
+      .play-framework-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 600px) {
+      .play-framework-grid { grid-template-columns: 1fr; }
+    }
+
+    @media print {
+      .play-framework-panel {
+        page-break-inside: avoid !important;
+        border: 1px solid #cbd5e1 !important;
+      }
+
+      .play-framework-header {
+        background: #eff6ff !important;
+        color: #1e3a8a !important;
+      }
+
+      .play-framework-grid {
+        grid-template-columns: repeat(4, 1fr) !important;
+      }
+
+      .play-framework-item {
+        page-break-inside: avoid !important;
+      }
+    }
+
     /* Action Buttons */
     .actions-bar { display: flex; gap: 10px; justify-content: space-between; align-items: center; margin-top: 12px; }
     .btn { padding: 7px 14px; border-radius: 6px; font-weight: 600; border: none; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 6px; font-size: 0.82rem; }
@@ -508,6 +598,58 @@
 
         <!-- Table Details -->
         <div style="font-weight: 700; margin: 10px 0 6px 0; color: var(--navy-primary); font-size: 0.9rem;">Lesson Plan Details</div>
+
+        <!-- P.L.A.Y. Framework Details - added only -->
+        <div class="play-framework-panel">
+          <div class="play-framework-header">P.L.A.Y. Framework — Pedagogical Support</div>
+          <div class="play-framework-intro">
+            Use the framework to review whether the lesson is engaging, student-centred,
+            relevant, inquiry-driven, and purposeful in its use of ICT.
+          </div>
+          <div class="play-framework-grid">
+            <div class="play-framework-item">
+              <div class="play-framework-code">P</div>
+              <div class="play-framework-title">Passion-driven, Purposeful</div>
+              <div class="play-framework-description">
+                Lesson inspires students’ motivation by engaging their natural curiosity and excitement.
+                It has a clear purpose, connecting learning objectives to meaningful activities.
+                Strong teacher-student relationships are strengthened when lesson encourages collaboration
+                and mutual understanding.
+              </div>
+            </div>
+
+            <div class="play-framework-item">
+              <div class="play-framework-code">L</div>
+              <div class="play-framework-title">Learner-centred, Learning-centred</div>
+              <div class="play-framework-description">
+                Lesson focuses on students’ needs, offering differentiated instruction to support diverse
+                learners. It provides rich and engaging learning experiences where students feel empowered
+                to explore, create and grow at their own pace.
+              </div>
+            </div>
+
+            <div class="play-framework-item">
+              <div class="play-framework-code">A</div>
+              <div class="play-framework-title">Adaptive, Applicable</div>
+              <div class="play-framework-description">
+                Lesson supports students in connecting their learning to real-life applications, to see how
+                their knowledge is relevant in the world. It encourages adaptability, allowing students to
+                transfer and apply knowledge across different situations.
+              </div>
+            </div>
+
+            <div class="play-framework-item">
+              <div class="play-framework-code">Y</div>
+              <div class="play-framework-title">alwaYs asking whY</div>
+              <div class="play-framework-description">
+                Lesson encourages inquiry and reflection through assessment and feedback. It helps students
+                think critically, ask deeper questions and seek meaningful answers. By fostering curiosity,
+                P.L.A.Y. nurtures a mindset of self-directed, lifelong learning and deep exploration.
+              </div>
+            </div>
+          </div>
+        </div>
+
         <table class="plan-table">
           <thead>
             <tr>
