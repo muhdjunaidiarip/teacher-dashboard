@@ -435,7 +435,7 @@
       }
 
       .form-grid-row-1, .form-grid-row-2 { display: grid !important; gap: 8px !important; }
-      .form-group { border: 1px solid #cbd5e1 !important; border-radius: 4px !important; padding: 4px 6px !important; background: #fff !important; }
+      .form-group { border: 1px solid #cbd5e1 !important; border-radius: 4px !important; padding: 4px 6px !important; background: #fff !important; margin-bottom: 6px !important; }
       .form-group label { font-size: 0.68rem !important; font-weight: 700 !important; color: #64748b !important; margin-bottom: 2px !important; display: block !important; }
 
       table.plan-table { 
@@ -624,15 +624,40 @@
           </div>
         </div>
 
-        <!-- Information Row 3: Objectives -->
-        <div class="form-group" style="margin-bottom: 10px;">
-          <label>Lesson Objectives</label>
-          <textarea id="objectivesInput" rows="1" placeholder="1. Describe photosynthesis stages..." oninput="autoExpand(this); syncPrintValues();"></textarea>
+        <!-- Single Row 1: Learner Profile -->
+        <div class="form-group" style="margin-bottom: 8px;">
+          <label>Learner Profile</label>
+          <textarea id="learnerProfileInput" rows="1" placeholder="e.g., Diverse learning needs, visual & kinesthetic learners..." oninput="autoExpand(this); syncPrintValues();"></textarea>
           <div class="print-value"></div>
         </div>
 
-        <!-- Table Details -->
-        <div style="font-weight: 700; margin: 10px 0 6px 0; color: var(--navy-primary); font-size: 0.9rem;">Lesson Plan Details</div>
+        <!-- Single Row 2: Pre-requisite Knowledge -->
+        <div class="form-group" style="margin-bottom: 8px;">
+          <label>Pre-requisite Knowledge</label>
+          <textarea id="prerequisiteInput" rows="1" placeholder="e.g., Basic knowledge of cell structure and light energy..." oninput="autoExpand(this); syncPrintValues();"></textarea>
+          <div class="print-value"></div>
+        </div>
+
+        <!-- Single Row 3: Learning Objectives -->
+        <div class="form-group" style="margin-bottom: 8px;">
+          <label>Learning Objectives</label>
+          <textarea id="objectivesInput" rows="1" placeholder="e.g., 1. Define photosynthesis and cellular respiration..." oninput="autoExpand(this); syncPrintValues();"></textarea>
+          <div class="print-value"></div>
+        </div>
+
+        <!-- Single Row 4: Learning Outcomes -->
+        <div class="form-group" style="margin-bottom: 8px;">
+          <label>Learning Outcomes</label>
+          <textarea id="outcomesInput" rows="1" placeholder="e.g., Students will be able to explain energy conversion processes..." oninput="autoExpand(this); syncPrintValues();"></textarea>
+          <div class="print-value"></div>
+        </div>
+
+        <!-- Single Row 5: Success Criteria -->
+        <div class="form-group" style="margin-bottom: 10px;">
+          <label>Success Criteria</label>
+          <textarea id="successCriteriaInput" rows="1" placeholder="e.g., Accurately construct a food chain diagram and identify inputs..." oninput="autoExpand(this); syncPrintValues();"></textarea>
+          <div class="print-value"></div>
+        </div>
 
         <!-- P.L.A.Y. Framework Details - Collapsible Container -->
         <div class="play-framework-panel" id="playFrameworkPanel">
@@ -689,6 +714,9 @@
             </div>
           </div>
         </div>
+
+        <!-- Table Details -->
+        <div style="font-weight: 700; margin: 10px 0 6px 0; color: var(--navy-primary); font-size: 0.9rem;">Lesson Plan Details</div>
 
         <table class="plan-table">
           <thead>
@@ -804,7 +832,11 @@
         date: new Date().toISOString().split('T')[0],
         subject: "Biology",
         duration: "50 mins",
+        learnerProfile: "Mixed-ability class; visual and kinesthetic learners.",
+        prerequisite: "Basic knowledge of plant cell structure and energy concept.",
         objectives: "1. Define photosynthesis and cellular respiration.\n2. Compare roles of producers and consumers.",
+        outcomes: "Students will accurately describe and sketch plant energy flow.",
+        successCriteria: "Students complete the diagram and answer 80% of recap questions correctly.",
         standards: "NGSS: HS-LS2-3",
         materials: "Projector, slides, food web cards",
         table: JSON.parse(JSON.stringify(defaultSegments))
@@ -823,7 +855,11 @@
         date: presetDate || new Date().toISOString().split('T')[0],
         subject: "",
         duration: "",
+        learnerProfile: "",
+        prerequisite: "",
         objectives: "",
+        outcomes: "",
+        successCriteria: "",
         standards: "",
         materials: "",
         table: JSON.parse(JSON.stringify(defaultSegments))
@@ -1000,7 +1036,11 @@
         date: document.getElementById('dateInput').value,
         subject: document.getElementById('subjectInput').value,
         duration: document.getElementById('durationInput').value,
+        learnerProfile: document.getElementById('learnerProfileInput').value,
+        prerequisite: document.getElementById('prerequisiteInput').value,
         objectives: document.getElementById('objectivesInput').value,
+        outcomes: document.getElementById('outcomesInput').value,
+        successCriteria: document.getElementById('successCriteriaInput').value,
         standards: document.getElementById('standardsInput').value,
         materials: document.getElementById('materialsInput').value,
         table: rows
@@ -1042,7 +1082,11 @@
       document.getElementById('dateInput').value = lesson.date || '';
       document.getElementById('subjectInput').value = lesson.subject || '';
       document.getElementById('durationInput').value = lesson.duration || '';
-      document.getElementById('objectivesInput').value = lesson.objectives || '';
+      document.getElementById('learnerProfileInput').value = lesson.learnerProfile || '';
+      document.getElementById('prerequisiteInput').value = lesson.prerequisite || lesson.prerequisiteKnowledge || '';
+      document.getElementById('objectivesInput').value = lesson.objectives || lesson.learningObjectives || '';
+      document.getElementById('outcomesInput').value = lesson.outcomes || lesson.learningOutcomes || '';
+      document.getElementById('successCriteriaInput').value = lesson.successCriteria || '';
       document.getElementById('standardsInput').value = lesson.standards || '';
       document.getElementById('materialsInput').value = lesson.materials || '';
 
@@ -1311,7 +1355,7 @@
             </div>
           </div>
           <div style="font-size: 0.85rem; color: var(--text-dark); margin-bottom: 12px; line-height: 1.4;">
-            <strong>Objectives:</strong>
+            <strong>Learning Objectives:</strong>
             <div style="color: var(--text-muted); white-space: pre-wrap; margin-top: 2px;">${focusLesson.objectives || 'None specified.'}</div>
           </div>
           <div style="display: flex; gap: 8px; margin-top: 10px;">
