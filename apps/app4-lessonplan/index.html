@@ -470,6 +470,24 @@ input[type="date"]::-webkit-date-and-time-value {
       table.plan-table th { background: var(--navy-primary) !important; color: white !important; padding: 6px 8px !important; border: 1px solid #cbd5e1 !important; font-size: 0.82rem !important; }
       table.plan-table td { padding: 4px !important; vertical-align: top !important; border: 1px solid #cbd5e1 !important; background: white !important; }
     }
+
+
+@media print {
+  body, html, .container, .main-content {
+    height: auto !important;
+    overflow: visible !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  
+  /* Hide interactive controls that should not appear on exported PDFs */
+  .no-print, button, input[type="button"], .editor-toolbar {
+    display: none !important;
+  }
+}
+
+
+
   </style>
 </head>
 <body>
