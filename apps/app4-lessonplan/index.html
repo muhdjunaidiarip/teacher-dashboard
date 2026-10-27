@@ -470,6 +470,278 @@ input[type="date"]::-webkit-date-and-time-value {
       table.plan-table th { background: var(--navy-primary) !important; color: white !important; padding: 6px 8px !important; border: 1px solid #cbd5e1 !important; font-size: 0.82rem !important; }
       table.plan-table td { padding: 4px !important; vertical-align: top !important; border: 1px solid #cbd5e1 !important; background: white !important; }
     }
+
+
+    /* iPad / Edge print hardening: keep screen layout unchanged */
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 10mm;
+      }
+
+      html,
+      body {
+        display: block !important;
+        width: auto !important;
+        height: auto !important;
+        min-height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
+        background: #fff !important;
+        color: #000 !important;
+      }
+
+      body * {
+        animation: none !important;
+        transition: none !important;
+        text-shadow: none !important;
+        box-shadow: none !important;
+      }
+
+      .sidebar,
+      #dashboardView,
+      .actions-bar,
+      .no-print,
+      .row-del-btn,
+      .toast-notification {
+        display: none !important;
+      }
+
+      .main-content {
+        display: block !important;
+        width: auto !important;
+        height: auto !important;
+        min-height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
+      }
+
+      /* Always print the lesson editor, not the dashboard */
+      #editorView,
+      #editorView.view-panel,
+      #editorView.view-panel.active {
+        display: block !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 0 !important;
+        overflow: visible !important;
+        position: static !important;
+      }
+
+      #editorCard,
+      .card {
+        display: block !important;
+        width: 100% !important;
+        max-width: none !important;
+        height: auto !important;
+        min-height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        overflow: visible !important;
+        background: #fff !important;
+        transform: none !important;
+      }
+
+      .lesson-title-heading {
+        display: block !important;
+        width: 100% !important;
+        margin: 0 0 10px !important;
+        padding: 0 0 5px !important;
+        color: #1e3a8a !important;
+        border-bottom: 2px solid #1e3a8a !important;
+        break-after: avoid-page;
+        page-break-after: avoid;
+      }
+
+      /* Use print-friendly grids instead of the narrow iPad screen grid */
+      .form-grid-row-1 {
+        display: grid !important;
+        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+        gap: 6px !important;
+        width: 100% !important;
+      }
+
+      .form-grid-row-2 {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 6px !important;
+        width: 100% !important;
+      }
+
+      .form-group {
+        display: block !important;
+        min-width: 0 !important;
+        width: 100% !important;
+        margin-bottom: 5px !important;
+        padding: 4px 5px !important;
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 3px !important;
+        background: #fff !important;
+        break-inside: auto !important;
+        page-break-inside: auto !important;
+      }
+
+      .form-group label {
+        display: block !important;
+        margin-bottom: 2px !important;
+        color: #475569 !important;
+        font-size: 8pt !important;
+        line-height: 1.2 !important;
+      }
+
+      .form-group input,
+      .form-group textarea,
+      .form-group select,
+      table.plan-table textarea {
+        display: none !important;
+      }
+
+      .print-value {
+        display: block !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        min-height: 1em !important;
+        height: auto !important;
+        margin: 0 !important;
+        padding: 2px 0 !important;
+        color: #0f172a !important;
+        font-size: 9pt !important;
+        line-height: 1.35 !important;
+        white-space: pre-wrap !important;
+        overflow: visible !important;
+        overflow-wrap: anywhere !important;
+        word-break: break-word !important;
+      }
+
+      /* Make the P.L.A.Y. panel readable and allow it to flow across pages */
+      .play-framework-panel {
+        display: block !important;
+        height: auto !important;
+        overflow: visible !important;
+        margin: 8px 0 !important;
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 3px !important;
+        break-inside: auto !important;
+        page-break-inside: auto !important;
+      }
+
+      .play-framework-header {
+        display: block !important;
+        padding: 6px 8px !important;
+        background: #eff6ff !important;
+        color: #1e3a8a !important;
+        break-after: avoid-page;
+        page-break-after: avoid;
+      }
+
+      .play-framework-body {
+        display: block !important;
+        height: auto !important;
+        overflow: visible !important;
+      }
+
+      .play-framework-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 6px !important;
+        padding: 6px !important;
+      }
+
+      .play-framework-item {
+        min-width: 0 !important;
+        height: auto !important;
+        padding: 6px !important;
+        border: 1px solid #cbd5e1 !important;
+        break-inside: avoid-page;
+        page-break-inside: avoid;
+      }
+
+      .play-framework-icon {
+        display: none !important;
+      }
+
+      /* Four-column lesson table: the action column is removed from print */
+      table.plan-table {
+        display: table !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        table-layout: fixed !important;
+        border-collapse: collapse !important;
+        border-radius: 0 !important;
+        overflow: visible !important;
+        margin: 6px 0 0 !important;
+        border: 1px solid #94a3b8 !important;
+        break-inside: auto !important;
+        page-break-inside: auto !important;
+      }
+
+      table.plan-table thead {
+        display: table-header-group !important;
+      }
+
+      table.plan-table tfoot {
+        display: table-footer-group !important;
+      }
+
+      table.plan-table th.no-print,
+      table.plan-table td.no-print {
+        display: none !important;
+      }
+
+      table.plan-table th:nth-child(1),
+      table.plan-table td:nth-child(1) { width: 23% !important; }
+      table.plan-table th:nth-child(2),
+      table.plan-table td:nth-child(2) { width: 12% !important; }
+      table.plan-table th:nth-child(3),
+      table.plan-table td:nth-child(3) { width: 40% !important; }
+      table.plan-table th:nth-child(4),
+      table.plan-table td:nth-child(4) { width: 25% !important; }
+
+      table.plan-table tr {
+        break-inside: avoid-page;
+        page-break-inside: avoid;
+      }
+
+      table.plan-table th,
+      table.plan-table td {
+        height: auto !important;
+        padding: 4px !important;
+        border: 1px solid #94a3b8 !important;
+        vertical-align: top !important;
+        white-space: normal !important;
+        overflow: visible !important;
+        overflow-wrap: anywhere !important;
+        word-break: break-word !important;
+      }
+
+      table.plan-table th {
+        background: #1e3a8a !important;
+        color: #fff !important;
+        font-size: 8pt !important;
+      }
+
+      table.plan-table td {
+        background: #fff !important;
+        color: #0f172a !important;
+        font-size: 8.5pt !important;
+      }
+
+      /* Keep headings with the content that follows them */
+      h1, h2, h3, h4 {
+        break-after: avoid-page;
+        page-break-after: avoid;
+      }
+
+      p, li {
+        orphans: 3;
+        widows: 3;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -1458,9 +1730,18 @@ input[type="date"]::-webkit-date-and-time-value {
     }
 
     function exportPDF() {
+      // Ensure the lesson editor is the active view before invoking print.
+      // The short layout delay helps iPad browsers finish recalculating print values.
+      if (!document.getElementById('editorView').classList.contains('active')) {
+        switchView('editor');
+      }
       syncPrintValues();
       triggerAllExpands(10);
-      window.print();
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setTimeout(() => window.print(), 120);
+        });
+      });
     }
   </script>
 </body>
