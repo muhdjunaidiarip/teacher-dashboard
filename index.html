@@ -35,7 +35,7 @@
 
 /* Add this inside the <style> tag of index.html */
 @media print {
-  /* 1. Hide top navbar and home dashboard */
+  /* Hide navbar and home view */
   header, 
   #home-view, 
   .brand, 
@@ -44,7 +44,7 @@
     display: none !important;
   }
 
-  /* 2. Reset fixed height and overflow restrictions */
+  /* Remove height limits and scrolling restrictions on containers */
   html, body, main, #iframe-container {
     height: auto !important;
     min-height: 100% !important;
@@ -54,19 +54,17 @@
     color: #000000 !important;
   }
 
-  /* 3. Allow active iframe to expand to full document height */
+  /* Hide inactive app frames */
   iframe.app-frame {
     display: none !important;
   }
 
+  /* Expand active app frame across all pages */
   iframe.app-frame.active {
     display: block !important;
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
+    position: relative !important; /* Forces Edge/WebKit to break across pages 1, 2, 3... */
     width: 100% !important;
     height: auto !important;
-    min-height: 100% !important;
     overflow: visible !important;
   }
 }
@@ -475,8 +473,8 @@
     <div id="iframe-container" style="height: 100%; width: 100%;"></div>
   </main>
 
-  <script>
-    // Central Registry for Dashboard Applications
+
+<script>
     const APPS = [
       {
         id: 'app-grading',
@@ -523,8 +521,40 @@
     ];
 
     /**
-     * Initialize Dashboard Elements dynamically from configuration
+     * Expands active iframe height to total scrollable content height 
+     * so Edge/WebKit renders all pages (Page 1, 2, 3...) when printing.
      */
+    function prepareAndPrint(activeIframe) {
+      if (!activeIframe || !activeIframe.contentWindow) {
+        window.print();
+        return;
+      }
+
+      try {
+        const iframeDoc = activeIframe.contentDocument || activeIframe.contentWindow.document;
+        const fullHeight = Math.max(
+          iframeDoc.body.scrollHeight,
+          iframeDoc.documentElement.scrollHeight,
+          iframeDoc.body.offsetHeight
+        );
+
+        // Expand iframe height so WebKit paginates all pages
+        activeIframe.style.height = fullHeight + 'px';
+      } catch (e) {
+        console.warn('Could not calculate iframe height:', e);
+      }
+
+      // Trigger main window print
+      setTimeout(() => {
+        window.print();
+
+        // Restore responsive 100% height after print dialog completes
+        setTimeout(() => {
+          activeIframe.style.height = '100%';
+        }, 1500);
+      }, 200);
+    }
+
     function initDashboard() {
       const navTabs = document.getElementById('nav-tabs');
       const appGrid = document.getElementById('app-grid');
@@ -535,7 +565,7 @@
       const iframeFragment = document.createDocumentFragment();
 
       APPS.forEach((app) => {
-        // 1. Build Navigation Tab Button
+        // 1. Navigation Tab
         const li = document.createElement('li');
         li.innerHTML = `
           <button class="tab-btn" id="tab-${app.id}" onclick="switchApp('${app.id}')" role="tab" aria-selected="false">
@@ -543,7 +573,7 @@
           </button>`;
         tabsFragment.appendChild(li);
 
-        // 2. Build Home Dashboard Grid Card
+        // 2. Dashboard Card
         const card = document.createElement('div');
         card.className = 'app-card';
         card.onclick = () => switchApp(app.id);
@@ -553,12 +583,24 @@
           <div class="app-card-desc">${app.desc}</div>`;
         gridFragment.appendChild(card);
 
-        // 3. Build Persistent IFrame Container
+        // 3. IFrame with automatic print interception
         const iframe = document.createElement('iframe');
         iframe.id = app.id;
         iframe.className = 'view-content app-frame';
         iframe.title = app.title;
         iframe.dataset.src = app.path;
+
+        // Intercept internal window.print() calls inside embedded sub-apps
+        iframe.onload = () => {
+          try {
+            iframe.contentWindow.print = function() {
+              prepareAndPrint(iframe);
+            };
+          } catch (e) {
+            console.warn('Cross-origin print handler notice:', e);
+          }
+        };
+
         iframeFragment.appendChild(iframe);
       });
 
@@ -566,11 +608,9 @@
       appGrid.appendChild(gridFragment);
       iframeContainer.appendChild(iframeFragment);
 
-      // Display formatted date
       const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
       document.getElementById('current-date').textContent = new Date().toLocaleDateString(undefined, options);
 
-      // Enable horizontal mouse wheel scrolling for nav tabs
       const navWrapper = document.getElementById('nav-wrapper');
       navWrapper.addEventListener('wheel', (e) => {
         if (e.deltaY !== 0) {
@@ -580,9 +620,6 @@
       });
     }
 
-    /**
-     * Show Home Dashboard View
-     */
     function showHome() {
       document.querySelectorAll('.app-frame').forEach(frame => frame.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -592,16 +629,13 @@
       document.getElementById('home-view').classList.add('active');
     }
 
-    /**
-     * Switch to requested app view, lazy-loading iframe on demand
-     */
     function switchApp(appId) {
       document.getElementById('home-view').classList.remove('active');
 
       document.querySelectorAll('.app-frame').forEach(frame => {
         if (frame.id === appId) {
           if (!frame.src) {
-            frame.src = frame.dataset.src; // Lazy-load URL on first switch
+            frame.src = frame.dataset.src;
           }
           frame.classList.add('active');
         } else {
@@ -614,16 +648,12 @@
         btn.classList.toggle('active', isActive);
         btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
         
-        // Auto-scroll selected tab into view in header
         if (isActive) {
           btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
         }
       });
     }
 
-    /**
-     * Fullscreen toggle mechanism
-     */
     function toggleFullScreen() {
       const docEl = document.documentElement;
       if (!document.fullscreenElement && !document.webkitFullscreenElement) {
@@ -643,5 +673,8 @@
 
     document.addEventListener('DOMContentLoaded', initDashboard);
   </script>
+
+
+
 </body>
 </html>
