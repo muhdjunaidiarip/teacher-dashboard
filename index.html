@@ -31,6 +31,46 @@
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
+/* Add this inside the <style> tag of index.html */
+@media print {
+  /* 1. Hide top header navigation and home dashboard */
+  header, 
+  #home-view, 
+  .brand, 
+  .actions, 
+  .nav-tabs-wrapper {
+    display: none !important;
+  }
+
+  /* 2. Reset fixed height and overflow restrictions on parent containers */
+  html, body, main, #iframe-container {
+    height: auto !important;
+    width: 100% !important;
+    overflow: visible !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    position: static !important;
+  }
+
+  /* 3. Ensure the active app iframe expands fully for print */
+  .view-content.app-frame {
+    display: none !important;
+  }
+
+  .view-content.app-frame.active {
+    display: block !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+}
+
+
+
+
     body {
       display: flex;
       flex-direction: column;
