@@ -360,6 +360,32 @@
       color: var(--text-muted);
       line-height: 1.5;
     }
+
+    /* Print & Save to PDF Optimizations for iPad/WebKit */
+    @media print {
+      body, main, #iframe-container {
+        height: auto !important;
+        overflow: visible !important;
+        background: #ffffff !important;
+        color: #000000 !important;
+        position: static !important;
+      }
+
+      header, .actions, #home-view, .view-content:not(.active) {
+        display: none !important;
+      }
+
+      iframe.active {
+        display: block !important;
+        position: static !important;
+        width: 100% !important;
+        height: 100% !important;
+        min-height: 100vh !important;
+        overflow: visible !important;
+        border: none !important;
+        background: #ffffff !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -379,6 +405,9 @@
 
     <!-- Quick Actions -->
     <div class="actions">
+      <button class="btn-action" onclick="printActiveApp()" title="Print or Save PDF">
+        <span>🖨️</span> Print / PDF
+      </button>
       <button class="btn-action" onclick="toggleFullScreen()" title="Present App Full Screen">
         <span>📺</span> Present App
       </button>
@@ -577,6 +606,20 @@
           btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
         }
       });
+    }
+
+    /**
+     * Trigger print or PDF export for active app on iPad / WebKit
+     */
+    function printActiveApp() {
+      const activeFrame = document.querySelector('iframe.active');
+      if (activeFrame && activeFrame.contentWindow) {
+        // Direct focus and print call for iPad Edge / Safari compatibility
+        activeFrame.contentWindow.focus();
+        activeFrame.contentWindow.print();
+      } else {
+        window.print();
+      }
     }
 
     /**
