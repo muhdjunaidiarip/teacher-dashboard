@@ -1453,20 +1453,26 @@
                 activeDictationTarget = targetInputId;
                 updateMicBtnUI(targetInputId, true);
 
-                let finalTranscript = '';
+                // Capture initial target text before continuous speech recognition starts
+                const baseText = targetEl.value;
+                const prefixSpace = (baseText.length > 0 && !baseText.endsWith(' ') && !baseText.endsWith('\n')) ? ' ' : '';
 
                 recognition.onresult = (event) => {
+                    let finalTranscript = '';
                     let interimTranscript = '';
-                    for (let i = event.resultIndex; i < event.results.length; ++i) {
+
+                    // Iterate through all speech results from index 0 on each tick to build clean transcripts without repetition
+                    for (let i = 0; i < event.results.length; ++i) {
+                        const transcript = event.results[i][0].transcript;
                         if (event.results[i].isFinal) {
-                            finalTranscript += event.results[i][0].transcript + ' ';
+                            finalTranscript += transcript;
                         } else {
-                            interimTranscript += event.results[i][0].transcript;
+                            interimTranscript += transcript;
                         }
                     }
-                    const baseText = targetEl.dataset.baseText || targetEl.value;
-                    const space = baseText.length > 0 && !baseText.endsWith(' ') ? ' ' : '';
-                    targetEl.value = baseText + space + finalTranscript + interimTranscript;
+
+                    // Assign initial text + accumulated final text + active interim text
+                    targetEl.value = baseText + prefixSpace + finalTranscript + interimTranscript;
                 };
 
                 recognition.onerror = (event) => {
@@ -1484,7 +1490,6 @@
                     activeDictationTarget = null;
                 };
 
-                targetEl.dataset.baseText = targetEl.value;
                 recognition.start();
                 showToast('🎙️ Microphone active. Speak clearly to dictate...');
             } catch (err) {
